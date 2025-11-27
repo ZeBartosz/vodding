@@ -1,0 +1,32 @@
+#root {
+    padding: 2rem;
+    text-align: center;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 1rem;
+}
+
+.input-container {
+    height: 100%;
+    display: grid;
+    grid-template-rows: 8fr 2fr;
+    gap: 0.5rem;
+    border: red solid;
+}
+.missing-video {
+    width: 1080px;
+    height: 720px;
+}
+
+.result-box {
+    margin: 0.5rem 0.5rem 0 0.5rem;
+    border: blue solid;
+}
+
+.input-box {
+    margin: 0 0.5rem 0.5rem 0.5rem;
+    border: blue solid;
+}
