@@ -10,31 +10,40 @@ body,
     grid-template-columns: 1fr min(420px, 33%);
     gap: 1rem;
     width: 100%;
-    max-width: 100%;
     box-sizing: border-box;
     padding: 1rem;
     min-height: 85vh;
 }
 
-.input-container {
-    display: grid;
-    grid-template-rows: 1fr auto;
-    gap: 0.5rem;
-    border: 1px solid red;
+.container > * {
     min-width: 0;
+    min-height: 0;
 }
 
-.missing-video {
-    width: 1080px;
-    height: 720px;
+.input-container {
+    display: grid;
+    grid-template-rows: 4fr 1fr;
+    border: 1px solid red;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+}
+
+.input-container {
+    grid-template-rows: minmax(0, 4fr) minmax(60px, 1fr);
 }
 
 .result-box {
-    margin: 0.5rem 0.5rem 0 0.5rem;
-    border: blue solid;
+    overflow: auto;
+    margin: 0.5rem;
+    border: 1px solid blue;
 }
 
 .input-box {
-    margin: 0 0.5rem 0.5rem 0.5rem;
-    border: blue solid;
+    margin: 0.5rem;
+    border: 1px solid blue;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
 }
