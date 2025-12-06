@@ -31,15 +31,7 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
     );
 
   return (
-    <div
-      style={{
-        overflow: "hidden",
-        width: "70vw",
-        height: "95vh",
-        position: "relative",
-        background: "#000",
-      }}
-    >
+    <div className="video-player-wrap">
       <ReactPlayer
         ref={playerRef}
         src={url}
@@ -66,24 +58,21 @@ const MissingURL: FC<MissingProps> = ({
   error,
 }) => {
   return (
-    <div
-      className="missing-video"
-      style={{
-        width: "70vw",
-        height: "95vh",
-      }}
-    >
+    <div className="missing-video">
       <form onSubmit={handleSubmit}>
         <label htmlFor="url-input">Paste VOD link</label>
-        <input
-          id="url-input"
-          type="text"
-          value={inputValue}
-          onChange={(e) => handleSetInputValue(e.target.value)}
-          placeholder="https://youtu.be/FOatagUO-Z0?si=B7VpCVugvcLB_Jzz"
-        />
-        <button type="submit">Submit</button>
-        {error && <p> {error}</p>}
+        <div>
+          <input
+            id="url-input"
+            type="text"
+            value={inputValue}
+            onChange={(e) => handleSetInputValue(e.target.value)}
+            placeholder="https://youtu.be/FOatagUO-Z0?si=B7VpCVugvcLB_Jzz"
+          />
+          <button type="submit">Submit</button>
+        </div>
+
+        {error && <p className="form-error">{error}</p>}
       </form>
     </div>
   );
