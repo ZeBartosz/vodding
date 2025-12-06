@@ -95,8 +95,14 @@ const ResultBox = ({
                   />
                 </svg>
               </div>
-              <div className="empty-title">No notes yet</div>
-              <div className="empty-sub">Add your first note below</div>
+              <div className="empty-title">
+                {query ? "No notes match your search" : "No notes yet"}
+              </div>
+              <div className="empty-sub">
+                {query
+                  ? "Try changing or clearing your search."
+                  : "Add your first note below"}
+              </div>
             </div>
           ) : (
             filtered.map((n) => (
