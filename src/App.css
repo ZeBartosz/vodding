@@ -22,21 +22,23 @@ body,
 
 .input-container {
     display: grid;
-    grid-template-rows: 4fr 1fr;
+    grid-template-rows: minmax(0, 4fr) minmax(60px, 1fr);
     border: 1px solid red;
     height: 100%;
     min-width: 0;
     min-height: 0;
 }
 
-.input-container {
-    grid-template-rows: minmax(0, 4fr) minmax(60px, 1fr);
-}
-
 .result-box {
-    overflow: auto;
-    margin: 0.5rem;
+    height: 76vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+    margin: 0.5rem 0.5rem 0 0.5rem;
     border: 1px solid blue;
+}
+.result-box {
+    min-height: 0;
+    white-space: pre-wrap;
 }
 
 .input-box {
@@ -46,4 +48,17 @@ body,
     align-items: center;
     justify-content: center;
     overflow: hidden;
+}
+
+.button-box {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0 0 0 0.5rem;
+}
+
+textarea {
+    width: 65%;
+    height: 90%;
+    resize: none;
 }
