@@ -10,8 +10,7 @@ export const useLink = () => {
   const [scale, setScale] = useState(1);
 
   useEffect(() => {
-    const internal =
-      playerRef.current?.getInternalPlayer?.() ?? playerRef.current;
+    const internal = playerRef.current;
     if (!internal) return;
 
     const el: HTMLElement = internal.nodeName ? internal : internal;

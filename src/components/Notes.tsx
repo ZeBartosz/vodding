@@ -43,7 +43,7 @@ const ResultBox = ({
       <div className="result-box" ref={resultsRef}>
         {notes.map((n) => (
           <div key={n.id} className="result-card">
-            <p>{formatTime(n.timestamp)}</p>
+            <p>{formatTime(n.timestamp)} - </p>
             <p>{n.content}</p>
           </div>
         ))}

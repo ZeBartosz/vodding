@@ -3,6 +3,7 @@ body,
 #root {
     height: 100%;
     margin: 0;
+    padding: 0;
 }
 
 .container {
@@ -39,6 +40,15 @@ body,
     white-space: pre-wrap;
 }
 
+.result-card {
+    margin: 0;
+    padding: 0;
+}
+
+.result-card > p {
+    margin: 0;
+    padding: 0;
+}
 .input-box {
     margin: 0.5rem;
     border: 1px solid blue;
