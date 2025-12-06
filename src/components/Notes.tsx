@@ -21,8 +21,12 @@ const formatTime = (seconds: number): string => {
 
 const ResultBox = ({
   currentTime,
+  handleMapView,
+  handleResetFocusAndScale,
 }: {
   currentTime: MutableRefObject<number>;
+  handleMapView: (e: React.SyntheticEvent) => void;
+  handleResetFocusAndScale: (e: React.SyntheticEvent) => void;
 }) => {
   const [notes, setNotes] = useState<Note[]>([]);
 
@@ -36,7 +40,12 @@ const ResultBox = ({
           </div>
         ))}
       </div>
-      <InputBox setNotes={setNotes} currentTime={currentTime} />
+      <InputBox
+        setNotes={setNotes}
+        currentTime={currentTime}
+        handleMapView={handleMapView}
+        handleResetFocusAndScale={handleResetFocusAndScale}
+      />
     </>
   );
 };
@@ -44,9 +53,13 @@ const ResultBox = ({
 const InputBox = ({
   setNotes,
   currentTime,
+  handleMapView,
+  handleResetFocusAndScale,
 }: {
   setNotes: React.Dispatch<React.SetStateAction<Note[]>>;
   currentTime: MutableRefObject<number>;
+  handleMapView: (e: React.SyntheticEvent) => void;
+  handleResetFocusAndScale: (e: React.SyntheticEvent) => void;
 }) => {
   const [inputValue, setInputValue] = useState("");
 
@@ -75,6 +88,13 @@ const InputBox = ({
         onKeyUp={(e) => e.key === "Enter" && addNote()}
       />
       <button onClick={addNote}>Add Note</button>
+      <button onClick={handleResetFocusAndScale} aria-label="Reset zoom">
+        Reset
+      </button>
+
+      <button onClick={handleMapView} aria-label="Map View">
+        Map View
+      </button>
     </div>
   );
 };

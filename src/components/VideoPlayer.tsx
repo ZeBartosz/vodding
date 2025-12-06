@@ -12,8 +12,6 @@ interface VideoPlayerProps {
   inputValue: string;
   error: string | null;
   handleSetInputValue: (v: string) => void;
-  handleMapView: (e: React.SyntheticEvent) => void;
-  handleResetFocusAndScale: (e: React.SyntheticEvent) => void;
 }
 
 const VideoPlayer: FC<VideoPlayerProps> = ({
@@ -24,8 +22,6 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
   inputValue,
   error,
   handleSetInputValue,
-  handleMapView,
-  handleResetFocusAndScale,
 }) => {
   if (url === null)
     return (
@@ -55,25 +51,6 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
         height="100%"
         onTimeUpdate={handleProgress}
       />
-
-      <div
-        style={{
-          position: "absolute",
-          top: 8,
-          right: 8,
-          zIndex: 9999,
-          display: "flex",
-          gap: 8,
-        }}
-      >
-        <button onClick={handleResetFocusAndScale} aria-label="Reset zoom">
-          Reset
-        </button>
-
-        <button onClick={handleMapView} aria-label="Map View">
-          Map View
-        </button>
-      </div>
     </div>
   );
 };

@@ -27,11 +27,13 @@ function App() {
         inputValue={inputValue}
         error={error}
         handleSetInputValue={handleSetInputValue}
-        handleMapView={handleMapView}
-        handleResetFocusAndScale={handleResetFocusAndScale}
       />
       <div className="input-container">
-        <ResultBox currentTime={currentTimeRef} />
+        <ResultBox
+          currentTime={currentTimeRef}
+          handleMapView={handleMapView}
+          handleResetFocusAndScale={handleResetFocusAndScale}
+        />
       </div>
     </div>
   );
