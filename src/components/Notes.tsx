@@ -10,7 +10,7 @@ import {
 import { useNotes } from "../hooks/useNotes";
 
 const formatTime = (seconds: number): string => {
-  if (!seconds || isNaN(seconds)) return "0:00";
+  if (!Number.isFinite(seconds) || seconds <= 0) return "0:00";
 
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
@@ -54,7 +54,7 @@ const ResultBox = ({
     return notes.filter(
       (n) =>
         n.content.toLowerCase().includes(q) ||
-        formatTime(n.timestamp).toLowerCase().includes(q),
+        formatTime(n.timestamp).includes(q),
     );
   }, [notes, query]);
 
@@ -69,7 +69,9 @@ const ResultBox = ({
             onChange={(e) => setQuery(e.target.value)}
             className="notes-search"
           />
-          <div className="notes-pill">{notes.length} notes</div>
+          <div className="notes-pill">
+            {notes.length} {notes.length === 1 ? "note" : "notes"}
+          </div>
         </div>
 
         <div className="result-box" ref={resultsRef}>
