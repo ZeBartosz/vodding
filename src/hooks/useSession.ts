@@ -92,6 +92,7 @@ export const useSession = () => {
   return {
     vodding,
     loading,
+    loadAll,
     loadWithId,
     voddingList,
     deleteVodById,

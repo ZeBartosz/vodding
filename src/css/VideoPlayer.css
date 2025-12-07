@@ -1,0 +1,149 @@
+.media-controller {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 16/9;
+}
+
+.react-player {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+    background: #000;
+}
+
+.vodding-list-wrap {
+    margin-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding-top: 1rem;
+}
+
+.vodding-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 240px;
+    overflow: auto;
+}
+
+.vodding-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.vodding-item:hover {
+    background: rgba(238, 246, 255, 0.03);
+}
+
+.vodding-meta {
+    max-width: 72%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.vodding-title {
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
+    color: #f6f7f8;
+    font-size: 13px;
+}
+
+.vodding-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.vodding-url {
+    font-size: 0.85rem;
+    color: #9aa1a6;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 280px;
+}
+
+.vodding-badges {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.notes-badge,
+.time-badge {
+    font-size: 0.72rem;
+    color: #7a8186;
+    background: rgba(245, 247, 251, 0.9);
+    padding: 2px 6px;
+    border-radius: 999px;
+    border: 1px solid rgba(238, 243, 255, 0.8);
+}
+
+.time-badge {
+    background: rgba(255, 247, 246, 0.95);
+    border-color: rgba(255, 236, 236, 0.85);
+    color: #8b8b8b;
+}
+
+.vodding-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.vodding-actions button {
+    margin-left: 0.5rem;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.restore-btn {
+    background: #eef6ff;
+    border: 1px solid #cbe4ff;
+    padding: 0.35rem 0.6rem;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #134b7a;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.delete-btn {
+    background: transparent;
+    border: none;
+    padding: 0.2rem 0.45rem;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #c33;
+    font-size: 0.98rem;
+    line-height: 1;
+}
+
+@media (max-width: 900px) {
+    .vodding-url {
+        max-width: 180px;
+    }
+    .vodding-list {
+        max-height: 200px;
+    }
+}
+
+.video-player-wrap {
+    overflow: hidden;
+    width: 100%;
+    height: 80vh;
+    position: relative;
+    background: #000;
+    border-radius: 6px;
+    box-shadow:
+        inset 0 0 0 1px rgba(208, 67, 67, 0.03),
+        0 6px 22px rgba(184, 46, 46, 0.06);
+}

@@ -8,6 +8,7 @@ import {
   useState,
 } from "react";
 import { useNotes } from "../hooks/useNotes";
+import type { Note } from "../types";
 
 const formatTime = (seconds: number): string => {
   if (!Number.isFinite(seconds) || seconds <= 0) return "0:00";
@@ -29,11 +30,15 @@ const ResultBox = ({
   handleMapView,
   handleResetFocusAndScale,
   handleNoteJump,
+  initialNotes,
+  onNotesChange,
 }: {
   currentTime: RefObject<number>;
   handleMapView: (e: SyntheticEvent) => void;
   handleResetFocusAndScale: (e: SyntheticEvent) => void;
   handleNoteJump: (time: number) => void;
+  initialNotes?: Note[];
+  onNotesChange?: (notes: Note[]) => void;
 }) => {
   const {
     notes,
@@ -44,9 +49,12 @@ const ResultBox = ({
     textareaRef,
     resultsRef,
     handleKeyDown,
-  } = useNotes(currentTime);
+    editNote,
+  } = useNotes(currentTime, initialNotes, onNotesChange);
 
   const [query, setQuery] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingValue, setEditingValue] = useState<string>("");
 
   const filtered = useMemo(() => {
     if (!query) return notes;
@@ -109,40 +117,94 @@ const ResultBox = ({
               </div>
             </div>
           ) : (
-            filtered.map((n) => (
-              <div key={n.id} className="result-card">
-                <div className="result-card-header">
-                  <div className="result-meta">
-                    <span className="timestamp">{formatTime(n.timestamp)}</span>
+            filtered.map((n: Note) => {
+              const isEditing = editingId === n.id;
+              return (
+                <div key={n.id} className="result-card">
+                  <div className="result-card-header">
+                    <div className="result-meta">
+                      <span className="timestamp">
+                        {formatTime(n.timestamp)}
+                      </span>
+                    </div>
+                    <div className="result-actions-row">
+                      <button
+                        onClick={() => {
+                          handleNoteJump(n.timestamp);
+                        }}
+                        aria-label="Jump to note"
+                        className="btn btn-ghost"
+                      >
+                        Jump
+                      </button>
+                      {!isEditing && (
+                        <button
+                          onClick={() => {
+                            setEditingId(n.id);
+                            setEditingValue(n.content);
+                          }}
+                          aria-label="Edit note"
+                          className="btn btn-ghost"
+                        >
+                          Edit
+                        </button>
+                      )}
+                      <button
+                        onClick={() => {
+                          const index = notes.findIndex(
+                            (note) => note.id === n.id,
+                          );
+                          if (index !== -1) deleteNote(index);
+                        }}
+                        aria-label="Delete note"
+                        className="btn"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
-                  <div className="result-actions-row">
-                    <button
-                      onClick={() => {
-                        handleNoteJump(n.timestamp);
-                      }}
-                      aria-label="Jump to note"
-                      className="btn btn-ghost"
-                    >
-                      Jump
-                    </button>
-                    <button
-                      onClick={() => {
-                        const index = notes.findIndex(
-                          (note) => note.id === n.id,
-                        );
-                        if (index !== -1) deleteNote(index);
-                      }}
-                      aria-label="Delete note"
-                      className="btn"
-                    >
-                      Delete
-                    </button>
+
+                  <div className="result-content">
+                    {isEditing ? (
+                      <div className="note-edit-wrap">
+                        <textarea
+                          value={editingValue}
+                          onChange={(e) => setEditingValue(e.target.value)}
+                          className="note-edit-textarea"
+                          rows={3}
+                        />
+                        <div className="note-edit-actions">
+                          <button
+                            onClick={() => {
+                              // commit edit
+                              if (typeof editNote === "function") {
+                                editNote(n.id, editingValue);
+                              }
+                              setEditingId(null);
+                            }}
+                            className="btn btn-primary"
+                          >
+                            Save
+                          </button>
+                          <button
+                            onClick={() => {
+                              // cancel edit
+                              setEditingId(null);
+                              setEditingValue("");
+                            }}
+                            className="btn btn-ghost"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div>{n.content}</div>
+                    )}
                   </div>
                 </div>
-
-                <div className="result-content">{n.content}</div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
 

@@ -12,7 +12,7 @@ import {
   MediaSeekForwardButton,
   MediaMuteButton,
 } from "media-chrome/react";
-import type { Video } from "../types";
+import type { Video, VoddingPayload } from "../types";
 
 interface VideoPlayerProps {
   handleProgress: (e: React.SyntheticEvent<HTMLMediaElement>) => void;
@@ -22,6 +22,11 @@ interface VideoPlayerProps {
   inputValue: string;
   error: string | null;
   handleSetInputValue: (v: string) => void;
+  voddingList: VoddingPayload[];
+  deleteVodById: (id: string) => Promise<any>;
+  loadWithId: (id: string) => Promise<VoddingPayload | null>;
+  loading: boolean;
+  setVideo: (v: Video | null) => void;
 }
 
 const VideoPlayer: FC<VideoPlayerProps> = ({
@@ -32,6 +37,11 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
   inputValue,
   error,
   handleSetInputValue,
+  voddingList,
+  deleteVodById,
+  loadWithId,
+  loading,
+  setVideo,
 }) => {
   if (video === null)
     return (
@@ -40,27 +50,23 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
         inputValue={inputValue}
         error={error ?? ""}
         handleSetInputValue={handleSetInputValue}
+        voddingList={voddingList}
+        deleteVodById={deleteVodById}
+        loadWithId={loadWithId}
+        loading={loading}
+        setVideo={setVideo}
       />
     );
 
   return (
     <div className="video-player-wrap">
-      <MediaController
-        style={{
-          width: "100%",
-          height: "100%",
-          aspectRatio: "16/9",
-        }}
-      >
+      <MediaController className="media-controller">
         <ReactPlayer
           ref={playerRef}
           src={video.url}
           slot="media"
           controls={false}
-          style={{
-            width: "100%",
-            height: "100%",
-          }}
+          className="react-player"
           onTimeUpdate={handleProgress}
         />
         <MediaControlBar>
@@ -82,6 +88,11 @@ interface MissingProps {
   inputValue: string;
   handleSetInputValue: (value: string) => void;
   error: string;
+  voddingList: VoddingPayload[];
+  deleteVodById: (id: string) => Promise<any>;
+  loadWithId: (id: string) => Promise<VoddingPayload | null>;
+  loading: boolean;
+  setVideo: (v: Video | null) => void;
 }
 
 const MissingURL: FC<MissingProps> = ({
@@ -89,7 +100,33 @@ const MissingURL: FC<MissingProps> = ({
   inputValue,
   handleSetInputValue,
   error,
+  voddingList,
+  deleteVodById,
+  loadWithId,
+  loading,
+  setVideo,
 }) => {
+  const handleRestore = async (v: VoddingPayload) => {
+    if (v.video?.url) handleSetInputValue(v.video.url);
+
+    if (v.id) {
+      try {
+        await loadWithId(v.id);
+      } catch {}
+    }
+
+    if (v.video) {
+      setVideo(v.video);
+    }
+  };
+
+  const handleDelete = async (id?: string) => {
+    if (!id) return;
+    try {
+      await deleteVodById(id);
+    } catch {}
+  };
+
   return (
     <div className="missing-video">
       <form onSubmit={handleSubmit}>
@@ -109,6 +146,66 @@ const MissingURL: FC<MissingProps> = ({
 
         {error && <p className="form-error">{error}</p>}
       </form>
+
+      <div className="vodding-list-wrap">
+        <h4>Saved VODs</h4>
+        {loading && <p>Loading saved VODs…</p>}
+        {!loading && (!voddingList || voddingList.length === 0) && (
+          <p className="muted">No saved VODs yet.</p>
+        )}
+
+        {!loading && voddingList && voddingList.length > 0 && (
+          <ul className="vodding-list" aria-label="Saved vodding list">
+            {voddingList.map((v) => (
+              <li key={v.id} className="vodding-item">
+                <div className="vodding-meta">
+                  <div className="vodding-title">
+                    {v.video?.name || v.video?.url || "Untitled VOD"}
+                  </div>
+
+                  <div className="vodding-row">
+                    <div className="vodding-url" title={v.video?.url}>
+                      {v.video?.url}
+                    </div>
+
+                    <div className="vodding-badges">
+                      <span className="notes-badge">
+                        {Array.isArray(v.notes) ? v.notes.length : 0} notes
+                      </span>
+                      <span className="time-badge">
+                        {v.createdAt
+                          ? new Date(v.createdAt).toLocaleString()
+                          : ""}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="vodding-actions">
+                  <button
+                    type="button"
+                    className="restore-btn"
+                    onClick={() => handleRestore(v)}
+                    aria-label={`Restore ${v.id}`}
+                    title="Restore VOD and populate notes"
+                  >
+                    Restore
+                  </button>
+                  <button
+                    type="button"
+                    className="delete-btn"
+                    onClick={() => handleDelete(v.id)}
+                    aria-label={`Delete ${v.id}`}
+                    title="Delete saved VOD"
+                  >
+                    🗑
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 };
