@@ -1,0 +1,100 @@
+import { useCallback, useEffect, useState } from "react";
+import type { VoddingPayload } from "../types";
+import {
+  deleteVod,
+  getVoddingById,
+  getVoddingList,
+  saveVod,
+} from "../repository/VoddingDb";
+
+export const useSession = () => {
+  const [voddingList, setVoddingList] = useState<VoddingPayload[]>([]);
+  const [vodding, setVodding] = useState<VoddingPayload | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadAll = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const data = await getVoddingList();
+      setVoddingList(data ?? []);
+      return data;
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setError(msg);
+      setVoddingList([]);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const loadWithId = useCallback(async (id: string) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const data = await getVoddingById(id);
+      setVodding(data ?? null);
+      return data;
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setError(msg);
+      setVodding(null);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadAll();
+
+    return () => {
+      setVodding(null);
+      setVoddingList([]);
+    };
+  }, []);
+
+  const save = useCallback(async (payload: VoddingPayload): Promise<any> => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await saveVod(payload);
+      if (res) setVodding(res);
+      return res;
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setError(msg);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const deleteVodById = useCallback(async (id: string) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      await deleteVod(id);
+      setVoddingList((prev) => prev.filter((v) => v.id !== id));
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  return {
+    vodding,
+    loading,
+    voddingList,
+    deleteVodById,
+    error,
+    save,
+  };
+};

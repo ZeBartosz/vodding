@@ -1,11 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { KeyboardEvent, RefObject } from "react";
-
-interface Note {
-  id: number;
-  content: string;
-  timestamp: number;
-}
+import type { Note } from "../types";
+import { v4 as uuidv4 } from "uuid";
 
 export const useNotes = (currentTimeRef?: RefObject<number>) => {
   const [notes, setNotes] = useState<Note[]>([]);
@@ -23,9 +19,11 @@ export const useNotes = (currentTimeRef?: RefObject<number>) => {
     setNotes((prev: Note[]) => [
       ...prev,
       {
-        id: Date.now(),
+        id: uuidv4(),
         content: inputValue,
         timestamp,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       },
     ]);
 
