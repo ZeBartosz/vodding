@@ -16,6 +16,8 @@ export const useSession = () => {
   const loadAll = useCallback(async () => {
     setLoading(true);
     setError(null);
+    setVodding(null);
+    setVoddingList([]);
 
     try {
       const data = await getVoddingList();

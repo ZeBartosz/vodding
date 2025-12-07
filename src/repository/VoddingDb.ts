@@ -19,6 +19,7 @@ export const getDB = (): Promise<IDBPDatabase<Vodding>> => {
       },
     }).catch((err: unknown) => {
       console.error("Failed to open VoddingDB:", err);
+      dbPromise = null;
       throw new Error("Storage unavailable");
     });
   }
