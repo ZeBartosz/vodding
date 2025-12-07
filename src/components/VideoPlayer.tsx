@@ -12,11 +12,12 @@ import {
   MediaSeekForwardButton,
   MediaMuteButton,
 } from "media-chrome/react";
+import type { Video } from "../types";
 
 interface VideoPlayerProps {
   handleProgress: (e: React.SyntheticEvent<HTMLMediaElement>) => void;
   playerRef: React.Ref<HTMLVideoElement>;
-  url: string | null;
+  video: Video | null;
   handleSubmit: (e: React.FormEvent) => void;
   inputValue: string;
   error: string | null;
@@ -26,13 +27,13 @@ interface VideoPlayerProps {
 const VideoPlayer: FC<VideoPlayerProps> = ({
   handleProgress,
   playerRef,
-  url,
+  video,
   handleSubmit,
   inputValue,
   error,
   handleSetInputValue,
 }) => {
-  if (url === null)
+  if (video === null)
     return (
       <MissingURL
         handleSubmit={handleSubmit}
@@ -53,7 +54,7 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
       >
         <ReactPlayer
           ref={playerRef}
-          src={url}
+          src={video.url}
           slot="media"
           controls={false}
           style={{

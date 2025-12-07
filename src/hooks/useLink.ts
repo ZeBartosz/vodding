@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { Video } from "../types";
+import { v4 as uuidv4 } from "uuid";
 
 export const useLink = () => {
-  const [url, setUrl] = useState<string | null>(null);
+  const [video, setVideo] = useState<Video | null>(null);
   const [inputValue, setInputValue] = useState<string>("");
   const [error, setError] = useState<string>("");
 
@@ -65,7 +67,16 @@ export const useLink = () => {
       }
 
       setError("");
-      setUrl(cleanUrl);
+
+      // initialize video state for the submitted URL
+      const newVideo: Video = {
+        id: uuidv4(),
+        url: cleanUrl,
+        name: cleanUrl,
+        addedAt: new Date().toISOString(),
+        provider: "youtube",
+      };
+      setVideo(newVideo);
     },
     [inputValue, validateAndCleanUrl],
   );
@@ -101,8 +112,8 @@ export const useLink = () => {
   }, []);
 
   return {
-    url,
-    setUrl,
+    video,
+    setVideo,
     handleSubmit,
     handleSetInputValue,
     handleResetFocusAndScale,

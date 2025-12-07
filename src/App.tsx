@@ -8,7 +8,7 @@ function App() {
   const { handleProgress, currentTimeRef } = useVideoMetaData();
   const {
     playerRef,
-    url,
+    video,
     handleSubmit,
     inputValue,
     error,
@@ -41,7 +41,7 @@ function App() {
             <VideoPlayer
               handleProgress={handleProgress}
               playerRef={playerRef}
-              url={url}
+              video={video}
               handleSubmit={handleSubmit}
               inputValue={inputValue}
               error={error}
