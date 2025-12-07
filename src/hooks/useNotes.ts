@@ -18,7 +18,7 @@ export const useNotes = (currentTimeRef?: RefObject<number>) => {
     if (!inputValue.trim()) return;
 
     const timestamp =
-      typeof currentTimeRef?.current === "number" ? currentTimeRef!.current : 0;
+      typeof currentTimeRef?.current === "number" ? currentTimeRef.current : 0;
 
     setNotes((prev: Note[]) => [
       ...prev,
@@ -48,14 +48,14 @@ export const useNotes = (currentTimeRef?: RefObject<number>) => {
           return;
         }
 
-        const start = el.selectionStart ?? inputValue.length;
-        const end = el.selectionEnd ?? inputValue.length;
+        const start = el.selectionStart;
+        const end = el.selectionEnd;
         const newValue =
           inputValue.slice(0, start) + "\n" + inputValue.slice(end);
         setInputValue(newValue);
 
         requestAnimationFrame(() => {
-          if (el) el.selectionStart = el.selectionEnd = start + 1;
+          el.selectionStart = el.selectionEnd = start + 1;
         });
         return;
       }

@@ -37,7 +37,7 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
       <MissingURL
         handleSubmit={handleSubmit}
         inputValue={inputValue}
-        error={error || ""}
+        error={error ?? ""}
         handleSetInputValue={handleSetInputValue}
       />
     );
@@ -98,7 +98,9 @@ const MissingURL: FC<MissingProps> = ({
             id="url-input"
             type="text"
             value={inputValue}
-            onChange={(e) => handleSetInputValue(e.target.value)}
+            onChange={(e) => {
+              handleSetInputValue(e.target.value);
+            }}
             placeholder="https://youtu.be/FOatagUO-Z0?si=B7VpCVugvcLB_Jzz"
           />
           <button type="submit">Submit</button>

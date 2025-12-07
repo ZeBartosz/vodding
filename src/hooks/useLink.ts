@@ -15,8 +15,9 @@ export const useLink = () => {
 
     const el: HTMLElement = internal.nodeName ? internal : internal;
 
-    el.style.transformOrigin = `${focus.x * 100}% ${focus.y * 100}%`;
-    el.style.transform = `scale(${scale})`;
+    el.style.transformOrigin = `${(focus.x * 100).toFixed()}% ${(focus.y * 100).toFixed()}%`;
+
+    el.style.transform = `scale(${scale.toString()})`;
     el.style.willChange = "transform";
     el.style.transition = "transform 250ms ease";
   }, [focus, scale]);
@@ -33,7 +34,8 @@ export const useLink = () => {
         if (urlObj.pathname === "/watch") {
           return urlObj.searchParams.get("v");
         }
-        const match = urlObj.pathname.match(/\/(?:embed|shorts)\/([\w-]{11})/);
+
+        const match = /\/(?:embed|shorts)\/([\w-]{11})/.exec(urlObj.pathname);
         return match ? match[1] : null;
       }
     } catch {
@@ -46,7 +48,7 @@ export const useLink = () => {
   const validateAndCleanUrl = useCallback(
     (url: string): string | null => {
       const videoId = extractYouTubeId(url);
-      if (!videoId || videoId.length !== 11) return null;
+      if (videoId?.length !== 11) return null;
       return `https://www.youtube.com/watch?v=${videoId}`;
     },
     [extractYouTubeId],

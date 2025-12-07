@@ -17,11 +17,11 @@ const formatTime = (seconds: number): string => {
   const secs = Math.floor(seconds % 60);
 
   if (hours > 0) {
-    return `${hours}:${minutes.toString().padStart(2, "0")}:${secs
+    return `${hours.toString()}:${minutes.toString().padStart(2, "0")}:${secs
       .toString()
       .padStart(2, "0")}`;
   }
-  return `${minutes}:${secs.toString().padStart(2, "0")}`;
+  return `${minutes.toString()}:${secs.toString().padStart(2, "0")}`;
 };
 
 const ResultBox = ({
@@ -66,7 +66,9 @@ const ResultBox = ({
             aria-label="Search notes"
             placeholder="Search notes..."
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+            }}
             className="notes-search"
           />
           <div className="notes-pill">
@@ -180,7 +182,9 @@ const InputBox = ({
       <textarea
         ref={textareaRef}
         value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
+        onChange={(e) => {
+          setInputValue(e.target.value);
+        }}
         placeholder="Write your observation..."
         onKeyDown={handleKeyDown}
       />
