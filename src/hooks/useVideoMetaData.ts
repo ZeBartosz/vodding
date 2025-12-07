@@ -33,7 +33,7 @@ export const useVideoMetaData = () => {
         }
       } catch {}
 
-      setCurrentTitle(title ?? "");
+      setCurrentTitle(title);
     },
     [],
   );

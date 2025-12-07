@@ -148,9 +148,8 @@ function App() {
               V
             </div>
             <div className="brand-title">
-              <div className="title">
-                {currentTitle ? video?.name : "VOD Review Session"}
-              </div>
+              <div className="title">{video?.name ?? "VOD Review Session"}</div>
+
               <div className="subtitle">Competitive Analysis</div>
             </div>
           </div>

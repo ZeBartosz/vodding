@@ -13,8 +13,6 @@ export const useSession = (setCurrentTitle: (title: string | null) => void) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  console.log(voddingList);
-
   const loadAll = useCallback(async () => {
     setLoading(true);
     setError(null);

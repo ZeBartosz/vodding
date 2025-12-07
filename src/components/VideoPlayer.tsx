@@ -127,7 +127,7 @@ const MissingURL: FC<MissingProps> = ({
       window.setTimeout(() => onRestoring?.(false), 400);
     }
   };
-  console.log(voddingList);
+
   const handleDelete = async (id?: string) => {
     if (!id) return;
     try {
