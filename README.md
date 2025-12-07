@@ -1,73 +1,196 @@
-# React + TypeScript + Vite
+# vodding
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+vodding is a "vodding" application — a web app built with React, TypeScript and Vite for creating, managing, and sharing voddings. (A "vodding" in this project is an app-defined unit of content — the repo provides the UI and tooling to author, view, and collaborate on voddings.)
 
-Currently, two official plugins are available:
+This repository provides a starter application with development tooling, linting, and a straightforward contribution workflow so others can help build and improve vodding. See [CONTRIBUTING.md](CONTRIBUTING.md) and [LICENSE](LICENSE) for contribution guidelines and licensing.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Table of contents
 
-## React Compiler
+- What this app is
+- Features
+- Tech stack
+- Getting started
+- Development
+- Contributing
+- Code style & tests
+- Reporting issues
+- License
+- Code of conduct
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## What this app is
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Vodingg is the frontend application for authoring and interacting with "voddings". It is intended to be:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- Simple to run locally for development and testing
+- Easy to extend with new UI components and integrations
+- Friendly to contributors with clear guidelines and automated checks
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+This repository currently holds the frontend implementation (React + TypeScript + Vite). Backend or hosting integrations may be provided in separate repositories or future work.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Features
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- Component-driven UI using React and TypeScript
+- Fast local development powered by Vite
+- Type-aware linting and recommended ESLint configuration
+- Minimal opinionated starter to make contribution straightforward
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
+
+## Tech stack
+
+- React
+- TypeScript
+- Vite
+- ESLint (TypeScript-aware)
+- (Optional) Prettier for formatting
+
+---
+
+## Getting started
+
+Prerequisites:
+
+- Node.js (LTS recommended, e.g. Node 18+)
+- A modern package manager — we recommend using Bun or pnpm for faster installs and deterministic installs. npm and Yarn are supported as well, but Bun and pnpm are preferred.
+
+Quick start (recommended):
+
+- Using Bun (fast runtime + package manager)
+  1. Install dependencies:
+     - `bun install`
+  2. Start the dev server:
+     - `bun run dev`
+  3. Build for production:
+     - `bun run build`
+  4. Preview the production build locally:
+     - `bun run preview`
+
+- Using pnpm (fast, disk-efficient, and reproducible):
+  1. Install dependencies:
+     - `pnpm install`
+  2. Start the dev server:
+     - `pnpm dev`
+     - (or `pnpm run dev` if your environment requires the explicit `run`)
+  3. Build for production:
+     - `pnpm build`
+  4. Preview the production build locally:
+     - `pnpm preview`
+
+Notes:
+- If you prefer, `npm` or `yarn` also work. For example: `npm install` / `npm run dev` or `yarn` / `yarn dev`.
+- This project uses the standard Vite script names by default. If your `package.json` differs, use the scripts defined there.
+- Bun provides an integrated runtime and package manager. If you choose Bun, ensure you're running a Bun-supported Node API surface (most Vite workflows work fine with Bun; check Bun docs if you hit runtime differences).
+
+---
+
+## Development
+
+- Create a feature branch from `main`:
+  - Example branch names: `feature/add-login`, `fix/issue-123`
+- Keep commits focused and atomic. Prefer multiple small commits over one huge commit.
+- Use descriptive commit messages. We recommend Conventional Commits (e.g. `feat: add login button`, `fix: resolve null pointer in Player`).
+- Before opening a pull request:
+  - Run linters: `npm run lint` or the equivalent script for your package manager (e.g. `pnpm lint` or `bun run lint`)
+  - Run tests: `npm test` (or `pnpm test` / `bun run test` if configured)
+  - Build the project to ensure production build succeeds: `npm run build` (or `pnpm build` / `bun run build`)
+
+Pull requests will be reviewed by maintainers. A PR should include:
+- A short summary of what the change does
+- Any relevant screenshots or recordings for UI changes
+- Tests or manual verification steps
+- Link to a related issue (if any)
+
+---
+
+## Contributing
+
+We welcome contributions of any size.
+
+How to contribute:
+
+1. Fork the repository.
+2. Create a branch from `main` named `feature/your-feature` or `fix/issue-number-description`.
+3. Make your change, keeping it scoped and well-documented.
+4. Run the project's tests and linters locally.
+5. Push your branch to your fork and open a pull request against this repository's `main` branch.
+6. Address review comments and update your PR until it is approved and merged.
+
+Guidelines:
+- Include tests for new features or bug fixes when practical.
+- Keep accessibility in mind for UI components.
+- Add or update documentation where behavior has changed.
+- Small, well-tested PRs merge faster.
+
+Pull request checklist (maintainers may use this):
+- [ ] PR targets `main`
+- [ ] Descriptive title and summary
+- [ ] Linked to an issue when applicable
+- [ ] Tests added/updated
+- [ ] Linting and type checks pass
+- [ ] Manual verification steps provided for UI changes
+
+---
+
+## Code style & tests
+
+- TypeScript should be used for new code.
+- Favor functional, pure components where appropriate and isolate side effects.
+- Use existing patterns in the codebase for state management, hooks, and component organization.
+- Use ESLint rules that are included in the repository. If you add new rules, discuss them in the PR.
+- If a test suite exists, add unit and/or integration tests for new features or bug fixes.
+
+---
+
+## Reporting issues
+
+When reporting a bug or requesting a feature, please include:
+- A short descriptive title
+- Steps to reproduce
+- Expected behavior
+- Actual behavior (include screenshots if helpful)
+- Environment information (OS, Node version, browser/version)
+- Any relevant logs or errors
+
+Good issues make it easier for others to help and to triage quickly.
+
+---
+
+## License
+
+This project is licensed under the MIT License.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+---
+
+## Code of conduct
+
+Please follow a respectful, inclusive, and constructive approach when interacting in issues and pull requests. We recommend adopting the Contributor Covenant (https://www.contributor-covenant.org/) as a basis for project behavior. 
+
+---
+
+## Questions or help
+
+If you need help getting set up or have questions about contributing, open an issue describing your situation and a maintainer or contributor will follow up.
+
+Thank you for your interest in Vodding — contributions are welcome!
