@@ -24,7 +24,7 @@ interface VideoPlayerProps {
   error: string | null;
   handleSetInputValue: (v: string) => void;
   voddingList: VoddingPayload[];
-  deleteVodById: (id: string) => Promise<any>;
+  deleteVodById: (id: string) => Promise<void>;
   loadWithId: (id: string) => Promise<VoddingPayload | null>;
   loading: boolean;
   setVideo: (v: Video | null) => void;
@@ -95,7 +95,7 @@ interface MissingProps {
   handleSetInputValue: (value: string) => void;
   error: string;
   voddingList: VoddingPayload[];
-  deleteVodById: (id: string) => Promise<any>;
+  deleteVodById: (id: string) => Promise<void>;
   loadWithId: (id: string) => Promise<VoddingPayload | null>;
   loading: boolean;
   setVideo: (v: Video | null) => void;
@@ -118,9 +118,9 @@ const MissingURL: FC<MissingProps> = ({
     onRestoring?.(true);
 
     try {
-      if (v.video?.url) handleSetInputValue(v.video.url);
+      if (v.video.url) handleSetInputValue(v.video.url);
       if (v.id) await loadWithId(v.id);
-      if (v.video) setVideo(v.video);
+      setVideo(v.video);
     } catch (err) {
       console.error("Failed to restore VOD:", err);
     } finally {
@@ -160,11 +160,11 @@ const MissingURL: FC<MissingProps> = ({
       <div className="vodding-list-wrap">
         <h4>Saved VODs</h4>
         {loading && <p>Loading saved VODs…</p>}
-        {!loading && (!voddingList || voddingList.length === 0) && (
+        {!loading && voddingList.length === 0 && (
           <p className="muted">No saved VODs yet.</p>
         )}
 
-        {!loading && voddingList && voddingList.length > 0 && (
+        {!loading && voddingList.length > 0 && (
           <ul className="vodding-list" aria-label="Saved vodding list">
             {voddingList.map((v) => {
               return (
@@ -172,13 +172,13 @@ const MissingURL: FC<MissingProps> = ({
                   <div className="vodding-meta">
                     <div className="vodding-row">
                       <div className="vodding-title">
-                        {v.video?.name || v.video?.url || "Untitled VOD"}
+                        {v.video.name || v.video.url || "Untitled VOD"}
                       </div>
 
                       <div className="vodding-badges">
                         <span
                           className="notes-badge"
-                          title={`${Array.isArray(v.notes) ? v.notes.length : 0} notes`}
+                          title={`${String(Array.isArray(v.notes) ? v.notes.length : 0)} notes`}
                         >
                           📄 {Array.isArray(v.notes) ? v.notes.length : 0}
                         </span>
@@ -203,7 +203,7 @@ const MissingURL: FC<MissingProps> = ({
                     <button
                       type="button"
                       className="restore-btn"
-                      onClick={() => handleRestore(v)}
+                      onClick={() => void handleRestore(v)}
                       aria-label={`Restore ${v.id}`}
                       title="Restore VOD and populate notes"
                     >
@@ -213,7 +213,7 @@ const MissingURL: FC<MissingProps> = ({
                     <button
                       type="button"
                       className="delete-btn"
-                      onClick={() => handleDelete(v.id)}
+                      onClick={() => void handleDelete(v.id)}
                       aria-label={`Delete ${v.id}`}
                       title="Delete saved VOD"
                     >

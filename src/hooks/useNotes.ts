@@ -14,8 +14,10 @@ export const useNotes = (
   const resultsRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (initialNotes === undefined || initialNotes === null) return;
-    setNotes(initialNotes);
+    if (!initialNotes) return;
+    requestAnimationFrame(() => {
+      setNotes(initialNotes);
+    });
   }, [initialNotes]);
 
   const addNote = useCallback(() => {

@@ -22,10 +22,10 @@ export const useSession = (setCurrentTitle: (title: string | null) => void) => {
 
     try {
       const raw = await getVoddingList();
-      const data = (raw ?? []).sort(
+      const data = raw.sort(
         (a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt),
       );
-      setVoddingList(data ?? []);
+      setVoddingList(data);
       return data;
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
@@ -35,6 +35,7 @@ export const useSession = (setCurrentTitle: (title: string | null) => void) => {
     } finally {
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadWithId = useCallback(async (id: string) => {
@@ -56,7 +57,7 @@ export const useSession = (setCurrentTitle: (title: string | null) => void) => {
   }, []);
 
   useEffect(() => {
-    loadAll();
+    void loadAll();
 
     return () => {
       setVodding(null);
@@ -70,7 +71,7 @@ export const useSession = (setCurrentTitle: (title: string | null) => void) => {
       setError(null);
       try {
         const res = await saveVod(payload);
-        if (res) setVodding(res);
+        setVodding(res);
         return res;
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : String(err);
@@ -90,7 +91,7 @@ export const useSession = (setCurrentTitle: (title: string | null) => void) => {
     try {
       const maybeVodding = await getVoddingById(id);
 
-      if (!maybeVodding?.video?.id) {
+      if (!maybeVodding?.video.id) {
         throw new Error(
           `Cannot delete: vodding record ${id} has no associated video.id`,
         );
@@ -98,7 +99,7 @@ export const useSession = (setCurrentTitle: (title: string | null) => void) => {
 
       const videoId = maybeVodding.video.id;
       await deleteVod(videoId);
-      setVoddingList((prev) => prev.filter((v) => v.video?.id !== videoId));
+      setVoddingList((prev) => prev.filter((v) => v.video.id !== videoId));
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       setError(msg);

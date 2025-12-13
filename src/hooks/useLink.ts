@@ -71,7 +71,7 @@ export const useLink = (currentTitle: string | null) => {
       const newVideo: Video = {
         id: uuidv4(),
         url: cleanUrl,
-        name: currentTitle || "Untitled",
+        name: currentTitle ?? "Untitled",
         addedAt: new Date().toISOString(),
         provider: "youtube",
       };
@@ -116,10 +116,12 @@ export const useLink = (currentTitle: string | null) => {
 
   useEffect(() => {
     if (!currentTitle) return;
-    setVideo((prev) => {
-      if (!prev) return prev;
-      if (prev.name === currentTitle) return prev;
-      return { ...prev, name: currentTitle };
+    requestAnimationFrame(() => {
+      setVideo((prev) => {
+        if (!prev) return prev;
+        if (prev.name === currentTitle) return prev;
+        return { ...prev, name: currentTitle };
+      });
     });
   }, [currentTitle, setVideo]);
 

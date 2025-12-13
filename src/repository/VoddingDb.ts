@@ -7,22 +7,20 @@ import { MAX_VODS } from "../types";
 let dbPromise: Promise<IDBPDatabase<Vodding>> | null = null;
 
 export const getDB = (): Promise<IDBPDatabase<Vodding>> => {
-  if (!dbPromise) {
-    dbPromise = openDB<Vodding>("VoddingDB", 1, {
-      upgrade(db) {
-        const store = db.createObjectStore("vodding", { keyPath: "id" });
-        store.createIndex("by-CreatedAt", "createdAt", { unique: false });
-        store.createIndex("by-videoId", "video.id", { unique: false });
-      },
-      blocking() {
-        dbPromise = null;
-      },
-    }).catch((err: unknown) => {
-      console.error("Failed to open VoddingDB:", err);
+  dbPromise ??= openDB<Vodding>("VoddingDB", 1, {
+    upgrade(db) {
+      const store = db.createObjectStore("vodding", { keyPath: "id" });
+      store.createIndex("by-CreatedAt", "createdAt", { unique: false });
+      store.createIndex("by-videoId", "video.id", { unique: false });
+    },
+    blocking() {
       dbPromise = null;
-      throw new Error("Storage unavailable");
-    });
-  }
+    },
+  }).catch((err: unknown) => {
+    console.error("Failed to open VoddingDB:", err);
+    dbPromise = null;
+    throw new Error("Storage unavailable");
+  });
   return dbPromise;
 };
 
@@ -37,7 +35,7 @@ export const getVoddingById = async (
 ): Promise<VoddingPayload | null> => {
   const db = await getDB();
   const vodding = await db.get("vodding", id);
-  return vodding || null;
+  return vodding ?? null;
 };
 
 export const saveVod = async (

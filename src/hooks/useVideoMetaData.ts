@@ -15,23 +15,27 @@ export const useVideoMetaData = () => {
 
   const handleTitleChange = useCallback(
     (e: React.SyntheticEvent<HTMLMediaElement>) => {
-      const el: any = e.currentTarget;
+      const el = e.currentTarget as HTMLMediaElement;
       let title = "";
 
       try {
-        if (el && typeof el.title === "string" && el.title.trim()) {
+        if (typeof el.title === "string" && el.title.trim()) {
           title = el.title;
         }
 
-        if (!title && el && el.api && typeof el.api.videoTitle === "string") {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        if (!title && typeof el.api.videoTitle === "string") {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
           title = el.api.videoTitle;
         }
 
-        if (!title && el && typeof el.getAttribute === "function") {
+        if (!title && typeof el.getAttribute === "function") {
           const attr = el.getAttribute("title");
           if (attr && typeof attr === "string") title = attr;
         }
-      } catch {}
+      } catch {
+        //
+      }
 
       setCurrentTitle(title);
     },

@@ -50,7 +50,9 @@ function App() {
 
   useEffect(() => {
     if (vodding?.notes) {
-      setNotes(vodding.notes);
+      requestAnimationFrame(() => {
+        setNotes(vodding.notes);
+      });
       prevNotesRef.current = vodding.notes;
     } else {
       prevNotesRef.current = null;
@@ -77,7 +79,7 @@ function App() {
       prevLen > 0 &&
       prev.some((p: Note, i: number) => {
         const next = notes[i];
-        return !!next && p.id === next.id && p.content !== next.content;
+        return p.id === next.id && p.content !== next.content;
       });
 
     if (autosaveTimer.current) {
@@ -87,6 +89,11 @@ function App() {
 
     const doSave = async () => {
       try {
+        if (!vodding && !video) return;
+
+        const currentVideo = video ?? vodding?.video;
+        if (!currentVideo) return;
+
         const payload = vodding
           ? {
               ...vodding,
@@ -98,12 +105,14 @@ function App() {
               id: uuidv4(),
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
-              video: video!,
+              video: currentVideo,
               notes,
             };
         await save(payload);
         setLastSavedAt(new Date().toISOString());
-      } catch {}
+      } catch {
+        //
+      }
     };
 
     if (edited || deleted) {
@@ -141,7 +150,7 @@ function App() {
           <div className="brand">
             <div
               className="brand-badge"
-              onClick={handleNewSession}
+              onClick={() => void handleNewSession()}
               style={{ cursor: "pointer" }}
               title="Start new session"
             >
@@ -219,7 +228,9 @@ function App() {
                 handleMapView={handleMapView}
                 handleResetFocusAndScale={handleResetFocusAndScale}
                 initialNotes={notes}
-                onNotesChange={(n: Note[]) => setNotes(n)}
+                onNotesChange={(n: Note[]) => {
+                  setNotes(n);
+                }}
               />
             </div>
           </aside>

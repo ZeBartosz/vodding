@@ -48,10 +48,13 @@ const Notes: React.FC<NotesProps> = ({
   );
 
   useEffect(() => {
-    if (initialNotes !== undefined && initialNotes !== null) {
+    if (initialNotes == null) return;
+    const id = requestAnimationFrame(() => {
       setInternalNotes(initialNotes);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    });
+    return () => {
+      cancelAnimationFrame(id);
+    };
   }, [initialNotes]);
 
   const [inputValue, setInputValue] = useState<string>("");
@@ -64,12 +67,15 @@ const Notes: React.FC<NotesProps> = ({
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const resultsRef = useRef<HTMLDivElement | null>(null);
 
-  const notes: Note[] = controlled ? (initialNotes ?? []) : internalNotes;
+  const notes: Note[] = useMemo<Note[]>(
+    () => (controlled ? (initialNotes ?? []) : internalNotes),
+    [controlled, initialNotes, internalNotes],
+  );
 
   const notify = useCallback(
     (next: Note[]) => {
       if (controlled) {
-        onNotesChange?.(next);
+        onNotesChange(next);
       } else {
         setInternalNotes(next);
       }
@@ -82,7 +88,7 @@ const Notes: React.FC<NotesProps> = ({
     if (!text) return;
 
     const timestamp =
-      typeof currentTime?.current === "number" ? currentTime.current : 0;
+      typeof currentTime.current === "number" ? currentTime.current : 0;
 
     const newNote: Note = {
       id: uuidv4(),
@@ -92,7 +98,7 @@ const Notes: React.FC<NotesProps> = ({
       updatedAt: new Date().toISOString(),
     };
 
-    const next = [...(notes || []), newNote];
+    const next = [...notes, newNote];
     notify(next);
     setInputValue("");
     requestAnimationFrame(() => {
@@ -103,7 +109,7 @@ const Notes: React.FC<NotesProps> = ({
 
   const deleteNote = useCallback(
     (id: string) => {
-      const next = (notes || []).filter((n) => n.id !== id);
+      const next = notes.filter((n) => n.id !== id);
       notify(next);
     },
     [notes, notify],
@@ -111,7 +117,7 @@ const Notes: React.FC<NotesProps> = ({
 
   const saveEdit = useCallback(
     (id: string, newContent: string) => {
-      const next = (notes || []).map((n) =>
+      const next = notes.map((n) =>
         n.id === id
           ? { ...n, content: newContent, updatedAt: new Date().toISOString() }
           : n,
@@ -153,9 +159,9 @@ const Notes: React.FC<NotesProps> = ({
   );
 
   const filtered = useMemo(() => {
-    if (!query) return notes ?? [];
+    if (!query) return notes;
     const q = query.toLowerCase().trim();
-    return (notes ?? []).filter(
+    return notes.filter(
       (n) =>
         n.content.toLowerCase().includes(q) ||
         formatTime(n.timestamp).includes(q),
@@ -166,7 +172,7 @@ const Notes: React.FC<NotesProps> = ({
     const el = resultsRef.current;
     if (!el) return;
     el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-  }, [notes?.length]);
+  }, [notes.length]);
 
   return (
     <div className="result-list-root">
@@ -175,11 +181,13 @@ const Notes: React.FC<NotesProps> = ({
           aria-label="Search notes"
           placeholder="Search notes..."
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => {
+            setQuery(e.target.value);
+          }}
           className="notes-search"
         />
         <div className="notes-pill">
-          {notes?.length ?? 0} {notes && notes.length === 1 ? "note" : "notes"}
+          {notes.length} {notes.length === 1 ? "note" : "notes"}
         </div>
       </div>
 
@@ -230,7 +238,9 @@ const Notes: React.FC<NotesProps> = ({
 
                   <div className="result-actions-row">
                     <button
-                      onClick={() => handleNoteJump(n.timestamp)}
+                      onClick={() => {
+                        handleNoteJump(n.timestamp);
+                      }}
                       aria-label="Jump to note"
                       className="btn btn-ghost"
                     >
@@ -252,7 +262,9 @@ const Notes: React.FC<NotesProps> = ({
                     )}
 
                     <button
-                      onClick={() => deleteNote(n.id)}
+                      onClick={() => {
+                        deleteNote(n.id);
+                      }}
                       aria-label="Delete note"
                       className="btn"
                     >
@@ -268,11 +280,15 @@ const Notes: React.FC<NotesProps> = ({
                         autoFocus
                         className="note-edit-textarea"
                         value={editingValue}
-                        onChange={(e) => setEditingValue(e.target.value)}
+                        onChange={(e) => {
+                          setEditingValue(e.target.value);
+                        }}
                       />
                       <div className="note-edit-actions">
                         <button
-                          onClick={() => saveEdit(n.id, editingValue)}
+                          onClick={() => {
+                            saveEdit(n.id, editingValue);
+                          }}
                           className="btn btn-primary"
                         >
                           Save
@@ -302,7 +318,9 @@ const Notes: React.FC<NotesProps> = ({
         <textarea
           ref={textareaRef}
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          onChange={(e) => {
+            setInputValue(e.target.value);
+          }}
           placeholder="Write your observation..."
           onKeyDown={handleKeyDown}
           className="input-textarea"
