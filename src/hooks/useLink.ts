@@ -126,6 +126,15 @@ export const useLink = (currentTitle: string | null) => {
 
       setError("");
 
+      const currentUrl = video?.url ?? null;
+      if (currentUrl === cleanUrl) {
+        setInputValue(cleanUrl);
+        if (name && video) {
+          setVideo((prev) => (prev ? { ...prev, name } : prev));
+        }
+        return false; // no change
+      }
+
       const newVideo: Video = {
         id: uuidv4(),
         url: cleanUrl,
@@ -138,7 +147,7 @@ export const useLink = (currentTitle: string | null) => {
       setInputValue(cleanUrl);
       return true;
     },
-    [validateAndCleanUrl, currentTitle],
+    [validateAndCleanUrl, currentTitle, video],
   );
 
   useEffect(() => {
