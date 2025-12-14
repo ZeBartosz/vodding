@@ -51,18 +51,12 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
   const [playerKey, setPlayerKey] = useState(0);
   const [copied, setCopied] = useState(false);
 
-  const origin = typeof window !== "undefined" ? window.location.origin : "";
-  const watchUrl = video?.url ?? "";
-  const embedUrl = watchUrl.replace("watch?v=", "embed/");
-  const embedSrc =
-    embedUrl + (origin ? `?origin=${encodeURIComponent(origin)}` : "");
-
   useEffect(() => {
     requestAnimationFrame(() => {
       setEmbedError(false);
       setPlayerKey((k) => k + 1);
     });
-  }, [watchUrl]);
+  }, [video]);
 
   const handleCopy = useCallback(async (text: string) => {
     try {
@@ -116,34 +110,54 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
       >
         <div className="embed-unavailable-card" role="alert">
           <div className="embed-unavailable-icon" aria-hidden>
-            <svg
-              width="72"
-              height="72"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
+            <div
+              style={{
+                width: 88,
+                height: 88,
+                borderRadius: 999,
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "rgba(255,255,255,0.02)",
+                border: "1px solid rgba(255,255,255,0.03)",
+                marginBottom: 12,
+              }}
             >
-              <circle
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="#8a8a8a"
-                strokeWidth="1.5"
-                fill="#111"
-              />
-              <path
-                d="M12 8v6"
-                stroke="#bdbdbd"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-              <circle cx="12" cy="17" r="0.8" fill="#bdbdbd" />
-            </svg>
+              <svg
+                width="48"
+                height="48"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="rgba(140,140,140,0.9)"
+                  strokeWidth="1.2"
+                  fill="transparent"
+                />
+                <path
+                  d="M12 7.5v6"
+                  stroke="rgba(180,180,180,0.95)"
+                  strokeWidth="1.4"
+                  strokeLinecap="round"
+                />
+                <circle
+                  cx="12"
+                  cy="16.5"
+                  r="0.85"
+                  fill="rgba(180,180,180,0.95)"
+                />
+              </svg>
+            </div>
           </div>
 
-          <h3 className="embed-unavailable-title">
+          <h2 className="embed-unavailable-title">
             Embedding disabled for this video
-          </h3>
+          </h2>
 
           <p className="embed-unavailable-desc">
             The video can still be watched on YouTube, but embedding has been
@@ -157,8 +171,8 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
             aria-label="Embed actions"
           >
             <a
-              className="embed-btn embed-btn-primary"
-              href={watchUrl}
+              className="btn btn-primary"
+              href={video.url}
               target="_blank"
               rel="noopener noreferrer"
               role="button"
@@ -168,34 +182,32 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
 
             <button
               type="button"
-              className="embed-btn"
+              className="btn"
               onClick={() => {
-                void handleCopy(watchUrl);
+                void handleCopy(video.url);
               }}
               aria-label="Copy video link"
             >
               {copied ? "Copied!" : "Copy link"}
             </button>
 
-            <a
-              className="embed-btn"
-              href={embedSrc}
-              target="_blank"
-              rel="noopener noreferrer"
-              role="button"
-              title="Open embed URL in a new tab (for debugging)"
-            >
-              Open embed
-            </a>
-
             <button
               type="button"
-              className="embed-btn embed-btn-ghost"
+              className="btn btn-ghost"
               onClick={handleRetry}
             >
               Retry embed
             </button>
           </div>
+
+          <hr
+            aria-hidden
+            style={{
+              border: "none",
+              borderTop: "1px solid rgba(255,255,255,0.04)",
+              margin: "16px 0",
+            }}
+          />
 
           <div className="embed-unavailable-help">
             <small>
@@ -206,11 +218,11 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
 
             <small>
               Note: embedding can also be blocked for reasons beyond the
-              uploader's "Allow embedding" setting — for example
-              copyright/Content ID claims, age or region restrictions, privacy
-              settings, or other policy-related blocks. If you aren't the owner
-              of the video, try opening it on YouTube to see more details about
-              the restriction.
+              uploader's "Allow embedding" setting — for example copyright/
+              Content ID claims, age or region restrictions, privacy settings,
+              or other policy-related blocks. If you aren't the owner of the
+              video, try opening it on YouTube to see more details about the
+              restriction.
             </small>
           </div>
         </div>
@@ -224,7 +236,7 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
         <ReactPlayer
           key={playerKey}
           ref={playerRef}
-          src={embedSrc}
+          src={video.url}
           controls={false}
           slot="media"
           className="react-player"
