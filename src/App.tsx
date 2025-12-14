@@ -183,6 +183,24 @@ function App() {
     handleSetInputValue("");
 
     prevNotesRef.current = [];
+
+    try {
+      if (
+        typeof window !== "undefined" &&
+        typeof window.history.replaceState === "function"
+      ) {
+        const newUrl =
+          window.location.origin +
+          window.location.pathname +
+          window.location.search;
+        window.history.replaceState(null, "", newUrl);
+      } else if (typeof window !== "undefined") {
+        window.location.hash = "";
+      }
+    } catch {
+      //
+    }
+
     await loadAll();
   };
 
