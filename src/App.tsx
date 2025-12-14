@@ -44,6 +44,7 @@ function App() {
 
   const [notes, setNotes] = useState<Note[]>([]);
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
+  const [isFromTimestampUrl, setIsFromTimestampUrl] = useState<boolean>(false);
 
   const { exporting, exportPdf } = useExportPdf({
     title: video?.name ?? currentTitle,
@@ -69,6 +70,14 @@ function App() {
   }, [vodding]);
 
   useEffect(() => {
+    if (!video && !vodding) {
+      requestAnimationFrame(() => {
+        setIsFromTimestampUrl(false);
+      });
+    }
+  }, [video, vodding]);
+
+  useEffect(() => {
     const handleHash = () => {
       try {
         const raw = window.location.hash || "";
@@ -79,6 +88,7 @@ function App() {
         const t = params.get("t");
         if (!v) return;
         const videoUrl = decodeURIComponent(v);
+        setIsFromTimestampUrl(true);
         const time = t ? Number(t) : NaN;
         const loaded = loadVideoFromUrl(videoUrl);
 
@@ -103,6 +113,10 @@ function App() {
   }, [loadVideoFromUrl, handleNoteJump]);
 
   useEffect(() => {
+    if (isFromTimestampUrl) {
+      prevNotesRef.current = notes;
+      return;
+    }
     if (isRestoringRef.current) {
       prevNotesRef.current = notes;
       return;
@@ -175,7 +189,7 @@ function App() {
         autosaveTimer.current = null;
       }
     };
-  }, [notes, save, video, vodding, currentTitle]);
+  }, [notes, save, video, vodding, currentTitle, isFromTimestampUrl]);
 
   const handleNewSession = async () => {
     setNotes([]);
@@ -183,19 +197,81 @@ function App() {
     handleSetInputValue("");
 
     prevNotesRef.current = [];
+    setIsFromTimestampUrl(false);
 
     try {
       if (
         typeof window !== "undefined" &&
         typeof window.history.replaceState === "function"
       ) {
-        const newUrl =
-          window.location.origin +
-          window.location.pathname +
-          window.location.search;
+        const { origin, pathname, search, hash } = window.location;
+
+        const searchParams = new URLSearchParams(
+          search.startsWith("?") ? search.slice(1) : "",
+        );
+        searchParams.delete("v");
+        searchParams.delete("t");
+        const newSearch = searchParams.toString()
+          ? `?${searchParams.toString()}`
+          : "";
+
+        let newHash = "";
+        if (hash && hash.length > 1) {
+          const hashRaw = hash.replace(/^#/, "");
+          if (hashRaw.includes("=") || hashRaw.includes("&")) {
+            const hashParams = new URLSearchParams(hashRaw);
+            hashParams.delete("v");
+            hashParams.delete("t");
+            const hashStr = hashParams.toString();
+            if (hashStr) {
+              newHash = `#${hashStr}`;
+            } else {
+              newHash = "";
+            }
+          } else {
+            newHash = `#${hashRaw}`;
+          }
+        }
+
+        const newUrl = `${origin}${pathname}${newSearch}${newHash}`;
         window.history.replaceState(null, "", newUrl);
       } else if (typeof window !== "undefined") {
-        window.location.hash = "";
+        try {
+          const { origin, pathname, search, hash } = window.location;
+          const searchParams = new URLSearchParams(
+            search.startsWith("?") ? search.slice(1) : "",
+          );
+          searchParams.delete("v");
+          searchParams.delete("t");
+          const newSearch = searchParams.toString()
+            ? `?${searchParams.toString()}`
+            : "";
+
+          let newHash = "";
+          if (hash && hash.length > 1) {
+            const hashRaw = hash.replace(/^#/, "");
+            if (hashRaw.includes("=") || hashRaw.includes("&")) {
+              const hashParams = new URLSearchParams(hashRaw);
+              hashParams.delete("v");
+              hashParams.delete("t");
+              const hashStr = hashParams.toString();
+              if (hashStr) {
+                newHash = `#${hashStr}`;
+              } else {
+                newHash = "";
+              }
+            } else {
+              newHash = `#${hashRaw}`;
+            }
+          }
+
+          const newUrl = `${origin}${pathname}${newSearch}${newHash}`;
+          // Use replace so we don't add a new history entry
+          window.location.replace(newUrl);
+        } catch {
+          // Last resort: clear the hash
+          window.location.hash = "";
+        }
       }
     } catch {
       //
