@@ -2,12 +2,11 @@ import {
   lazy,
   Suspense,
   useCallback,
-  useEffect,
   useMemo,
-  useRef,
   useState,
+  useEffect,
 } from "react";
-import { v4 as uuidv4 } from "uuid";
+
 import VideoPlayer from "./components/VideoPlayer";
 import "./css/App.css";
 import "./css/Notes.css";
@@ -16,7 +15,9 @@ import { useLink } from "./hooks/useLink";
 import { useSession } from "./hooks/useSession";
 import { useVideoMetaData } from "./hooks/useVideoMetaData";
 import useExportPdf from "./hooks/useExportPdf";
-import type { Note } from "./types";
+import { useNotes } from "./hooks/useNotes";
+import useNotesAutosave from "./hooks/useNotesAutosave";
+
 const ResultBox = lazy(() => import("./components/Notes"));
 
 function App() {
@@ -50,25 +51,17 @@ function App() {
     vodding,
   } = useSession(setCurrentTitle);
 
-  const [notes, setNotes] = useState<Note[]>([]);
-  const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
   const [isFromTimestampUrl, setIsFromTimestampUrl] = useState<boolean>(false);
 
-  const autosaveTimer = useRef<number | null>(null);
-  const prevNotesRef = useRef<Note[] | null>(null);
-  const isRestoringRef = useRef<boolean>(false);
-  const restoreClearTimer = useRef<number | null>(null);
+  const { notes, setNotes } = useNotes(currentTimeRef, vodding?.notes);
 
-  useEffect(() => {
-    if (vodding?.notes) {
-      requestAnimationFrame(() => {
-        setNotes(vodding.notes);
-      });
-      prevNotesRef.current = vodding.notes;
-    } else {
-      prevNotesRef.current = null;
-    }
-  }, [vodding]);
+  const { lastSavedAt, onRestoring, prevNotesRef } = useNotesAutosave({
+    notes,
+    vodding,
+    video,
+    save,
+    isFromTimestampUrl,
+  });
 
   const exportOptions = useMemo(
     () => ({
@@ -87,35 +80,6 @@ function App() {
       exportPdf();
     }, 0);
   }, [exportPdf]);
-
-  const doSave = useCallback(async () => {
-    try {
-      if (!vodding && !video) return;
-
-      const currentVideo = video ?? vodding?.video;
-      if (!currentVideo) return;
-
-      const payload = vodding
-        ? {
-            ...vodding,
-            video: video ?? vodding.video,
-            notes,
-            updatedAt: new Date().toISOString(),
-          }
-        : {
-            id: uuidv4(),
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            video: currentVideo,
-            notes,
-          };
-
-      await save(payload);
-      setLastSavedAt(new Date().toISOString());
-    } catch {
-      //
-    }
-  }, [save, vodding, video, notes]);
 
   const handleHash = useCallback(() => {
     try {
@@ -153,66 +117,12 @@ function App() {
     };
   }, [handleHash]);
 
-  useEffect(() => {
-    if (isFromTimestampUrl) {
-      prevNotesRef.current = notes;
-      return;
-    }
-    if (isRestoringRef.current) {
-      prevNotesRef.current = notes;
-      return;
-    }
-    if (!video && !vodding) {
-      prevNotesRef.current = notes;
-      return;
-    }
-
-    const prev = prevNotesRef.current ?? [];
-    const prevLen = prev.length;
-    const currLen = notes.length;
-
-    const deleted = currLen < prevLen;
-    const edited =
-      currLen === prevLen &&
-      prevLen > 0 &&
-      prev.some((p: Note, i: number) => {
-        const next = notes[i];
-        return p.id === next.id && p.content !== next.content;
-      });
-
-    if (autosaveTimer.current) {
-      window.clearTimeout(autosaveTimer.current);
-      autosaveTimer.current = null;
-    }
-
-    if (edited || deleted) {
-      setTimeout(() => {
-        void doSave();
-      }, 0);
-      prevNotesRef.current = notes;
-      return;
-    }
-
-    autosaveTimer.current = window.setTimeout(async () => {
-      await doSave();
-      prevNotesRef.current = notes;
-      autosaveTimer.current = null;
-    }, 700) as unknown as number;
-
-    return () => {
-      if (autosaveTimer.current) {
-        window.clearTimeout(autosaveTimer.current);
-        autosaveTimer.current = null;
-      }
-    };
-  }, [notes, doSave, video, vodding, isFromTimestampUrl]);
-
   const handleNewSession = useCallback(() => {
     (() => {
       setNotes([]);
       setVideo(null);
       handleSetInputValue("");
-      prevNotesRef.current = [];
+      if (prevNotesRef.current) prevNotesRef.current = [];
       setIsFromTimestampUrl(false);
 
       const cleanUrlParams = () => {
@@ -269,29 +179,9 @@ function App() {
         //
       }
     })();
-  }, [handleSetInputValue, loadAll, setVideo]);
+  }, [handleSetInputValue, loadAll, setVideo, setNotes, prevNotesRef]);
 
-  const onNotesChange = useCallback((n: Note[]) => {
-    setNotes(n);
-  }, []);
-
-  const onRestoring = useCallback((isRestoring: boolean) => {
-    isRestoringRef.current = isRestoring;
-    if (isRestoring && autosaveTimer.current) {
-      window.clearTimeout(autosaveTimer.current);
-      autosaveTimer.current = null;
-    }
-    if (!isRestoring) {
-      if (restoreClearTimer.current) {
-        window.clearTimeout(restoreClearTimer.current);
-        restoreClearTimer.current = null;
-      }
-      restoreClearTimer.current = window.setTimeout(() => {
-        isRestoringRef.current = false;
-        restoreClearTimer.current = null;
-      }, 350) as unknown as number;
-    }
-  }, []);
+  const onNotesChange = setNotes;
 
   const savedStyle: React.CSSProperties = useMemo(
     () => ({ fontSize: 12, color: "#666" }),
