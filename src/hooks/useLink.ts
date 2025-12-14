@@ -39,7 +39,8 @@ export const useLink = (currentTitle: string | null) => {
         const match = /\/(?:embed|shorts|live)\/([\w-]{11})/.exec(
           urlObj.pathname,
         );
-        return match ? match[1] : null;
+        if (!match) return null;
+        return match[1];
       }
     } catch {
       return null;
