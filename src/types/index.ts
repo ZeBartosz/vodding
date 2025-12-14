@@ -24,6 +24,8 @@ export interface VoddingPayload {
   notes: Note[];
 }
 
+export type Maybe<T> = T | null | undefined;
+
 export interface Vodding extends DBSchema {
   vodding: {
     key: string;

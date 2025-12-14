@@ -1,5 +1,12 @@
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useMemo,
+  useState,
+  useEffect,
+} from "react";
+
 import VideoPlayer from "./components/VideoPlayer";
 import "./css/App.css";
 import "./css/Notes.css";
@@ -7,7 +14,10 @@ import "./css/VideoPlayer.css";
 import { useLink } from "./hooks/useLink";
 import { useSession } from "./hooks/useSession";
 import { useVideoMetaData } from "./hooks/useVideoMetaData";
-import type { Note } from "./types";
+import useExportPdf from "./hooks/useExportPdf";
+import { useNotes } from "./hooks/useNotes";
+import useNotesAutosave from "./hooks/useNotesAutosave";
+
 const ResultBox = lazy(() => import("./components/Notes"));
 
 function App() {
@@ -29,6 +39,7 @@ function App() {
     handleMapView,
     handleResetFocusAndScale,
     handleNoteJump,
+    loadVideoFromUrl,
   } = useLink(currentTitle);
   const {
     save,
@@ -40,212 +51,271 @@ function App() {
     vodding,
   } = useSession(setCurrentTitle);
 
-  const [notes, setNotes] = useState<Note[]>([]);
-  const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
+  const [isFromTimestampUrl, setIsFromTimestampUrl] = useState<boolean>(false);
 
-  const autosaveTimer = useRef<number | null>(null);
-  const prevNotesRef = useRef<Note[] | null>(null);
-  const isRestoringRef = useRef<boolean>(false);
-  const restoreClearTimer = useRef<number | null>(null);
+  const { notes, setNotes } = useNotes(currentTimeRef, vodding?.notes);
+
+  const { lastSavedAt, onRestoring, prevNotesRef } = useNotesAutosave({
+    notes,
+    vodding,
+    video,
+    save,
+    isFromTimestampUrl,
+  });
+
+  const exportOptions = useMemo(
+    () => ({
+      title: video?.name ?? currentTitle,
+      videoUrl: video?.url ?? "",
+      notes,
+      filename: `${(video?.name ?? "session").replace(/\s+/g, "_")}.pdf`,
+    }),
+    [video?.name, video?.url, currentTitle, notes],
+  );
+
+  const { exporting, exportPdf } = useExportPdf(exportOptions);
+
+  const handleExport = useCallback(() => {
+    setTimeout(() => {
+      exportPdf();
+    }, 0);
+  }, [exportPdf]);
+
+  const handleHash = useCallback(() => {
+    try {
+      const raw = window.location.hash || "";
+      if (!raw) return;
+      const hash = raw.replace(/^#/, "");
+      const params = new URLSearchParams(hash);
+      const v = params.get("v");
+      const t = params.get("t");
+      if (!v) return;
+      const videoUrl = decodeURIComponent(v);
+      setIsFromTimestampUrl(true);
+      const time = t ? Number(t) : NaN;
+      const loaded = loadVideoFromUrl(videoUrl);
+
+      if (!Number.isNaN(time) && typeof handleNoteJump === "function") {
+        setTimeout(
+          () => {
+            handleNoteJump(time);
+          },
+          loaded ? 300 : 500,
+        );
+      }
+    } catch {
+      //
+    }
+  }, [loadVideoFromUrl, handleNoteJump]);
 
   useEffect(() => {
-    if (vodding?.notes) {
-      requestAnimationFrame(() => {
-        setNotes(vodding.notes);
-      });
-      prevNotesRef.current = vodding.notes;
-    } else {
-      prevNotesRef.current = null;
-    }
-  }, [vodding]);
+    const run = () => requestAnimationFrame(handleHash);
+    run();
+    window.addEventListener("hashchange", run);
+    return () => {
+      window.removeEventListener("hashchange", run);
+    };
+  }, [handleHash]);
 
-  useEffect(() => {
-    if (isRestoringRef.current) {
-      prevNotesRef.current = notes;
-      return;
-    }
-    if (!video && !vodding) {
-      prevNotesRef.current = notes;
-      return;
-    }
+  const handleNewSession = useCallback(() => {
+    (() => {
+      setNotes([]);
+      setVideo(null);
+      handleSetInputValue("");
+      if (prevNotesRef.current) prevNotesRef.current = [];
+      setIsFromTimestampUrl(false);
 
-    const prev = prevNotesRef.current ?? [];
-    const prevLen = prev.length;
-    const currLen = notes.length;
+      const cleanUrlParams = () => {
+        const { origin, pathname, search, hash } = window.location;
+        const searchParams = new URLSearchParams(
+          search.startsWith("?") ? search.slice(1) : "",
+        );
+        searchParams.delete("v");
+        searchParams.delete("t");
+        const newSearch = searchParams.toString()
+          ? `?${searchParams.toString()}`
+          : "";
 
-    const deleted = currLen < prevLen;
-    const edited =
-      currLen === prevLen &&
-      prevLen > 0 &&
-      prev.some((p: Note, i: number) => {
-        const next = notes[i];
-        return p.id === next.id && p.content !== next.content;
-      });
-
-    if (autosaveTimer.current) {
-      window.clearTimeout(autosaveTimer.current);
-      autosaveTimer.current = null;
-    }
-
-    const doSave = async () => {
-      try {
-        if (!vodding && !video) return;
-
-        const currentVideo = video ?? vodding?.video;
-        if (!currentVideo) return;
-
-        const payload = vodding
-          ? {
-              ...vodding,
-              video: video ?? vodding.video,
-              notes,
-              updatedAt: new Date().toISOString(),
+        let newHash = "";
+        if (hash && hash.length > 1) {
+          const hashRaw = hash.replace(/^#/, "");
+          if (hashRaw.includes("=") || hashRaw.includes("&")) {
+            const hashParams = new URLSearchParams(hashRaw);
+            hashParams.delete("v");
+            hashParams.delete("t");
+            const hashStr = hashParams.toString();
+            if (hashStr) {
+              newHash = `#${hashStr}`;
             }
-          : {
-              id: uuidv4(),
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-              video: currentVideo,
-              notes,
-            };
-        await save(payload);
-        setLastSavedAt(new Date().toISOString());
+          } else {
+            newHash = `#${hashRaw}`;
+          }
+        }
+
+        return `${origin}${pathname}${newSearch}${newHash}`;
+      };
+
+      try {
+        const newUrl = cleanUrlParams();
+        if (
+          typeof window !== "undefined" &&
+          typeof window.history.replaceState === "function"
+        ) {
+          window.history.replaceState(null, "", newUrl);
+        } else if (typeof window !== "undefined") {
+          try {
+            window.location.replace(newUrl);
+          } catch {
+            window.location.hash = "";
+          }
+        }
       } catch {
         //
       }
-    };
 
-    if (edited || deleted) {
-      void doSave();
-      prevNotesRef.current = notes;
-      return;
-    }
-
-    autosaveTimer.current = window.setTimeout(async () => {
-      await doSave();
-      prevNotesRef.current = notes;
-    }, 700);
-
-    return () => {
-      if (autosaveTimer.current) {
-        window.clearTimeout(autosaveTimer.current);
-        autosaveTimer.current = null;
+      try {
+        void loadAll();
+      } catch {
+        //
       }
-    };
-  }, [notes, save, video, vodding, currentTitle]);
+    })();
+  }, [handleSetInputValue, loadAll, setVideo, setNotes, prevNotesRef]);
 
-  const handleNewSession = async () => {
-    setNotes([]);
-    setVideo(null);
-    handleSetInputValue("");
+  const onNotesChange = setNotes;
 
-    prevNotesRef.current = [];
-    await loadAll();
-  };
+  const savedStyle: React.CSSProperties = useMemo(
+    () => ({ fontSize: 12, color: "#666" }),
+    [],
+  );
+  const rightControlsStyle: React.CSSProperties = useMemo(
+    () => ({
+      display: "flex",
+      alignItems: "center",
+      marginLeft: 12,
+      gap: 12,
+    }),
+    [],
+  );
 
   return (
-    <>
-      <div className="container">
-        <div className="topbar">
-          <div className="brand">
-            <div
-              className="brand-badge"
-              onClick={() => void handleNewSession()}
-              style={{ cursor: "pointer" }}
-              title="Start new session"
-            >
-              V
-            </div>
-            <div className="brand-title">
-              <div className="title">{video?.name ?? "VOD Review Session"}</div>
+    <div className="container">
+      <div className="topbar">
+        <div className="brand">
+          <div
+            className="brand-badge"
+            onClick={handleNewSession}
+            style={{ cursor: "pointer" }}
+            title="Start new session"
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                handleNewSession();
+              }
+            }}
+          >
+            V
+          </div>
+          <div className="brand-title">
+            <div className="title">{video?.name ?? "VOD Review Session"}</div>
+            <div className="subtitle">Competitive Analysis</div>
+          </div>
+        </div>
 
-              <div className="subtitle">Competitive Analysis</div>
+        {video && (
+          <div className="topbar-right">
+            {lastSavedAt && (
+              <div style={savedStyle}>
+                Saved {new Date(lastSavedAt).toLocaleTimeString()}
+              </div>
+            )}
+            <div style={rightControlsStyle}>
+              <button
+                onClick={handleExport}
+                disabled={exporting}
+                className="btn btn-ghost"
+                aria-label="Export notes"
+                title="Export notes to PDF"
+                type="button"
+              >
+                {exporting ? "Exporting…" : "Export"}
+              </button>
             </div>
           </div>
+        )}
+      </div>
 
-          {video && (
-            <div className="topbar-right">
-              <div className="small">Session Notes</div>
-              {lastSavedAt && (
-                <div style={{ marginLeft: 12, fontSize: 12, color: "#666" }}>
-                  Saved {new Date(lastSavedAt).toLocaleTimeString()}
+      <div className="main">
+        <div className="video-column">
+          <VideoPlayer
+            handleProgress={handleProgress}
+            handleTitleChange={handleTitleChange}
+            playerRef={playerRef}
+            video={video}
+            handleSubmit={handleSubmit}
+            inputValue={inputValue}
+            error={error}
+            handleSetInputValue={handleSetInputValue}
+            voddingList={voddingList}
+            deleteVodById={deleteVodById}
+            loadWithId={loadWithId}
+            loading={loading}
+            setVideo={setVideo}
+            onRestoring={onRestoring}
+          />
+        </div>
+
+        {video && (
+          <aside className="sidebar">
+            <div className="sidebar-header">
+              <div className="header-left">
+                <div className="h1">Session Notes</div>
+                <div className="small">
+                  {isFromTimestampUrl
+                    ? "Read-only session — notes are disabled"
+                    : "Add your observations"}
+                </div>
+              </div>
+              <div className="dot">•</div>
+            </div>
+
+            <div className="input-container">
+              {isFromTimestampUrl && (
+                <div
+                  className="readonly-overlay"
+                  role="status"
+                  aria-live="polite"
+                  title="Read-only session"
+                >
+                  <div>
+                    <div className="readonly-title">Read-only session</div>
+                    <div className="readonly-desc">
+                      This session was opened from a timestamped link — notes
+                      are read-only. You cannot add or edit notes in this view.
+                    </div>
+                  </div>
                 </div>
               )}
+              <Suspense
+                fallback={
+                  <div className="results-loading">Loading session notes…</div>
+                }
+              >
+                <ResultBox
+                  currentTime={currentTimeRef}
+                  handleNoteJump={handleNoteJump}
+                  handleMapView={handleMapView}
+                  handleResetFocusAndScale={handleResetFocusAndScale}
+                  initialNotes={notes}
+                  onNotesChange={onNotesChange}
+                  readOnly={isFromTimestampUrl}
+                />
+              </Suspense>
             </div>
-          )}
-        </div>
-
-        <div className="main">
-          <div className="video-column">
-            <VideoPlayer
-              handleProgress={handleProgress}
-              handleTitleChange={handleTitleChange}
-              playerRef={playerRef}
-              video={video}
-              handleSubmit={handleSubmit}
-              inputValue={inputValue}
-              error={error}
-              handleSetInputValue={handleSetInputValue}
-              voddingList={voddingList}
-              deleteVodById={deleteVodById}
-              loadWithId={loadWithId}
-              loading={loading}
-              setVideo={setVideo}
-              onRestoring={(isRestoring: boolean) => {
-                isRestoringRef.current = isRestoring;
-                if (isRestoring && autosaveTimer.current) {
-                  window.clearTimeout(autosaveTimer.current);
-                  autosaveTimer.current = null;
-                }
-                if (!isRestoring) {
-                  if (restoreClearTimer.current) {
-                    window.clearTimeout(restoreClearTimer.current);
-                    restoreClearTimer.current = null;
-                  }
-                  restoreClearTimer.current = window.setTimeout(() => {
-                    isRestoringRef.current = false;
-                    restoreClearTimer.current = null;
-                  }, 350) as unknown as number;
-                }
-              }}
-            />
-          </div>
-
-          {video && (
-            <aside className="sidebar">
-              <div className="sidebar-header">
-                <div className="header-left">
-                  <div className="h1">Session Notes</div>
-                  <div className="small">Add your observations</div>
-                </div>
-                <div className="dot">•</div>
-              </div>
-
-              <div className="input-container">
-                <Suspense
-                  fallback={
-                    <div className="results-loading">
-                      Loading session notes…
-                    </div>
-                  }
-                >
-                  <ResultBox
-                    currentTime={currentTimeRef}
-                    handleNoteJump={handleNoteJump}
-                    handleMapView={handleMapView}
-                    handleResetFocusAndScale={handleResetFocusAndScale}
-                    initialNotes={notes}
-                    onNotesChange={(n: Note[]) => {
-                      setNotes(n);
-                    }}
-                  />
-                </Suspense>
-              </div>
-            </aside>
-          )}
-        </div>
+          </aside>
+        )}
       </div>
-    </>
+    </div>
   );
 }
 
