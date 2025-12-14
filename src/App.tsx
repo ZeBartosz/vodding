@@ -70,14 +70,6 @@ function App() {
   }, [vodding]);
 
   useEffect(() => {
-    if (!video && !vodding) {
-      requestAnimationFrame(() => {
-        setIsFromTimestampUrl(false);
-      });
-    }
-  }, [video, vodding]);
-
-  useEffect(() => {
     const handleHash = () => {
       try {
         const raw = window.location.hash || "";
