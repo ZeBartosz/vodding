@@ -199,77 +199,47 @@ function App() {
     prevNotesRef.current = [];
     setIsFromTimestampUrl(false);
 
+    const cleanUrlParams = () => {
+      const { origin, pathname, search, hash } = window.location;
+      const searchParams = new URLSearchParams(
+        search.startsWith("?") ? search.slice(1) : "",
+      );
+      searchParams.delete("v");
+      searchParams.delete("t");
+      const newSearch = searchParams.toString()
+        ? `?${searchParams.toString()}`
+        : "";
+
+      let newHash = "";
+      if (hash && hash.length > 1) {
+        const hashRaw = hash.replace(/^#/, "");
+        if (hashRaw.includes("=") || hashRaw.includes("&")) {
+          const hashParams = new URLSearchParams(hashRaw);
+          hashParams.delete("v");
+          hashParams.delete("t");
+          const hashStr = hashParams.toString();
+          if (hashStr) {
+            newHash = `#${hashStr}`;
+          }
+        } else {
+          newHash = `#${hashRaw}`;
+        }
+      }
+
+      return `${origin}${pathname}${newSearch}${newHash}`;
+    };
+
     try {
+      const newUrl = cleanUrlParams();
       if (
         typeof window !== "undefined" &&
         typeof window.history.replaceState === "function"
       ) {
-        const { origin, pathname, search, hash } = window.location;
-
-        const searchParams = new URLSearchParams(
-          search.startsWith("?") ? search.slice(1) : "",
-        );
-        searchParams.delete("v");
-        searchParams.delete("t");
-        const newSearch = searchParams.toString()
-          ? `?${searchParams.toString()}`
-          : "";
-
-        let newHash = "";
-        if (hash && hash.length > 1) {
-          const hashRaw = hash.replace(/^#/, "");
-          if (hashRaw.includes("=") || hashRaw.includes("&")) {
-            const hashParams = new URLSearchParams(hashRaw);
-            hashParams.delete("v");
-            hashParams.delete("t");
-            const hashStr = hashParams.toString();
-            if (hashStr) {
-              newHash = `#${hashStr}`;
-            } else {
-              newHash = "";
-            }
-          } else {
-            newHash = `#${hashRaw}`;
-          }
-        }
-
-        const newUrl = `${origin}${pathname}${newSearch}${newHash}`;
         window.history.replaceState(null, "", newUrl);
       } else if (typeof window !== "undefined") {
         try {
-          const { origin, pathname, search, hash } = window.location;
-          const searchParams = new URLSearchParams(
-            search.startsWith("?") ? search.slice(1) : "",
-          );
-          searchParams.delete("v");
-          searchParams.delete("t");
-          const newSearch = searchParams.toString()
-            ? `?${searchParams.toString()}`
-            : "";
-
-          let newHash = "";
-          if (hash && hash.length > 1) {
-            const hashRaw = hash.replace(/^#/, "");
-            if (hashRaw.includes("=") || hashRaw.includes("&")) {
-              const hashParams = new URLSearchParams(hashRaw);
-              hashParams.delete("v");
-              hashParams.delete("t");
-              const hashStr = hashParams.toString();
-              if (hashStr) {
-                newHash = `#${hashStr}`;
-              } else {
-                newHash = "";
-              }
-            } else {
-              newHash = `#${hashRaw}`;
-            }
-          }
-
-          const newUrl = `${origin}${pathname}${newSearch}${newHash}`;
-          // Use replace so we don't add a new history entry
           window.location.replace(newUrl);
         } catch {
-          // Last resort: clear the hash
           window.location.hash = "";
         }
       }
