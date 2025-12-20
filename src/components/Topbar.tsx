@@ -1,14 +1,15 @@
 import { memo } from "react";
+import type { Video } from "../types";
 
-type TopbarProps = {
-  video: any;
+interface TopbarProps {
+  video: Video | null;
   lastSavedAt: string | Date | null;
   exporting: boolean;
   handleExport: () => void;
   handleNewSession: () => void;
   savedStyle?: React.CSSProperties;
   rightControlsStyle?: React.CSSProperties;
-};
+}
 
 const Topbar = ({
   video,
@@ -51,16 +52,14 @@ const Topbar = ({
             </div>
           )}
           <div style={rightControlsStyle}>
-            {video && (
-              <button
-                disabled={exporting}
-                className="btn btn-ghost"
-                onClick={handleNewSession}
-                type="button"
-              >
-                New VOD
-              </button>
-            )}
+            <button
+              disabled={exporting}
+              className="btn btn-ghost"
+              onClick={handleNewSession}
+              type="button"
+            >
+              New VOD
+            </button>
             <button
               onClick={handleExport}
               disabled={exporting}

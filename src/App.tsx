@@ -18,7 +18,8 @@ import useExportPdf from "./hooks/useExportPdf";
 import { useNotes } from "./hooks/useNotes";
 import useNotesAutosave from "./hooks/useNotesAutosave";
 import Topbar from "./components/Topbar";
-
+import Skeleton from "./components/ui/skeleton";
+import NotesSkeleton from "./components/ui/NotesSkeleton";
 const ResultBox = lazy(() => import("./components/Notes"));
 
 function App() {
@@ -261,11 +262,7 @@ function App() {
                   </div>
                 </div>
               )}
-              <Suspense
-                fallback={
-                  <div className="results-loading">Loading session notes…</div>
-                }
-              >
+              <Suspense fallback={<NotesSkeleton />}>
                 <ResultBox
                   currentTime={currentTimeRef}
                   handleNoteJump={handleNoteJump}
