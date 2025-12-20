@@ -6,8 +6,6 @@ import {
   useState,
   useEffect,
 } from "react";
-
-import VideoPlayer from "./components/VideoPlayer";
 import "./css/App.css";
 import "./css/Notes.css";
 import "./css/VideoPlayer.css";
@@ -19,6 +17,8 @@ import { useNotes } from "./hooks/useNotes";
 import useNotesAutosave from "./hooks/useNotesAutosave";
 import Topbar from "./components/Topbar";
 import NotesSkeleton from "./components/ui/NotesSkeleton";
+import Skeleton from "./components/ui/skeleton";
+const VideoPlayer = lazy(() => import("./components/VideoPlayer"));
 const ResultBox = lazy(() => import("./components/Notes"));
 
 function App() {
@@ -212,22 +212,24 @@ function App() {
 
       <div className="main">
         <div className="video-column">
-          <VideoPlayer
-            handleProgress={handleProgress}
-            handleTitleChange={handleTitleChange}
-            playerRef={playerRef}
-            video={video}
-            handleSubmit={handleSubmit}
-            inputValue={inputValue}
-            error={error}
-            handleSetInputValue={handleSetInputValue}
-            voddingList={voddingList}
-            deleteVodById={deleteVodById}
-            loadWithId={loadWithId}
-            loading={loading}
-            setVideo={setVideo}
-            onRestoring={onRestoring}
-          />
+          <Suspense fallback={<Skeleton width="1280" height="720" />}>
+            <VideoPlayer
+              handleProgress={handleProgress}
+              handleTitleChange={handleTitleChange}
+              playerRef={playerRef}
+              video={video}
+              handleSubmit={handleSubmit}
+              inputValue={inputValue}
+              error={error}
+              handleSetInputValue={handleSetInputValue}
+              voddingList={voddingList}
+              deleteVodById={deleteVodById}
+              loadWithId={loadWithId}
+              loading={loading}
+              setVideo={setVideo}
+              onRestoring={onRestoring}
+            />
+          </Suspense>
         </div>
 
         {video && (
