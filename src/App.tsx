@@ -18,7 +18,6 @@ import useExportPdf from "./hooks/useExportPdf";
 import { useNotes } from "./hooks/useNotes";
 import useNotesAutosave from "./hooks/useNotesAutosave";
 import Topbar from "./components/Topbar";
-import Skeleton from "./components/ui/skeleton";
 import NotesSkeleton from "./components/ui/NotesSkeleton";
 const ResultBox = lazy(() => import("./components/Notes"));
 
