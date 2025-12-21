@@ -1,12 +1,22 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import type { Video } from "../types";
 import { v4 as uuidv4 } from "uuid";
 
-export const useLink = (currentTitle: string | null) => {
+export const useLink = (
+  currentTitle: string | null,
+  setIsFromTimestampUrl: Dispatch<SetStateAction<boolean>>,
+) => {
   const [video, setVideo] = useState<Video | null>(null);
   const [inputValue, setInputValue] = useState<string>("");
   const [error, setError] = useState<string>("");
-
+  const jumpTimeoutRef = useRef<number | null>(null);
   const playerRef = useRef<HTMLVideoElement | null>(null);
   const [focus, setFocus] = useState({ x: 0.5, y: 0.5 });
   const [scale, setScale] = useState(1);
@@ -23,6 +33,15 @@ export const useLink = (currentTitle: string | null) => {
     el.style.willChange = "transform";
     el.style.transition = "transform 250ms ease";
   }, [focus, scale]);
+
+  useEffect(() => {
+    return () => {
+      if (jumpTimeoutRef.current) {
+        clearTimeout(jumpTimeoutRef.current);
+        jumpTimeoutRef.current = null;
+      }
+    };
+  }, []);
 
   const extractYouTubeId = useCallback((url: string): string | null => {
     try {
@@ -69,15 +88,13 @@ export const useLink = (currentTitle: string | null) => {
       }
 
       setError("");
-
-      const newVideo: Video = {
+      setVideo({
         id: uuidv4(),
         url: cleanUrl,
         name: currentTitle ?? "Untitled",
         addedAt: new Date().toISOString(),
         provider: "youtube",
-      };
-      setVideo(newVideo);
+      });
     },
     [inputValue, validateAndCleanUrl, currentTitle],
   );
@@ -135,20 +152,48 @@ export const useLink = (currentTitle: string | null) => {
         return false;
       }
 
-      const newVideo: Video = {
+      setVideo({
         id: uuidv4(),
         url: cleanUrl,
         name: name ?? currentTitle ?? "Untitled",
         addedAt: new Date().toISOString(),
         provider: "youtube",
-      };
-
-      setVideo(newVideo);
+      });
       setInputValue(cleanUrl);
       return true;
     },
     [validateAndCleanUrl, currentTitle, video],
   );
+
+  const handleHash = useCallback(() => {
+    try {
+      const raw = window.location.hash || "";
+      if (!raw) return;
+      const hash = raw.replace(/^#/, "");
+      const params = new URLSearchParams(hash);
+      const v = params.get("v");
+      const t = params.get("t");
+      if (!v) return;
+      const videoUrl = decodeURIComponent(v);
+      setIsFromTimestampUrl(true);
+      const time = t ? Number(t) : NaN;
+      const loaded = loadVideoFromUrl(videoUrl);
+
+      if (!Number.isNaN(time)) {
+        if (jumpTimeoutRef.current) clearTimeout(jumpTimeoutRef.current);
+
+        jumpTimeoutRef.current = setTimeout(
+          () => {
+            jumpTimeoutRef.current = null;
+            handleNoteJump(time);
+          },
+          loaded ? 300 : 500,
+        );
+      }
+    } catch {
+      //
+    }
+  }, [loadVideoFromUrl, handleNoteJump, setIsFromTimestampUrl]);
 
   useEffect(() => {
     if (!currentTitle) return;
@@ -176,5 +221,6 @@ export const useLink = (currentTitle: string | null) => {
     handleNoteJump,
     loadVideoFromUrl,
     handleUpdateVideoName,
+    handleHash,
   };
 };

@@ -1,5 +1,6 @@
 import { memo } from "react";
 import type { Video } from "../types";
+import Skeleton from "./ui/skeleton";
 
 interface TopbarProps {
   video: Video | null;
@@ -7,8 +8,7 @@ interface TopbarProps {
   exporting: boolean;
   handleExport: () => void;
   handleNewSession: () => void;
-  savedStyle?: React.CSSProperties;
-  rightControlsStyle?: React.CSSProperties;
+  currentTitle: string | null;
 }
 
 const Topbar = ({
@@ -17,8 +17,7 @@ const Topbar = ({
   exporting,
   handleExport,
   handleNewSession,
-  savedStyle,
-  rightControlsStyle,
+  currentTitle,
 }: TopbarProps) => {
   return (
     <div className="topbar">
@@ -39,7 +38,11 @@ const Topbar = ({
           V
         </div>
         <div className="brand-title">
-          <div className="title">{video?.name ?? "VOD Review Session"}</div>
+          <div className="title">
+            {currentTitle
+              ? (video?.name ?? <Skeleton height={16} />)
+              : "VOD Review Session"}
+          </div>
           <div className="subtitle">Competitive Analysis</div>
         </div>
       </div>
@@ -47,11 +50,18 @@ const Topbar = ({
       {video && (
         <div className="topbar-right">
           {lastSavedAt && (
-            <div style={savedStyle}>
+            <div style={{ fontSize: 12, color: "#666" }}>
               Saved {new Date(lastSavedAt).toLocaleTimeString()}
             </div>
           )}
-          <div style={rightControlsStyle}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginLeft: 12,
+              gap: 12,
+            }}
+          >
             <button
               disabled={exporting}
               className="btn btn-ghost"
