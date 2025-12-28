@@ -219,22 +219,6 @@ function App() {
             </div>
 
             <div className="input-container">
-              {isFromTimestampUrl && (
-                <div
-                  className="readonly-overlay"
-                  role="status"
-                  aria-live="polite"
-                  title="Read-only session"
-                >
-                  <div>
-                    <div className="readonly-title">Read-only session</div>
-                    <div className="readonly-desc">
-                      This session was opened from a shared link — notes are
-                      read-only. You cannot add or edit notes in this view.
-                    </div>
-                  </div>
-                </div>
-              )}
               <Suspense fallback={<NotesSkeleton />}>
                 <ResultBox
                   currentTime={currentTimeRef}

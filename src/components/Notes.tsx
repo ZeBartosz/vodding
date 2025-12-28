@@ -49,7 +49,7 @@ const Notes: React.FC<NotesProps> = ({
 
   const urlNotes: Note[] = (() => {
     try {
-      return getNotesFromUrl() ?? [];
+      return getNotesFromUrl();
     } catch {
       return [];
     }
@@ -353,19 +353,19 @@ const Notes: React.FC<NotesProps> = ({
 
       <div className="input-box">
         <div className="textarea-wrapper">
-          <textarea
-            ref={textareaRef}
-            value={inputValue}
-            readOnly={inputsReadOnly}
-            onChange={(e) => {
-              setInputValue(e.target.value);
-            }}
-            placeholder={
-              inputsReadOnly ? "Read-only session" : "Write your observation..."
-            }
-            onKeyDown={handleKeyDown}
-            className={`input-textarea ${inputsReadOnly ? "input-textarea-readonly" : ""}`}
-          />
+          {!inputsReadOnly && (
+            <textarea
+              ref={textareaRef}
+              value={inputValue}
+              readOnly={inputsReadOnly}
+              onChange={(e) => {
+                setInputValue(e.target.value);
+              }}
+              placeholder={"Write your observation..."}
+              onKeyDown={handleKeyDown}
+              className={`input-textarea}`}
+            />
+          )}
         </div>
         <div className="button-box">
           <div>
