@@ -1,87 +1,88 @@
 .note-edit-wrap,
 .edit-area {
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 8px;
   padding: 8px;
-  box-sizing: border-box;
+  background: rgb(255 255 255 / 2%);
+  border-radius: 8px;
 }
 
 .has-tooltip {
   position: relative;
 }
+
 .has-tooltip[data-tooltip]::after {
-  content: attr(data-tooltip);
   position: absolute;
   bottom: calc(100% + 8px);
   left: 50%;
-  transform: translateX(-50%) translateY(0);
-  background: rgba(0, 0, 0, 0.85);
-  color: #fff;
+  z-index: 40;
   padding: 6px 8px;
   font-size: 12px;
-  border-radius: 4px;
+  color: #fff;
   white-space: nowrap;
-  opacity: 0;
   pointer-events: none;
+  content: attr(data-tooltip);
+  background: rgb(0 0 0 / 85%);
+  border-radius: 4px;
+  opacity: 0;
+  transform: translateX(-50%) translateY(0);
   transition:
     opacity 160ms ease,
     transform 160ms ease;
-  z-index: 40;
   will-change: opacity, transform;
 }
 
 .has-tooltip:hover[data-tooltip]::after,
 .has-tooltip:focus[data-tooltip]::after,
 .has-tooltip:focus-within[data-tooltip]::after {
-  transition-delay: 500ms;
   opacity: 1;
   transform: translateX(-50%) translateY(-6px);
+  transition-delay: 500ms;
 }
 
 /* Hover / focus states for action icon buttons in notes */
 .result-actions-row .btn,
 .result-card .result-actions-row .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 8px 10px;
+  border-radius: 8px;
   transition:
     background-color 160ms ease,
     transform 120ms ease,
     box-shadow 160ms ease,
     color 160ms ease;
-  -webkit-transition:
+  transition:
     background-color 160ms ease,
     transform 120ms ease,
     box-shadow 160ms ease,
     color 160ms ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 10px;
-  min-width: 40px;
-  min-height: 40px;
-  border-radius: 8px;
 }
 
 .result-actions-row .btn:hover,
 .result-card .result-actions-row .btn:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgb(255 255 255 / 3%);
+  box-shadow: 0 10px 30px rgb(184 46 46 / 8%);
   transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 10px 30px rgba(184, 46, 46, 0.08);
 }
 
 .result-actions-row .btn:focus,
 .result-card .result-actions-row .btn:focus {
   outline: none;
-  box-shadow: 0 0 0 4px rgba(184, 46, 46, 0.08);
-  border-color: rgba(184, 46, 46, 0.5);
+  border-color: rgb(184 46 46 / 50%);
+  box-shadow: 0 0 0 4px rgb(184 46 46 / 8%);
 }
 
 /* Make sure SVG icons align nicely */
 .result-actions-row .btn svg,
 .result-card .result-actions-row .btn svg {
-  vertical-align: middle;
   display: inline-block;
+  vertical-align: middle;
 }
 
 /* Color adjustments for the delete/trash icon */
@@ -98,26 +99,26 @@
 
 .note-edit-textarea,
 .edit-area textarea {
+  box-sizing: border-box;
   width: 100%;
   min-height: 84px;
   max-height: 240px;
-  resize: vertical;
-  border-radius: 6px;
   padding: 10px;
-  background: #071214;
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  color: var(--text);
-  box-sizing: border-box;
   font-size: 14px;
   line-height: 1.35;
+  color: var(--text);
+  resize: vertical;
+  background: #071214;
+  border: 1px solid rgb(255 255 255 / 4%);
+  border-radius: 6px;
 }
 
 .note-edit-actions,
 .edit-actions {
   display: flex;
-  justify-content: flex-end;
   gap: 12px;
   align-items: center;
+  justify-content: flex-end;
   padding-top: 6px;
 }
 
@@ -135,22 +136,22 @@
 
 .note-edit-actions .btn-ghost,
 .edit-actions .btn-ghost {
-  border: 1px solid rgba(255, 255, 255, 0.04);
   background: transparent;
+  border: 1px solid rgb(255 255 255 / 4%);
 }
 
 .result-card.editing {
-  border-left: 3px solid rgba(184, 46, 46, 0.08);
-  background: rgba(255, 255, 255, 0.01);
+  background: rgb(255 255 255 / 1%);
+  border-left: 3px solid rgb(184 46 46 / 8%);
 }
 
 .result-content > div {
-  white-space: pre-wrap;
-  word-break: break-word;
   color: var(--text);
+  word-break: break-word;
+  white-space: pre-wrap;
 }
 
-@media (max-width: 900px) {
+@media (width <= 900px) {
   .note-edit-textarea,
   .edit-area textarea {
     min-height: 72px;
@@ -160,13 +161,13 @@
 .note-edit-textarea:focus,
 .edit-area textarea:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(184, 46, 46, 0.08);
-  border-color: rgba(184, 46, 46, 0.6);
+  border-color: rgb(184 46 46 / 60%);
+  box-shadow: 0 0 0 3px rgb(184 46 46 / 8%);
 }
 
 .note-edit-actions .btn-primary:focus,
 .edit-actions .btn-primary:focus {
-  box-shadow: 0 4px 16px rgba(184, 46, 46, 0.12);
+  box-shadow: 0 4px 16px rgb(184 46 46 / 12%);
   transform: translateY(-1px);
 }
 

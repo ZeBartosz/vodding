@@ -1,11 +1,11 @@
 .skeleton-container {
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  gap: 12px;
   align-items: stretch;
   width: 100%;
   height: 100%;
-  gap: 12px;
-  box-sizing: border-box;
 }
 
 .skeleton-box {
@@ -13,22 +13,23 @@
   background-color: #0b1013;
   background-image: linear-gradient(
     90deg,
-    rgba(255, 255, 255, 0.01) 0%,
-    rgba(255, 255, 255, 0.02) 20%,
-    rgba(255, 255, 255, 0.06) 50%,
-    rgba(255, 255, 255, 0.02) 80%,
-    rgba(255, 255, 255, 0.01) 100%
+    rgb(255 255 255 / 1%) 0%,
+    rgb(255 255 255 / 2%) 20%,
+    rgb(255 255 255 / 6%) 50%,
+    rgb(255 255 255 / 2%) 80%,
+    rgb(255 255 255 / 1%) 100%
   );
   background-size: 200% 100%;
   border-radius: 8px;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 2%);
   animation: skeleton-shimmer 2.5s linear infinite;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
   will-change: background-position;
 }
 
 .skeleton-box.small {
   height: 28px;
 }
+
 .skeleton-box.large {
   height: 40px;
 }
@@ -37,6 +38,7 @@
   0% {
     background-position: 200% 0;
   }
+
   100% {
     background-position: -200% 0;
   }
