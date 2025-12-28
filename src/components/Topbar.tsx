@@ -10,6 +10,11 @@ interface TopbarProps {
   handleNewSession: () => void;
   currentTitle: string | null;
   onCopyShareableUrl?: () => Promise<boolean>;
+  /**
+   * Save a shared VOD + notes into the client's session/store.
+   * Should return a boolean indicating success.
+   */
+  onSaveShared?: () => Promise<boolean>;
 }
 
 const Topbar = ({
@@ -20,8 +25,12 @@ const Topbar = ({
   handleNewSession,
   currentTitle,
   onCopyShareableUrl,
+  onSaveShared,
 }: TopbarProps) => {
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">(
+    "idle",
+  );
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saved" | "error">(
     "idle",
   );
 
@@ -44,6 +53,25 @@ const Topbar = ({
     }
   }, [onCopyShareableUrl]);
 
+  const handleSaveShared = useCallback(async () => {
+    if (!onSaveShared) return;
+
+    try {
+      const success = await onSaveShared();
+      setSaveStatus(success ? "saved" : "error");
+
+      // Reset status after 2 seconds
+      setTimeout(() => {
+        setSaveStatus("idle");
+      }, 2000);
+    } catch {
+      setSaveStatus("error");
+      setTimeout(() => {
+        setSaveStatus("idle");
+      }, 2000);
+    }
+  }, [onSaveShared]);
+
   const getShareButtonText = () => {
     switch (copyStatus) {
       case "copied":
@@ -52,6 +80,17 @@ const Topbar = ({
         return "Failed";
       default:
         return "Share";
+    }
+  };
+
+  const getSaveButtonText = () => {
+    switch (saveStatus) {
+      case "saved":
+        return "Saved!";
+      case "error":
+        return "Failed";
+      default:
+        return "Save";
     }
   };
 
@@ -112,6 +151,8 @@ const Topbar = ({
               </svg>
               New VOD
             </button>
+
+            {/* Copy shareable link */}
             <button
               onClick={handleShare}
               disabled={exporting || copyStatus !== "idle"}
@@ -153,6 +194,52 @@ const Topbar = ({
               )}
               {getShareButtonText()}
             </button>
+
+            {onSaveShared && (
+              <>
+                {/* Save shared session into client's session/store */}
+                <button
+                  onClick={handleSaveShared}
+                  disabled={exporting || saveStatus !== "idle"}
+                  className={`topbar-btn ${saveStatus === "saved" ? "topbar-btn-success" : ""}`}
+                  aria-label="Save shared session"
+                  title="Save shared VOD & notes to your session"
+                  type="button"
+                >
+                  {saveStatus === "saved" ? (
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  ) : (
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="7 10 12 15 17 10" />
+                      <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                  )}
+                  {getSaveButtonText()}
+                </button>
+              </>
+            )}
+
             <button
               onClick={handleExport}
               disabled={exporting}

@@ -19,6 +19,7 @@ import { useUrlSync } from "./hooks/useUrlSync";
 import Topbar from "./components/Topbar";
 import NotesSkeleton from "./components/ui/NotesSkeleton";
 import Skeleton from "./components/ui/skeleton";
+import { v4 as uuidv4 } from "uuid";
 const VideoPlayer = lazy(() => import("./components/VideoPlayer"));
 const ResultBox = lazy(() => import("./components/Notes"));
 
@@ -75,6 +76,58 @@ function App() {
     notes,
     isFromTimestampUrl,
   });
+
+  // Save shared (URL) notes + video into the client's session/store.
+  const handleSaveShared = useCallback(async (): Promise<boolean> => {
+    try {
+      if (!urlNotes || urlNotes.length === 0) return false;
+
+      // Prefer current video object, fallback to vodding.video
+      const currentVideo = video ?? vodding?.video;
+      if (!currentVideo) return false;
+
+      const now = new Date().toISOString();
+
+      let payload;
+      if (vodding) {
+        payload = {
+          ...vodding,
+          video: currentVideo,
+          notes: urlNotes,
+          updatedAt: now,
+        };
+      } else {
+        payload = {
+          id: uuidv4(),
+          createdAt: now,
+          updatedAt: now,
+          video: currentVideo,
+          notes: urlNotes,
+        };
+      }
+
+      await save(payload);
+
+      // Reflect the saved session in UI state
+      setNotes(payload.notes ?? []);
+      setVideo(payload.video ?? currentVideo);
+      setIsFromTimestampUrl(false);
+      clearUrlNotes();
+
+      return true;
+    } catch {
+      return false;
+    }
+  }, [
+    urlNotes,
+    video,
+    vodding,
+    save,
+    setNotes,
+    setVideo,
+    clearUrlNotes,
+    setIsFromTimestampUrl,
+  ]);
 
   const exportOptions = useMemo(
     () => ({
@@ -180,6 +233,9 @@ function App() {
         handleNewSession={handleNewSession}
         currentTitle={currentTitle}
         onCopyShareableUrl={copyShareableUrl}
+        onSaveShared={
+          urlNotes && urlNotes.length > 0 ? handleSaveShared : undefined
+        }
       />
 
       <div className="main">

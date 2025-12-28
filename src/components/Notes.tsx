@@ -9,7 +9,6 @@ import React, {
 import { v4 as uuidv4 } from "uuid";
 import { Send, Edit, Trash, Clock } from "lucide-react";
 import type { Note } from "../types";
-import { getNotesFromUrl } from "../hooks/useUrlSync";
 
 interface NotesProps {
   currentTime: RefObject<number>;
@@ -47,15 +46,6 @@ const Notes: React.FC<NotesProps> = ({
 }) => {
   const controlled = typeof onNotesChange === "function";
 
-  const urlNotes: Note[] = (() => {
-    try {
-      return getNotesFromUrl();
-    } catch {
-      return [];
-    }
-  })();
-  const inputsReadOnly = readOnly || urlNotes.length > 0;
-
   const [internalNotes, setInternalNotes] = useState<Note[]>(
     initialNotes ?? [],
   );
@@ -81,13 +71,8 @@ const Notes: React.FC<NotesProps> = ({
   const resultsRef = useRef<HTMLDivElement | null>(null);
 
   const notes: Note[] = useMemo<Note[]>(
-    () =>
-      urlNotes && urlNotes.length > 0
-        ? urlNotes
-        : controlled
-          ? (initialNotes ?? [])
-          : internalNotes,
-    [urlNotes, controlled, initialNotes, internalNotes],
+    () => (controlled ? (initialNotes ?? []) : internalNotes),
+    [controlled, initialNotes, internalNotes],
   );
 
   const notify = useCallback(
@@ -102,7 +87,7 @@ const Notes: React.FC<NotesProps> = ({
   );
 
   const addNote = useCallback(() => {
-    if (inputsReadOnly) return;
+    if (readOnly) return;
     const text = inputValue.trim();
     if (!text) return;
 
@@ -124,20 +109,20 @@ const Notes: React.FC<NotesProps> = ({
       const el = resultsRef.current;
       if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
     });
-  }, [inputValue, currentTime, notes, notify, inputsReadOnly]);
+  }, [inputValue, currentTime, notes, notify, readOnly]);
 
   const deleteNote = useCallback(
     (id: string) => {
-      if (inputsReadOnly) return;
+      if (readOnly) return;
       const next = notes.filter((n) => n.id !== id);
       notify(next);
     },
-    [notes, notify, inputsReadOnly],
+    [notes, notify, readOnly],
   );
 
   const saveEdit = useCallback(
     (id: string, newContent: string) => {
-      if (inputsReadOnly) return;
+      if (readOnly) return;
       const next = notes.map((n) =>
         n.id === id
           ? { ...n, content: newContent, updatedAt: new Date().toISOString() }
@@ -147,7 +132,7 @@ const Notes: React.FC<NotesProps> = ({
       setEditingId(null);
       setEditingValue("");
     },
-    [notes, notify, inputsReadOnly],
+    [notes, notify, readOnly],
   );
 
   const handleKeyDown = useCallback(
@@ -241,7 +226,7 @@ const Notes: React.FC<NotesProps> = ({
             <div className="empty-sub">
               {query
                 ? "Try changing or clearing your search."
-                : inputsReadOnly
+                : readOnly
                   ? "This session is read-only."
                   : "Add your first note below"}
             </div>
@@ -274,7 +259,7 @@ const Notes: React.FC<NotesProps> = ({
                       <Send size={16} />
                     </button>
 
-                    {!isEditing && !inputsReadOnly && (
+                    {!isEditing && !readOnly && (
                       <button
                         onClick={() => {
                           setEditingId(n.id);
@@ -288,7 +273,7 @@ const Notes: React.FC<NotesProps> = ({
                       </button>
                     )}
 
-                    {!inputsReadOnly && (
+                    {!readOnly && (
                       <button
                         onClick={() => {
                           deleteNote(n.id);
@@ -310,7 +295,7 @@ const Notes: React.FC<NotesProps> = ({
                         autoFocus
                         className="note-edit-textarea"
                         value={editingValue}
-                        readOnly={inputsReadOnly}
+                        readOnly={readOnly}
                         onChange={(e) => {
                           setEditingValue(e.target.value);
                         }}
@@ -321,11 +306,9 @@ const Notes: React.FC<NotesProps> = ({
                             saveEdit(n.id, editingValue);
                           }}
                           className="btn btn-primary"
-                          disabled={inputsReadOnly}
+                          disabled={readOnly}
                           title={
-                            inputsReadOnly
-                              ? "Disabled in read-only view"
-                              : undefined
+                            readOnly ? "Disabled in read-only view" : undefined
                           }
                         >
                           Save
@@ -353,19 +336,19 @@ const Notes: React.FC<NotesProps> = ({
 
       <div className="input-box">
         <div className="textarea-wrapper">
-          {!inputsReadOnly && (
-            <textarea
-              ref={textareaRef}
-              value={inputValue}
-              readOnly={inputsReadOnly}
-              onChange={(e) => {
-                setInputValue(e.target.value);
-              }}
-              placeholder={"Write your observation..."}
-              onKeyDown={handleKeyDown}
-              className={`input-textarea}`}
-            />
-          )}
+          <textarea
+            ref={textareaRef}
+            value={inputValue}
+            readOnly={readOnly}
+            onChange={(e) => {
+              setInputValue(e.target.value);
+            }}
+            placeholder={
+              readOnly ? "Read-only session" : "Write your observation..."
+            }
+            onKeyDown={handleKeyDown}
+            className={`input-textarea ${readOnly ? "input-textarea-readonly" : ""}`}
+          />
         </div>
         <div className="button-box">
           <div>
@@ -389,14 +372,14 @@ const Notes: React.FC<NotesProps> = ({
               addNote();
             }}
             className="btn btn-primary"
-            disabled={inputsReadOnly}
+            disabled={readOnly}
             title={
-              inputsReadOnly
+              readOnly
                 ? "Save this VOD to your session to add notes"
                 : undefined
             }
           >
-            {inputsReadOnly ? "Read-only" : "+ Add Note"}
+            {readOnly ? "Read-only" : "+ Add Note"}
           </button>
         </div>
       </div>
