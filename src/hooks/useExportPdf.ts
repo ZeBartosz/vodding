@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Note } from "../types";
 import { jsPDF } from "jspdf";
+import { buildShareableUrl } from "../utils/urlParams";
 
 interface UseExportPdfParams {
   title?: string | null;
@@ -73,8 +74,42 @@ export default function useExportPdf({
       const exportedAt = new Date().toLocaleString();
       const videoMeta = videoUrl ? " • Video: " + videoUrl : "";
 
+      // Build a shareable link (video + notes) and include it under the title
+      let shareableLink = "";
+      try {
+        if (videoUrl) {
+          shareableLink = buildShareableUrl(videoUrl, safeNotes);
+        }
+      } catch {
+        // fallback to raw video URL if building fails
+        shareableLink = videoUrl ?? "";
+      }
+
       doc.text("Exported: " + exportedAt + videoMeta, marginLeft, y);
-      y += 18;
+      y += 14;
+
+      if (shareableLink) {
+        // smaller font & blue color for the link display
+        const prevFontSize = doc.getFontSize();
+        doc.setFontSize(10);
+        doc.setTextColor(0, 102, 204);
+        // Print the link line
+        doc.text("Shared link: " + shareableLink, marginLeft, y);
+        try {
+          // Add clickable link area covering most of the line
+          const linkWidth = Math.min(maxWidth, pageWidth - marginLeft * 2);
+          doc.link(marginLeft, y - 10, linkWidth, 12, { url: shareableLink });
+        } catch {
+          // ignore link attachment errors
+        }
+        // restore styling
+        doc.setTextColor(0, 0, 0);
+        doc.setFontSize(prevFontSize);
+        y += 18;
+      } else {
+        y += 18;
+      }
+
       doc.setDrawColor(230);
       doc.line(marginLeft, y, pageWidth - marginLeft, y);
       y += 18;
