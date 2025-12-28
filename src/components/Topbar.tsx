@@ -39,9 +39,7 @@ const Topbar = ({
         </div>
         <div className="brand-title">
           <div className="title">
-            {currentTitle
-              ? (video?.name ?? <Skeleton height={16} />)
-              : "VOD Review Session"}
+            {currentTitle ? (video?.name ?? <Skeleton height={16} />) : "VOD Review Session"}
           </div>
           <div className="subtitle">Competitive Analysis</div>
         </div>

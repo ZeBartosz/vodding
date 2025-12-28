@@ -144,31 +144,19 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
                   strokeWidth="1.4"
                   strokeLinecap="round"
                 />
-                <circle
-                  cx="12"
-                  cy="16.5"
-                  r="0.85"
-                  fill="rgba(180,180,180,0.95)"
-                />
+                <circle cx="12" cy="16.5" r="0.85" fill="rgba(180,180,180,0.95)" />
               </svg>
             </div>
           </div>
 
-          <h2 className="embed-unavailable-title">
-            Embedding disabled for this video
-          </h2>
+          <h2 className="embed-unavailable-title">Embedding disabled for this video</h2>
 
           <p className="embed-unavailable-desc">
-            The video can still be watched on YouTube, but embedding has been
-            blocked or the player configuration prevents playback inside this
-            app.
+            The video can still be watched on YouTube, but embedding has been blocked or the player
+            configuration prevents playback inside this app.
           </p>
 
-          <div
-            className="embed-unavailable-actions"
-            role="group"
-            aria-label="Embed actions"
-          >
+          <div className="embed-unavailable-actions" role="group" aria-label="Embed actions">
             <a
               className="btn btn-primary"
               href={video.url}
@@ -190,11 +178,7 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
               {copied ? "Copied!" : "Copy link"}
             </button>
 
-            <button
-              type="button"
-              className="btn btn-ghost"
-              onClick={handleRetry}
-            >
+            <button type="button" className="btn btn-ghost" onClick={handleRetry}>
               Retry embed
             </button>
           </div>
@@ -210,17 +194,15 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
 
           <div className="embed-unavailable-help">
             <small>
-              If you own this video, go to YouTube Studio → Content → More
-              options and enable "Allow embedding" to play this video inside
-              third-party sites.
+              If you own this video, go to YouTube Studio → Content → More options and enable "Allow
+              embedding" to play this video inside third-party sites.
             </small>
 
             <small>
-              Note: embedding can also be blocked for reasons beyond the
-              uploader's "Allow embedding" setting — for example copyright/
-              Content ID claims, age or region restrictions, privacy settings,
-              or other policy-related blocks. If you aren't the owner of the
-              video, try opening it on YouTube to see more details about the
+              Note: embedding can also be blocked for reasons beyond the uploader's "Allow
+              embedding" setting — for example copyright/ Content ID claims, age or region
+              restrictions, privacy settings, or other policy-related blocks. If you aren't the
+              owner of the video, try opening it on YouTube to see more details about the
               restriction.
             </small>
           </div>
@@ -330,9 +312,7 @@ const MissingURL: FC<MissingProps> = ({
       <div className="vodding-list-wrap">
         <h4>Saved VODs</h4>
         {loading && <p>Loading saved VODs…</p>}
-        {!loading && voddingList.length === 0 && (
-          <p className="muted">No saved VODs yet.</p>
-        )}
+        {!loading && voddingList.length === 0 && <p className="muted">No saved VODs yet.</p>}
 
         {!loading && voddingList.length > 0 && (
           <ul className="vodding-list" aria-label="Saved vodding list">
@@ -355,15 +335,9 @@ const MissingURL: FC<MissingProps> = ({
 
                         <span
                           className="time-badge"
-                          title={
-                            v.updatedAt
-                              ? new Date(v.updatedAt).toLocaleString()
-                              : ""
-                          }
+                          title={v.updatedAt ? new Date(v.updatedAt).toLocaleString() : ""}
                         >
-                          {v.updatedAt
-                            ? new Date(v.updatedAt).toLocaleString()
-                            : ""}
+                          {v.updatedAt ? new Date(v.updatedAt).toLocaleString() : ""}
                         </span>
                       </div>
                     </div>

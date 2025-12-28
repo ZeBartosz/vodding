@@ -30,25 +30,17 @@ export const getVoddingList = async (): Promise<VoddingPayload[]> => {
   return voddingList;
 };
 
-export const getVoddingById = async (
-  id: string,
-): Promise<VoddingPayload | null> => {
+export const getVoddingById = async (id: string): Promise<VoddingPayload | null> => {
   const db = await getDB();
   const vodding = await db.get("vodding", id);
   return vodding ?? null;
 };
 
-export const saveVod = async (
-  data: VoddingPayload,
-): Promise<VoddingPayload> => {
+export const saveVod = async (data: VoddingPayload): Promise<VoddingPayload> => {
   const db = await getDB();
   const videoId = data.video.id;
 
-  const existingStation = await db.getFromIndex(
-    "vodding",
-    "by-videoId",
-    videoId,
-  );
+  const existingStation = await db.getFromIndex("vodding", "by-videoId", videoId);
 
   if (existingStation) {
     const updatedStation: VoddingPayload = {
@@ -85,11 +77,7 @@ export const saveVod = async (
 
 export const deleteVod = async (videoId: string) => {
   const db = await getDB();
-  const existingStation = await db.getFromIndex(
-    "vodding",
-    "by-videoId",
-    videoId,
-  );
+  const existingStation = await db.getFromIndex("vodding", "by-videoId", videoId);
 
   if (existingStation) {
     await db.delete("vodding", existingStation.id);

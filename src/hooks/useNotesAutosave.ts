@@ -129,15 +129,7 @@ export default function useNotesAutosave({
         autosaveTimer.current = null;
       }
     };
-  }, [
-    notes,
-    doSave,
-    video,
-    vodding,
-    skipAutosave,
-    isFromTimestampUrl,
-    debounceMs,
-  ]);
+  }, [notes, doSave, video, vodding, skipAutosave, isFromTimestampUrl, debounceMs]);
 
   useEffect(() => {
     return () => {

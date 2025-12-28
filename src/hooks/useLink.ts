@@ -55,9 +55,7 @@ export const useLink = (
         if (urlObj.pathname === "/watch") {
           return urlObj.searchParams.get("v");
         }
-        const match = /\/(?:embed|shorts|live)\/([\w-]{11})/.exec(
-          urlObj.pathname,
-        );
+        const match = /\/(?:embed|shorts|live)\/([\w-]{11})/.exec(urlObj.pathname);
         if (!match) return null;
         return match[1];
       }
