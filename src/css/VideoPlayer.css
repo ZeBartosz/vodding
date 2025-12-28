@@ -328,8 +328,8 @@
 
 .missing-video .missing-input:focus,
 .missing-video input:focus {
-  border-color: rgb(184 46 46 / 50%);
   outline: none;
+  border-color: rgb(184 46 46 / 50%);
   box-shadow: 0 0 0 3px rgb(184 46 46 / 15%);
 }
 
