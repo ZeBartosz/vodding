@@ -20,12 +20,11 @@ const Topbar = ({
   currentTitle,
 }: TopbarProps) => {
   return (
-    <div className="topbar">
+    <header className="topbar">
       <div className="brand">
         <div
           className="brand-badge"
           onClick={handleNewSession}
-          style={{ cursor: "pointer" }}
           title="Start new session"
           role="button"
           tabIndex={0}
@@ -48,40 +47,78 @@ const Topbar = ({
       {video && (
         <div className="topbar-right">
           {lastSavedAt && (
-            <div style={{ fontSize: 12, color: "#666" }}>
+            <div className="topbar-saved">
+              <span className="saved-indicator" />
               Saved {new Date(lastSavedAt).toLocaleTimeString()}
             </div>
           )}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginLeft: 12,
-              gap: 12,
-            }}
-          >
+          <div className="topbar-actions">
             <button
               disabled={exporting}
-              className="btn btn-ghost"
+              className="topbar-btn"
               onClick={handleNewSession}
               type="button"
+              title="Start a new VOD session"
             >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 5v14M5 12h14" />
+              </svg>
               New VOD
             </button>
             <button
               onClick={handleExport}
               disabled={exporting}
-              className="btn btn-ghost"
+              className="topbar-btn topbar-btn-primary"
               aria-label="Export notes"
               title="Export notes to PDF"
               type="button"
             >
-              {exporting ? "Exporting…" : "Export"}
+              {exporting ? (
+                <>
+                  <svg
+                    className="topbar-spinner"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+                  </svg>
+                  Exporting…
+                </>
+              ) : (
+                <>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                  </svg>
+                  Export
+                </>
+              )}
             </button>
           </div>
         </div>
       )}
-    </div>
+    </header>
   );
 };
 

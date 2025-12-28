@@ -47,13 +47,18 @@ body,
   z-index: 30;
   box-sizing: border-box;
   display: flex;
-  gap: 8px;
+  gap: 12px;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 14px;
+  padding: 14px 20px;
   white-space: nowrap;
-  background: linear-gradient(90deg, rgb(8 10 12 / 60%), rgb(6 8 10 / 40%));
-  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, rgb(32 18 20 / 70%) 0%, rgb(24 14 16 / 75%) 100%);
+  border: 1px solid rgb(184 46 46 / 12%);
+  border-top: none;
+  border-radius: 0 0 16px 16px;
+  box-shadow:
+    0 4px 24px rgb(0 0 0 / 25%),
+    inset 0 1px 0 rgb(255 255 255 / 4%);
 }
 
 .topbar .brand {
@@ -69,13 +74,27 @@ body,
   flex: 0 0 auto;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
+  font-size: 18px;
   font-weight: 700;
   color: white;
+  cursor: pointer;
   background: linear-gradient(135deg, var(--accent-red), var(--accent-red-strong));
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgb(208 67 67 / 14%);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgb(184 46 46 / 30%);
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.brand-badge:hover {
+  box-shadow: 0 6px 20px rgb(184 46 46 / 40%);
+  transform: translateY(-2px);
+}
+
+.brand-badge:active {
+  transform: translateY(0);
 }
 
 .brand-title {
@@ -108,7 +127,7 @@ body,
 .topbar-right {
   display: flex;
   flex: 0 0 auto;
-  gap: 12px;
+  gap: 16px;
   align-items: center;
   margin-left: auto;
 }
@@ -116,6 +135,113 @@ body,
 .topbar-right .small {
   font-size: 13px;
   color: var(--muted);
+}
+
+.topbar-saved {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgb(255 255 255 / 60%);
+  background: rgb(255 255 255 / 4%);
+  border: 1px solid rgb(255 255 255 / 6%);
+  border-radius: 8px;
+}
+
+.saved-indicator {
+  width: 8px;
+  height: 8px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgb(34 197 94 / 50%);
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 8px rgb(34 197 94 / 50%);
+  }
+
+  50% {
+    opacity: 0.7;
+    box-shadow: 0 0 12px rgb(34 197 94 / 70%);
+  }
+}
+
+.topbar-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.topbar-btn {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgb(255 255 255 / 70%);
+  cursor: pointer;
+  background: rgb(255 255 255 / 4%);
+  border: 1px solid rgb(255 255 255 / 6%);
+  border-radius: 10px;
+  transition:
+    background 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease,
+    transform 120ms ease,
+    box-shadow 150ms ease;
+}
+
+.topbar-btn:hover {
+  color: rgb(255 255 255 / 90%);
+  background: rgb(255 255 255 / 8%);
+  border-color: rgb(255 255 255 / 12%);
+  transform: translateY(-1px);
+}
+
+.topbar-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.topbar-btn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.topbar-btn-primary {
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, var(--accent-red), var(--accent-red-strong));
+  border: none;
+  box-shadow: 0 4px 12px rgb(184 46 46 / 25%);
+}
+
+.topbar-btn-primary:hover {
+  box-shadow: 0 6px 20px rgb(184 46 46 / 35%);
+  transform: translateY(-2px);
+}
+
+.topbar-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .notes-pill {
