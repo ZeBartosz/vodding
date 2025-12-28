@@ -1,4 +1,4 @@
-/* Note editing wrap */
+/* Note editing wrapper container */
 .note-edit-wrap,
 .edit-area {
   box-sizing: border-box;
@@ -11,11 +11,12 @@
   border-radius: 10px;
 }
 
-/* Tooltip styles */
+/* Base class for elements with tooltips */
 .has-tooltip {
   position: relative;
 }
 
+/* Tooltip popup displayed on hover/focus */
 .has-tooltip[data-tooltip]::after {
   position: absolute;
   bottom: calc(100% + 8px);
@@ -40,6 +41,7 @@
   will-change: opacity, transform;
 }
 
+/* Tooltip visible state on hover/focus */
 .has-tooltip:hover[data-tooltip]::after,
 .has-tooltip:focus[data-tooltip]::after,
 .has-tooltip:focus-within[data-tooltip]::after {
@@ -48,8 +50,87 @@
   transition-delay: 400ms;
 }
 
-/* Hover / focus states for action icon buttons in notes */
-.result-actions-row .btn,
+/* Container for note edit action buttons */
+.note-edit-actions,
+.edit-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+  padding-top: 4px;
+}
+
+/* Button styles within note edit actions */
+.note-edit-actions .btn,
+.edit-actions .btn {
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 8px;
+  transition:
+    background 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease,
+    transform 120ms ease,
+    box-shadow 150ms ease;
+}
+
+/* Action buttons in result actions row */
+.result-actions-row .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  min-height: 34px;
+  padding: 6px 8px;
+  color: rgb(255 255 255 / 50%);
+  background: rgb(255 255 255 / 3%);
+  border: 1px solid rgb(255 255 255 / 5%);
+  border-radius: 8px;
+  transition:
+    background-color 150ms ease,
+    transform 120ms ease,
+    box-shadow 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease;
+}
+
+/* Hover state for action buttons */
+.result-actions-row .btn:hover {
+  color: rgb(255 255 255 / 80%);
+  background: rgb(255 255 255 / 6%);
+  border-color: rgb(255 255 255 / 10%);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 20%);
+  transform: translateY(-2px);
+}
+
+/* Focus state for action buttons */
+.result-actions-row .btn:focus {
+  outline: none;
+  border-color: rgb(184 46 46 / 40%);
+  box-shadow: 0 0 0 3px rgb(184 46 46 / 12%);
+}
+
+/* SVG icon alignment within action buttons */
+.result-actions-row .btn svg {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+}
+
+/* Red color for delete/trash icon */
+.result-actions-row .btn .text-red-600 {
+  color: rgb(184 46 46 / 80%);
+  transition: color 150ms ease;
+}
+
+/* Brighter red on hover for delete icon */
+.result-actions-row .btn:hover .text-red-600 {
+  color: #d04343;
+}
+
+/* Action buttons in result card context */
 .result-card .result-actions-row .btn {
   display: inline-flex;
   align-items: center;
@@ -69,7 +150,7 @@
     border-color 150ms ease;
 }
 
-.result-actions-row .btn:hover,
+/* Hover state for result card action buttons */
 .result-card .result-actions-row .btn:hover {
   color: rgb(255 255 255 / 80%);
   background: rgb(255 255 255 / 6%);
@@ -78,15 +159,14 @@
   transform: translateY(-2px);
 }
 
-.result-actions-row .btn:focus,
+/* Focus state for result card action buttons */
 .result-card .result-actions-row .btn:focus {
-  border-color: rgb(184 46 46 / 40%);
   outline: none;
+  border-color: rgb(184 46 46 / 40%);
   box-shadow: 0 0 0 3px rgb(184 46 46 / 12%);
 }
 
-/* Make sure SVG icons align nicely */
-.result-actions-row .btn svg,
+/* SVG icon alignment within result card action buttons */
 .result-card .result-actions-row .btn svg {
   display: inline-block;
   width: 16px;
@@ -94,19 +174,18 @@
   vertical-align: middle;
 }
 
-/* Color adjustments for the delete/trash icon */
-.result-actions-row .btn .text-red-600,
+/* Red color for result card delete/trash icon */
 .result-card .result-actions-row .btn .text-red-600 {
   color: rgb(184 46 46 / 80%);
   transition: color 150ms ease;
 }
 
-.result-actions-row .btn:hover .text-red-600,
+/* Brighter red on hover for result card delete icon */
 .result-card .result-actions-row .btn:hover .text-red-600 {
   color: #d04343;
 }
 
-/* Note edit textarea */
+/* Textarea for editing notes */
 .note-edit-textarea,
 .edit-area textarea {
   box-sizing: border-box;
@@ -126,37 +205,15 @@
     box-shadow 150ms ease;
 }
 
+/* Focus state for note edit textarea */
 .note-edit-textarea:focus,
 .edit-area textarea:focus {
-  border-color: rgb(184 46 46 / 50%);
   outline: none;
+  border-color: rgb(184 46 46 / 50%);
   box-shadow: 0 0 0 3px rgb(184 46 46 / 15%);
 }
 
-/* Note edit actions row */
-.note-edit-actions,
-.edit-actions {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  justify-content: flex-end;
-  padding-top: 4px;
-}
-
-.note-edit-actions .btn,
-.edit-actions .btn {
-  padding: 8px 14px;
-  font-size: 13px;
-  font-weight: 500;
-  border-radius: 8px;
-  transition:
-    background 150ms ease,
-    color 150ms ease,
-    border-color 150ms ease,
-    transform 120ms ease,
-    box-shadow 150ms ease;
-}
-
+/* Primary button in note edit actions */
 .note-edit-actions .btn-primary,
 .edit-actions .btn-primary {
   padding: 8px 16px;
@@ -167,12 +224,14 @@
   box-shadow: 0 4px 12px rgb(184 46 46 / 25%);
 }
 
+/* Hover state for primary button */
 .note-edit-actions .btn-primary:hover,
 .edit-actions .btn-primary:hover {
   box-shadow: 0 6px 16px rgb(184 46 46 / 35%);
   transform: translateY(-1px);
 }
 
+/* Focus state for primary button */
 .note-edit-actions .btn-primary:focus,
 .edit-actions .btn-primary:focus {
   box-shadow:
@@ -180,6 +239,7 @@
     0 0 0 3px rgb(184 46 46 / 15%);
 }
 
+/* Ghost/transparent button variant */
 .note-edit-actions .btn-ghost,
 .edit-actions .btn-ghost {
   color: rgb(255 255 255 / 60%);
@@ -187,6 +247,7 @@
   border: 1px solid rgb(255 255 255 / 6%);
 }
 
+/* Hover state for ghost button */
 .note-edit-actions .btn-ghost:hover,
 .edit-actions .btn-ghost:hover {
   color: rgb(255 255 255 / 80%);
@@ -194,33 +255,36 @@
   border-color: rgb(255 255 255 / 10%);
 }
 
-/* Editing state for result card */
+/* Result card in editing mode */
 .result-card.editing {
   background: linear-gradient(180deg, rgb(184 46 46 / 6%) 0%, rgb(184 46 46 / 3%) 100%);
   border-color: rgb(184 46 46 / 20%);
 }
 
-/* Note content display */
+/* Note content text display */
 .result-content > div,
 .note-content {
   font-size: 14px;
   line-height: 1.55;
   color: var(--text);
-  word-break: break-word;
+  overflow-wrap: break-word;
   white-space: pre-wrap;
 }
 
+/* Note edit wrapper within result card */
 .result-card .note-edit-wrap {
   margin-top: 10px;
 }
 
-/* Responsive adjustments */
+/* Responsive adjustments for tablet screens */
 @media (width <= 900px) {
+  /* Smaller textarea on tablet */
   .note-edit-textarea,
   .edit-area textarea {
     min-height: 72px;
   }
 
+  /* Compact buttons on tablet */
   .note-edit-actions .btn,
   .edit-actions .btn {
     padding: 6px 12px;
