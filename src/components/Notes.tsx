@@ -1,11 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type RefObject,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Send, Edit, Trash, Clock } from "lucide-react";
 import type { Note } from "../types";
@@ -46,9 +39,7 @@ const Notes: React.FC<NotesProps> = ({
 }) => {
   const controlled = typeof onNotesChange === "function";
 
-  const [internalNotes, setInternalNotes] = useState<Note[]>(
-    initialNotes ?? [],
-  );
+  const [internalNotes, setInternalNotes] = useState<Note[]>(initialNotes ?? []);
 
   useEffect(() => {
     if (initialNotes == null) return;
@@ -91,8 +82,7 @@ const Notes: React.FC<NotesProps> = ({
     const text = inputValue.trim();
     if (!text) return;
 
-    const timestamp =
-      typeof currentTime.current === "number" ? currentTime.current : 0;
+    const timestamp = typeof currentTime.current === "number" ? currentTime.current : 0;
 
     const newNote: Note = {
       id: uuidv4(),
@@ -124,9 +114,7 @@ const Notes: React.FC<NotesProps> = ({
     (id: string, newContent: string) => {
       if (readOnly) return;
       const next = notes.map((n) =>
-        n.id === id
-          ? { ...n, content: newContent, updatedAt: new Date().toISOString() }
-          : n,
+        n.id === id ? { ...n, content: newContent, updatedAt: new Date().toISOString() } : n,
       );
       notify(next);
       setEditingId(null);
@@ -148,8 +136,7 @@ const Notes: React.FC<NotesProps> = ({
         }
         const start = el.selectionStart;
         const end = el.selectionEnd;
-        const newValue =
-          inputValue.slice(0, start) + "\n" + inputValue.slice(end);
+        const newValue = inputValue.slice(0, start) + "\n" + inputValue.slice(end);
         setInputValue(newValue);
         requestAnimationFrame(() => {
           const t = textareaRef.current;
@@ -168,9 +155,7 @@ const Notes: React.FC<NotesProps> = ({
     if (!query) return notes;
     const q = query.toLowerCase().trim();
     return notes.filter(
-      (n) =>
-        n.content.toLowerCase().includes(q) ||
-        formatTime(n.timestamp).includes(q),
+      (n) => n.content.toLowerCase().includes(q) || formatTime(n.timestamp).includes(q),
     );
   }, [notes, query]);
 
@@ -208,11 +193,7 @@ const Notes: React.FC<NotesProps> = ({
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <path
-                  d="M11 6H13V12H11V6Z"
-                  fill="currentColor"
-                  opacity="0.85"
-                />
+                <path d="M11 6H13V12H11V6Z" fill="currentColor" opacity="0.85" />
                 <path
                   d="M12 17.25C10.481 17.25 9.25 16.019 9.25 14.5C9.25 12.981 10.481 11.75 12 11.75C13.519 11.75 14.75 12.981 14.75 14.5C14.75 16.019 13.519 17.25 12 17.25Z"
                   fill="currentColor"
@@ -235,15 +216,11 @@ const Notes: React.FC<NotesProps> = ({
           filtered.map((n) => {
             const isEditing = editingId === n.id;
             return (
-              <div
-                key={n.id}
-                className={`result-card ${isEditing ? "editing" : ""}`}
-              >
+              <div key={n.id} className={`result-card ${isEditing ? "editing" : ""}`}>
                 <div className="result-card-header">
                   <div className="result-meta">
                     <span className="timestamp">
-                      <Clock size={12} className="timestamp-icon" />{" "}
-                      {formatTime(n.timestamp)}
+                      <Clock size={12} className="timestamp-icon" /> {formatTime(n.timestamp)}
                     </span>
                   </div>
 
@@ -306,9 +283,7 @@ const Notes: React.FC<NotesProps> = ({
                           }}
                           className="btn btn-primary"
                           disabled={readOnly}
-                          title={
-                            readOnly ? "Disabled in read-only view" : undefined
-                          }
+                          title={readOnly ? "Disabled in read-only view" : undefined}
                         >
                           Save
                         </button>
@@ -341,9 +316,7 @@ const Notes: React.FC<NotesProps> = ({
           onChange={(e) => {
             setInputValue(e.target.value);
           }}
-          placeholder={
-            readOnly ? "Read-only session" : "Write your observation..."
-          }
+          placeholder={readOnly ? "Read-only session" : "Write your observation..."}
           onKeyDown={handleKeyDown}
           className="input-textarea"
         />
@@ -356,11 +329,7 @@ const Notes: React.FC<NotesProps> = ({
             >
               Reset
             </button>
-            <button
-              onClick={handleMapView}
-              aria-label="Map View"
-              className="btn btn-ghost"
-            >
+            <button onClick={handleMapView} aria-label="Map View" className="btn btn-ghost">
               Map View
             </button>
           </div>
@@ -370,11 +339,7 @@ const Notes: React.FC<NotesProps> = ({
             }}
             className="btn btn-primary"
             disabled={readOnly}
-            title={
-              readOnly
-                ? "Adding notes is disabled in read-only view"
-                : undefined
-            }
+            title={readOnly ? "Adding notes is disabled in read-only view" : undefined}
           >
             {readOnly ? "Read-only" : "+ Add Note"}
           </button>

@@ -8,12 +8,7 @@ interface Props {
   className?: string;
 }
 
-const Skeleton = ({
-  size = "large",
-  width = "100%",
-  height,
-  className = "",
-}: Props) => {
+const Skeleton = ({ size = "large", width = "100%", height, className = "" }: Props) => {
   const style: React.CSSProperties = { width };
   if (height !== undefined) {
     style.height = height;

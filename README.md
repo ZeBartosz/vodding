@@ -81,6 +81,7 @@ Quick start (recommended):
      - `pnpm preview`
 
 Notes:
+
 - If you prefer, `npm` or `yarn` also work. For example: `npm install` / `npm run dev` or `yarn` / `yarn dev`.
 - This project uses the standard Vite script names by default. If your `package.json` differs, use the scripts defined there.
 - Bun provides an integrated runtime and package manager. If you choose Bun, ensure you're running a Bun-supported Node API surface (most Vite workflows work fine with Bun; check Bun docs if you hit runtime differences).
@@ -99,6 +100,7 @@ Notes:
   - Build the project to ensure production build succeeds: `npm run build` (or `pnpm build` / `bun run build`)
 
 Pull requests will be reviewed by maintainers. A PR should include:
+
 - A short summary of what the change does
 - Any relevant screenshots or recordings for UI changes
 - Tests or manual verification steps
@@ -120,12 +122,14 @@ How to contribute:
 6. Address review comments and update your PR until it is approved and merged.
 
 Guidelines:
+
 - Include tests for new features or bug fixes when practical.
 - Keep accessibility in mind for UI components.
 - Add or update documentation where behavior has changed.
 - Small, well-tested PRs merge faster.
 
 Pull request checklist (maintainers may use this):
+
 - [ ] PR targets `main`
 - [ ] Descriptive title and summary
 - [ ] Linked to an issue when applicable
@@ -148,6 +152,7 @@ Pull request checklist (maintainers may use this):
 ## Reporting issues
 
 When reporting a bug or requesting a feature, please include:
+
 - A short descriptive title
 - Steps to reproduce
 - Expected behavior
@@ -185,7 +190,7 @@ THE SOFTWARE.
 
 ## Code of conduct
 
-Please follow a respectful, inclusive, and constructive approach when interacting in issues and pull requests. We recommend adopting the Contributor Covenant (https://www.contributor-covenant.org/) as a basis for project behavior. 
+Please follow a respectful, inclusive, and constructive approach when interacting in issues and pull requests. We recommend adopting the Contributor Covenant (https://www.contributor-covenant.org/) as a basis for project behavior.
 
 ---
 

@@ -1,14 +1,22 @@
 {
   "name": "vodding",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
     "preview": "vite preview",
-    "build:preview": "bun run build && bun run preview"
+    "build:preview": "bun run build && bun run preview",
+    "lint": "bun oxlint .",
+    "lint:fix": "bun oxlint . --fix",
+    "lint:type-aware": "bun oxlint . --type-aware --type-check",
+    "lint:type-aware:fix": "bun oxlint . --type-aware --type-check --fix",
+    "lint:css": "stylelint \"**/*.{css,scss}\"",
+    "lint:css:fix": "stylelint \"**/*.{css,scss}\" --fix",
+    "format": "bun oxfmt",
+    "format:check": "bun oxfmt --check",
+    "check": "bun run format:check && bun run lint:type-aware && bun run lint:css"
   },
   "dependencies": {
     "idb": "^8.0.3",
@@ -35,8 +43,12 @@
     "eslint-plugin-react-refresh": "^0.4.24",
     "eslint-plugin-react-x": "^2.3.12",
     "globals": "^16.5.0",
-    "oxlint": "^1.32.0",
-    "oxlint-tsgolint": "^0.8.6",
+    "oxfmt": "^0.20.0",
+    "oxlint": "^1.35.0",
+    "oxlint-tsgolint": "^0.10.0",
+    "stylelint": "^16.26.1",
+    "stylelint-config-recess-order": "^7.4.0",
+    "stylelint-config-standard": "^39.0.1",
     "typescript": "~5.9.3",
     "vite": "^5.1.0"
   }

@@ -43,8 +43,7 @@ export default function useExportPdf({
   }, []);
 
   const exportPdf = useCallback(() => {
-    if (typeof window === "undefined" || typeof document === "undefined")
-      return;
+    if (typeof window === "undefined" || typeof document === "undefined") return;
     if (exportingRef.current) return;
 
     exportingRef.current = true;
@@ -116,9 +115,7 @@ export default function useExportPdf({
       }
 
       try {
-        const outputFn = (
-          doc as unknown as { output?: (type: string) => unknown }
-        ).output;
+        const outputFn = (doc as unknown as { output?: (type: string) => unknown }).output;
         if (typeof outputFn === "function") {
           const blobOrVal = outputFn.call(doc, "blob");
           if (blobOrVal instanceof Blob) {
@@ -134,13 +131,11 @@ export default function useExportPdf({
               URL.revokeObjectURL(url);
             }, 0);
           } else {
-            const saveFn = (doc as unknown as { save?: (name: string) => void })
-              .save;
+            const saveFn = (doc as unknown as { save?: (name: string) => void }).save;
             if (typeof saveFn === "function") saveFn.call(doc, filename);
           }
         } else {
-          const saveFn = (doc as unknown as { save?: (name: string) => void })
-            .save;
+          const saveFn = (doc as unknown as { save?: (name: string) => void }).save;
           if (typeof saveFn === "function") saveFn.call(doc, filename);
         }
       } catch {

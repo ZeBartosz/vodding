@@ -1,11 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import type { VoddingPayload } from "../types";
-import {
-  deleteVod,
-  getVoddingById,
-  getVoddingList,
-  saveVod,
-} from "../repository/VoddingDb";
+import { deleteVod, getVoddingById, getVoddingList, saveVod } from "../repository/VoddingDb";
 
 export const useSession = (setCurrentTitle: (title: string | null) => void) => {
   const [voddingList, setVoddingList] = useState<VoddingPayload[]>([]);
@@ -22,9 +17,7 @@ export const useSession = (setCurrentTitle: (title: string | null) => void) => {
 
     try {
       const raw = await getVoddingList();
-      const data = raw.sort(
-        (a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt),
-      );
+      const data = raw.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
       setVoddingList(data);
       return data;
     } catch (err: unknown) {
@@ -65,24 +58,21 @@ export const useSession = (setCurrentTitle: (title: string | null) => void) => {
     };
   }, [loadAll]);
 
-  const save = useCallback(
-    async (payload: VoddingPayload): Promise<VoddingPayload> => {
-      setLoading(true);
-      setError(null);
-      try {
-        const res = await saveVod(payload);
-        setVodding(res);
-        return res;
-      } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : String(err);
-        setError(msg);
-        throw err;
-      } finally {
-        setLoading(false);
-      }
-    },
-    [],
-  );
+  const save = useCallback(async (payload: VoddingPayload): Promise<VoddingPayload> => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await saveVod(payload);
+      setVodding(res);
+      return res;
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setError(msg);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   const deleteVodById = useCallback(async (id: string) => {
     setLoading(true);
@@ -92,9 +82,7 @@ export const useSession = (setCurrentTitle: (title: string | null) => void) => {
       const maybeVodding = await getVoddingById(id);
 
       if (!maybeVodding?.video.id) {
-        throw new Error(
-          `Cannot delete: vodding record ${id} has no associated video.id`,
-        );
+        throw new Error(`Cannot delete: vodding record ${id} has no associated video.id`);
       }
 
       const videoId = maybeVodding.video.id;

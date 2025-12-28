@@ -3,10 +3,7 @@ import type { KeyboardEvent, RefObject } from "react";
 import type { Note } from "../types";
 import { v4 as uuidv4 } from "uuid";
 
-export const useNotes = (
-  currentTimeRef?: RefObject<number>,
-  initialNotes?: Note[],
-) => {
+export const useNotes = (currentTimeRef?: RefObject<number>, initialNotes?: Note[]) => {
   const [notes, setNotes] = useState<Note[]>(initialNotes ?? []);
   const [inputValue, setInputValue] = useState<string>("");
 
@@ -23,8 +20,7 @@ export const useNotes = (
   const addNote = useCallback(() => {
     if (!inputValue.trim()) return;
 
-    const timestamp =
-      typeof currentTimeRef?.current === "number" ? currentTimeRef.current : 0;
+    const timestamp = typeof currentTimeRef?.current === "number" ? currentTimeRef.current : 0;
 
     const newNote: Note = {
       id: uuidv4(),
@@ -49,9 +45,7 @@ export const useNotes = (
   const editNote = useCallback((id: string, newContent: string) => {
     setNotes((prev) =>
       prev.map((n) =>
-        n.id === id
-          ? { ...n, content: newContent, updatedAt: new Date().toISOString() }
-          : n,
+        n.id === id ? { ...n, content: newContent, updatedAt: new Date().toISOString() } : n,
       ),
     );
   }, []);
@@ -70,8 +64,7 @@ export const useNotes = (
 
         const start = el.selectionStart;
         const end = el.selectionEnd;
-        const newValue =
-          inputValue.slice(0, start) + "\n" + inputValue.slice(end);
+        const newValue = inputValue.slice(0, start) + "\n" + inputValue.slice(end);
         setInputValue(newValue);
 
         requestAnimationFrame(() => {

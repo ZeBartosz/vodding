@@ -7,14 +7,10 @@
   "env": {
     "builtin": true
   },
-  "ignorePatterns": [
-    "dist"
-  ],
+  "ignorePatterns": ["dist"],
   "overrides": [
     {
-      "files": [
-        "**/*.{ts,tsx}"
-      ],
+      "files": ["**/*.{ts,tsx}"],
       "rules": {
         "for-direction": "error",
         "no-async-promise-executor": "error",
@@ -73,24 +69,7 @@
       }
     },
     {
-      "files": [
-        [
-          "**/*.{ts,tsx}",
-          "**/*.ts"
-        ],
-        [
-          "**/*.{ts,tsx}",
-          "**/*.tsx"
-        ],
-        [
-          "**/*.{ts,tsx}",
-          "**/*.mts"
-        ],
-        [
-          "**/*.{ts,tsx}",
-          "**/*.cts"
-        ]
-      ],
+      "files": ["**/*.{ts,tsx}", "**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts"],
       "rules": {
         "no-class-assign": "off",
         "no-const-assign": "off",
@@ -111,9 +90,7 @@
       }
     },
     {
-      "files": [
-        "**/*.{ts,tsx}"
-      ],
+      "files": ["**/*.{ts,tsx}"],
       "rules": {
         "@typescript-eslint/ban-ts-comment": "error",
         "no-array-constructor": "error",
@@ -136,41 +113,18 @@
         "@typescript-eslint/prefer-namespace-keyword": "error",
         "@typescript-eslint/triple-slash-reference": "error"
       },
-      "plugins": [
-        "typescript"
-      ]
+      "plugins": ["typescript"]
     },
     {
-      "files": [
-        "**/*.{ts,tsx}"
-      ],
+      "files": ["**/*.{ts,tsx}"],
       "rules": {
         "react-hooks/rules-of-hooks": "error",
         "react-hooks/exhaustive-deps": "warn"
       },
-      "plugins": [
-        "react"
-      ]
+      "plugins": ["react"]
     },
     {
-      "files": [
-        [
-          "**/*.{ts,tsx}",
-          "**/*.ts"
-        ],
-        [
-          "**/*.{ts,tsx}",
-          "**/*.tsx"
-        ],
-        [
-          "**/*.{ts,tsx}",
-          "**/*.mts"
-        ],
-        [
-          "**/*.{ts,tsx}",
-          "**/*.cts"
-        ]
-      ],
+      "files": ["**/*.{ts,tsx}", "**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts"],
       "rules": {
         "no-class-assign": "off",
         "no-const-assign": "off",
@@ -191,9 +145,7 @@
       }
     },
     {
-      "files": [
-        "**/*.{ts,tsx}"
-      ],
+      "files": ["**/*.{ts,tsx}"],
       "rules": {
         "@typescript-eslint/await-thenable": "error",
         "@typescript-eslint/ban-ts-comment": "error",
@@ -242,29 +194,10 @@
         "@typescript-eslint/triple-slash-reference": "error",
         "@typescript-eslint/unbound-method": "error"
       },
-      "plugins": [
-        "typescript"
-      ]
+      "plugins": ["typescript"]
     },
     {
-      "files": [
-        [
-          "**/*.{ts,tsx}",
-          "**/*.ts"
-        ],
-        [
-          "**/*.{ts,tsx}",
-          "**/*.tsx"
-        ],
-        [
-          "**/*.{ts,tsx}",
-          "**/*.mts"
-        ],
-        [
-          "**/*.{ts,tsx}",
-          "**/*.cts"
-        ]
-      ],
+      "files": ["**/*.{ts,tsx}", "**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts"],
       "rules": {
         "no-class-assign": "off",
         "no-const-assign": "off",
@@ -285,9 +218,7 @@
       }
     },
     {
-      "files": [
-        "**/*.{ts,tsx}"
-      ],
+      "files": ["**/*.{ts,tsx}"],
       "rules": {
         "@typescript-eslint/await-thenable": "error",
         "@typescript-eslint/ban-ts-comment": [
@@ -374,37 +305,15 @@
             "allowRegExp": false
           }
         ],
-        "@typescript-eslint/return-await": [
-          "error",
-          "error-handling-correctness-only"
-        ],
+        "@typescript-eslint/return-await": ["error", "error-handling-correctness-only"],
         "@typescript-eslint/triple-slash-reference": "error",
         "@typescript-eslint/unbound-method": "error",
         "@typescript-eslint/use-unknown-in-catch-callback-variable": "error"
       },
-      "plugins": [
-        "typescript"
-      ]
+      "plugins": ["typescript"]
     },
     {
-      "files": [
-        [
-          "**/*.{ts,tsx}",
-          "**/*.ts"
-        ],
-        [
-          "**/*.{ts,tsx}",
-          "**/*.tsx"
-        ],
-        [
-          "**/*.{ts,tsx}",
-          "**/*.mts"
-        ],
-        [
-          "**/*.{ts,tsx}",
-          "**/*.cts"
-        ]
-      ],
+      "files": ["**/*.{ts,tsx}", "**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts"],
       "rules": {
         "no-class-assign": "off",
         "no-const-assign": "off",
@@ -425,9 +334,7 @@
       }
     },
     {
-      "files": [
-        "**/*.{ts,tsx}"
-      ],
+      "files": ["**/*.{ts,tsx}"],
       "rules": {
         "@typescript-eslint/adjacent-overload-signatures": "error",
         "@typescript-eslint/array-type": "error",
@@ -443,14 +350,10 @@
         "@typescript-eslint/prefer-function-type": "error",
         "@typescript-eslint/prefer-includes": "error"
       },
-      "plugins": [
-        "typescript"
-      ]
+      "plugins": ["typescript"]
     },
     {
-      "files": [
-        "**/*.{ts,tsx}"
-      ],
+      "files": ["**/*.{ts,tsx}"],
       "env": {
         "es2020": true,
         "browser": true
