@@ -317,13 +317,28 @@ const MissingURL: FC<MissingProps> = ({
         {!loading && voddingList.length > 0 && (
           <ul className="vodding-list" aria-label="Saved vodding list">
             {voddingList.map((v) => {
+              const title = v.video.name || v.video.url || "Untitled VOD";
               return (
-                <li key={v.id} className="vodding-item">
+                <li
+                  key={v.id}
+                  className="vodding-item"
+                  onClick={() => {
+                    void handleRestore(v);
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      void handleRestore(v);
+                    }
+                  }}
+                  title={title}
+                  aria-label={`Restore ${title}`}
+                >
                   <div className="vodding-meta">
                     <div className="vodding-row">
-                      <div className="vodding-title">
-                        {v.video.name || v.video.url || "Untitled VOD"}
-                      </div>
+                      <div className="vodding-title">{title}</div>
 
                       <div className="vodding-badges">
                         <span
@@ -346,20 +361,9 @@ const MissingURL: FC<MissingProps> = ({
                   <div className="vodding-actions">
                     <button
                       type="button"
-                      className="restore-btn"
-                      onClick={() => {
-                        void handleRestore(v);
-                      }}
-                      aria-label={`Restore ${v.id}`}
-                      title="Restore VOD and populate notes"
-                    >
-                      ⟲ Restore
-                    </button>
-
-                    <button
-                      type="button"
                       className="delete-btn"
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         void handleDelete(v.id);
                       }}
                       aria-label={`Delete ${v.id}`}

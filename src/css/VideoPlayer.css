@@ -24,38 +24,75 @@
 }
 
 .vodding-list-wrap {
-  padding-top: 1rem;
-  margin-top: 1rem;
-  border-top: 1px solid rgb(255 255 255 / 6%);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 800px;
+  padding: 24px 28px;
+  background: linear-gradient(180deg, rgb(18 12 14 / 75%) 0%, rgb(12 8 10 / 80%) 100%);
+  border: 1px solid rgb(184 46 46 / 12%);
+  border-radius: 16px;
+  box-shadow:
+    0 4px 24px rgb(0 0 0 / 35%),
+    0 0 0 1px rgb(255 255 255 / 2%),
+    inset 0 1px 0 rgb(255 255 255 / 3%);
+}
+
+.vodding-list-wrap h4 {
+  margin: 0 0 16px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #f0f2f4;
+  letter-spacing: 0.3px;
 }
 
 .vodding-list {
   box-sizing: border-box;
-  min-width: 750px;
-  max-height: 240px;
+  max-height: 480px;
   padding: 0;
   margin: 0;
+  overflow-y: auto;
   list-style: none;
+}
+
+.vodding-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.vodding-list::-webkit-scrollbar-track {
+  background: rgb(255 255 255 / 2%);
+  border-radius: 3px;
+}
+
+.vodding-list::-webkit-scrollbar-thumb {
+  background: rgb(184 46 46 / 40%);
+  border-radius: 3px;
 }
 
 .vodding-item {
   display: flex;
-  gap: 12px;
+  gap: 14px;
   align-items: center;
-  padding: 0.6rem;
-  margin-bottom: 8px;
-  background: linear-gradient(180deg, rgb(255 255 255 / 0.6%), transparent);
-  border: 1px solid rgb(255 255 255 / 2%);
-  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  background: linear-gradient(180deg, rgb(255 255 255 / 3%) 0%, rgb(255 255 255 / 1%) 100%);
+  border: 1px solid rgb(255 255 255 / 5%);
+  border-radius: 12px;
   transition:
     background 160ms ease,
-    transform 120ms ease;
+    transform 120ms ease,
+    border-color 160ms ease;
+}
+
+.vodding-item:last-child {
+  margin-bottom: 0;
 }
 
 .vodding-item:hover,
 .vodding-item:focus-within {
-  background: rgb(238 246 255 / 2%);
-  box-shadow: 0 6px 18px rgb(8 10 12 / 35%);
+  background: linear-gradient(180deg, rgb(184 46 46 / 8%) 0%, rgb(184 46 46 / 4%) 100%);
+  border-color: rgb(184 46 46 / 20%);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 30%);
   transform: translateY(-2px);
 }
 
@@ -88,26 +125,26 @@
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   min-width: 0;
 }
 
 .vodding-title {
   display: block;
-  flex: 1 1 auto;
-  min-width: 0;
+  max-width: 320px;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
-  color: var(--text);
+  color: #f0f2f4;
   white-space: nowrap;
 }
 
 .vodding-row {
   display: flex;
-  gap: 12px;
-  align-items: center;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
   min-width: 0;
 }
 
@@ -123,9 +160,8 @@
 .vodding-badges {
   display: flex;
   flex: 0 0 auto;
-  gap: 8px;
+  gap: 10px;
   align-items: center;
-  margin-left: auto;
 }
 
 .notes-badge,
@@ -134,24 +170,25 @@
   display: inline-flex;
   gap: 6px;
   align-items: center;
-  padding: 4px 8px;
-  font-size: 0.72rem;
+  padding: 6px 10px;
+  font-size: 0.75rem;
   white-space: nowrap;
-  border-radius: 999px;
+  border-radius: 8px;
 }
 
 .notes-badge {
   font-weight: 700;
   color: #fff;
-  background: linear-gradient(90deg, var(--accent-red), var(--accent-red-strong));
+  background: linear-gradient(135deg, var(--accent-red), var(--accent-red-strong));
   border: none;
-  box-shadow: 0 6px 18px rgb(208 67 67 / 12%);
+  box-shadow: 0 4px 12px rgb(208 67 67 / 25%);
 }
 
 .time-badge {
-  color: var(--muted);
-  background: rgb(255 255 255 / 3%);
-  border: 1px solid rgb(255 255 255 / 2%);
+  font-weight: 500;
+  color: rgb(255 255 255 / 60%);
+  background: rgb(255 255 255 / 4%);
+  border: 1px solid rgb(255 255 255 / 6%);
 }
 
 .vodding-actions {
@@ -163,15 +200,17 @@
 
 .restore-btn {
   display: inline-flex;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
-  padding: 6px 10px;
+  padding: 8px 14px;
+  font-size: 13px;
   font-weight: 600;
   color: white;
   cursor: pointer;
-  background: linear-gradient(90deg, var(--accent-red), var(--accent-red-strong));
+  background: linear-gradient(135deg, var(--accent-red), var(--accent-red-strong));
   border: none;
   border-radius: 8px;
+  box-shadow: 0 4px 12px rgb(184 46 46 / 25%);
   transition:
     transform 120ms ease,
     box-shadow 120ms ease;
@@ -179,87 +218,151 @@
 
 .restore-btn:hover,
 .restore-btn:focus {
-  box-shadow: 0 10px 26px rgb(184 46 46 / 12%);
+  box-shadow: 0 6px 20px rgb(184 46 46 / 35%);
   transform: translateY(-2px);
 }
 
 .delete-btn {
-  padding: 6px 8px;
-  font-size: 0.98rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  font-size: 1rem;
   line-height: 1;
-  color: #f3bcbc;
+  color: rgb(243 188 188 / 70%);
   cursor: pointer;
-  background: transparent;
-  border: 1px solid rgb(255 255 255 / 4%);
+  background: rgb(255 255 255 / 3%);
+  border: 1px solid rgb(255 255 255 / 5%);
   border-radius: 8px;
+  transition:
+    background 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease;
 }
 
 .delete-btn:hover,
 .delete-btn:focus {
-  background: rgb(243 188 188 / 6%);
-  border-color: rgb(243 188 188 / 12%);
+  color: #f3bcbc;
+  background: rgb(243 188 188 / 10%);
+  border-color: rgb(243 188 188 / 20%);
 }
 
 .muted {
   font-size: 0.9rem;
-  color: var(--muted);
+  color: rgb(255 255 255 / 50%);
+}
+
+.vodding-list-wrap .muted {
+  padding: 20px;
+  text-align: center;
 }
 
 .missing-video {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  gap: 24px;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   width: 100%;
   height: 100%;
+  padding: 40px 20px;
+  overflow-y: auto;
   color: #fff;
-  background: #000;
+  background: transparent;
 }
 
 .missing-video form {
-  padding: 18px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 560px;
+  padding: 28px 32px;
   color: var(--text);
-  background: rgb(15 20 22 / 60%);
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  background: linear-gradient(180deg, rgb(20 14 16 / 85%) 0%, rgb(15 10 12 / 90%) 100%);
+  border: 1px solid rgb(184 46 46 / 15%);
+  border-radius: 16px;
+  box-shadow:
+    0 4px 24px rgb(0 0 0 / 40%),
+    0 0 0 1px rgb(255 255 255 / 3%),
+    inset 0 1px 0 rgb(255 255 255 / 4%);
 }
 
 .missing-video label {
   display: block;
-  margin-bottom: 8px;
-  color: var(--text);
+  margin-bottom: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #f0f2f4;
+  letter-spacing: 0.2px;
+}
+
+.missing-video form > div {
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
 .missing-video .missing-row {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   align-items: center;
 }
 
 .missing-video .missing-input,
 .missing-video input {
   box-sizing: border-box;
-  width: 420px;
-  padding: 8px;
+  flex: 1;
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 14px;
   color: #eaeef0;
-  background: #071214;
-  border: 1px solid rgb(255 255 255 / 4%);
-  border-radius: 6px;
+  background: rgb(8 12 14 / 80%);
+  border: 1px solid rgb(255 255 255 / 6%);
+  border-radius: 10px;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.missing-video .missing-input:focus,
+.missing-video input:focus {
+  border-color: rgb(184 46 46 / 50%);
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(184 46 46 / 15%);
+}
+
+.missing-video .missing-input::placeholder,
+.missing-video input::placeholder {
+  color: rgb(255 255 255 / 30%);
 }
 
 .missing-video .btn-primary,
 .missing-video button[type="submit"] {
-  padding: 8px 12px;
+  flex-shrink: 0;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 600;
   color: white;
   cursor: pointer;
-  background: linear-gradient(90deg, var(--accent-red), var(--accent-red-strong));
+  background: linear-gradient(135deg, var(--accent-red), var(--accent-red-strong));
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgb(184 46 46 / 30%);
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.missing-video .btn-primary:hover,
+.missing-video button[type="submit"]:hover {
+  box-shadow: 0 6px 20px rgb(184 46 46 / 40%);
+  transform: translateY(-1px);
 }
 
 .form-error {
-  margin-top: 10px;
+  margin-top: 12px;
   font-size: 13px;
   color: #f3bcbc;
 }
