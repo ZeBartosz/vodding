@@ -56,12 +56,9 @@ function App() {
     loadAll,
     vodding,
   } = useSession(setCurrentTitle);
-
-  // Use notes from URL if in read-only mode, otherwise use session notes
   const initialNotesSource =
     isFromTimestampUrl && urlNotes.length > 0 ? urlNotes : vodding?.notes;
   const { notes, setNotes } = useNotes(currentTimeRef, initialNotesSource);
-
   const { lastSavedAt, onRestoring, prevNotesRef } = useNotesAutosave({
     notes,
     vodding,
@@ -69,20 +66,19 @@ function App() {
     save,
     isFromTimestampUrl,
   });
-
-  // Sync video and notes to URL params
   const { copyShareableUrl } = useUrlSync({
     video,
     notes,
     isFromTimestampUrl,
   });
+  const [saving, setSaving] = useState<boolean>(false);
 
-  // Save shared (URL) notes + video into the client's session/store.
   const handleSaveShared = useCallback(async (): Promise<boolean> => {
     try {
-      if (!urlNotes || urlNotes.length === 0) return false;
+      if (saving) return false;
+      if (urlNotes.length === 0) return false;
+      setSaving(true);
 
-      // Prefer current video object, fallback to vodding.video
       const currentVideo = video ?? vodding?.video;
       if (!currentVideo) return false;
 
@@ -106,17 +102,20 @@ function App() {
         };
       }
 
-      await save(payload);
+      const savedPayload = await save(payload);
 
-      // Reflect the saved session in UI state
-      setNotes(payload.notes ?? []);
-      setVideo(payload.video ?? currentVideo);
-      setIsFromTimestampUrl(false);
-      clearUrlNotes();
+      if (savedPayload.id) {
+        setNotes(payload.notes);
+        setVideo(payload.video);
+        setIsFromTimestampUrl(false);
+        clearUrlNotes();
+      }
 
       return true;
     } catch {
       return false;
+    } finally {
+      setSaving(false);
     }
   }, [
     urlNotes,
@@ -127,6 +126,7 @@ function App() {
     setVideo,
     clearUrlNotes,
     setIsFromTimestampUrl,
+    saving,
   ]);
 
   const exportOptions = useMemo(
@@ -233,9 +233,7 @@ function App() {
         handleNewSession={handleNewSession}
         currentTitle={currentTitle}
         onCopyShareableUrl={copyShareableUrl}
-        onSaveShared={
-          urlNotes && urlNotes.length > 0 ? handleSaveShared : undefined
-        }
+        onSaveShared={urlNotes.length > 0 ? handleSaveShared : undefined}
       />
 
       <div className="main">
