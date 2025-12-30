@@ -1,29 +1,21 @@
 import type { Note } from "../types";
 
-/**
- * Compressed note format for URL params
- * We only store timestamp and content to keep URLs shorter
- */
 interface CompressedNote {
-  t: number; // timestamp
-  c: string; // content
+  t: number;
+  c: string;
 }
 
-/**
- * Convert a string to base64 (handles Unicode properly)
- */
 function stringToBase64(str: string): string {
   const bytes = new TextEncoder().encode(str);
   let binary = "";
-  for (let i = 0; i < bytes.length; i++) {
-    binary += String.fromCharCode(bytes[i]);
+
+  for (const byte of bytes) {
+    binary += String.fromCharCode(byte);
   }
+
   return btoa(binary);
 }
 
-/**
- * Convert base64 to string (handles Unicode properly)
- */
 function base64ToString(base64: string): string {
   const binary = atob(base64);
   const bytes = new Uint8Array(binary.length);
@@ -33,38 +25,28 @@ function base64ToString(base64: string): string {
   return new TextDecoder().decode(bytes);
 }
 
-/**
- * Encode notes array to a URL-safe base64 string
- */
 export function encodeNotesForUrl(notes: Note[]): string {
   if (!notes.length) return "";
 
   const compressed: CompressedNote[] = notes.map((note) => ({
-    t: Math.round(note.timestamp),
+    t: Math.floor(note.timestamp),
     c: note.content,
   }));
 
   try {
     const json = JSON.stringify(compressed);
-    // Use base64url encoding (URL-safe base64)
     const base64 = stringToBase64(json);
-    // Make it URL-safe by replacing + with -, / with _, and removing =
     return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
   } catch {
     return "";
   }
 }
 
-/**
- * Decode notes from URL-safe base64 string
- */
 export function decodeNotesFromUrl(encoded: string): Note[] {
   if (!encoded) return [];
 
   try {
-    // Restore standard base64 from URL-safe format
     let base64 = encoded.replace(/-/g, "+").replace(/_/g, "/");
-    // Add back padding if needed
     while (base64.length % 4) {
       base64 += "=";
     }
@@ -88,9 +70,6 @@ export function decodeNotesFromUrl(encoded: string): Note[] {
   }
 }
 
-/**
- * Build a shareable URL with video and notes encoded in hash params
- */
 export function buildShareableUrl(videoUrl: string, notes: Note[]): string {
   const { origin, pathname } = window.location;
   const params = new URLSearchParams();
@@ -107,9 +86,6 @@ export function buildShareableUrl(videoUrl: string, notes: Note[]): string {
   return `${origin}${pathname}#${params.toString()}`;
 }
 
-/**
- * Parse hash params from the current URL
- */
 export function parseHashParams(): {
   videoUrl: string | null;
   timestamp: number | null;
@@ -142,12 +118,8 @@ export function parseHashParams(): {
   }
 }
 
-/**
- * Update URL hash with current video and notes without triggering navigation
- */
 export function updateUrlHash(videoUrl: string | null, notes: Note[]): void {
   if (!videoUrl) {
-    // Clear hash if no video
     if (window.location.hash) {
       window.history.replaceState(null, "", window.location.pathname);
     }
@@ -167,7 +139,6 @@ export function updateUrlHash(videoUrl: string | null, notes: Note[]): void {
   const newHash = `#${params.toString()}`;
   const currentHash = window.location.hash;
 
-  // Only update if changed to avoid unnecessary history entries
   if (currentHash !== newHash) {
     window.history.replaceState(null, "", `${window.location.pathname}${newHash}`);
   }
