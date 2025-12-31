@@ -12,7 +12,7 @@ import { parseHashParams } from "../utils/urlParams";
 
 export const useLink = (
   currentTitle: string | null,
-  setIsFromTimestampUrl: Dispatch<SetStateAction<boolean>>,
+  setSharedFromUrl: Dispatch<SetStateAction<boolean>>,
 ) => {
   const [video, setVideo] = useState<Video | null>(null);
   const [inputValue, setInputValue] = useState<string>("");
@@ -176,7 +176,7 @@ export const useLink = (
       const hasTimestamp = timestamp !== null && !Number.isNaN(timestamp);
 
       // Set read-only mode if we have notes or timestamp from URL
-      setIsFromTimestampUrl(shared);
+      setSharedFromUrl(shared);
 
       // Store notes from URL
       if (hasUrlNotes) {
@@ -199,7 +199,7 @@ export const useLink = (
     } catch {
       //
     }
-  }, [loadVideoFromUrl, handleNoteJump, setIsFromTimestampUrl]);
+  }, [loadVideoFromUrl, handleNoteJump, setSharedFromUrl]);
 
   const clearUrlNotes = useCallback(() => {
     setUrlNotes([]);

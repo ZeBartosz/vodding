@@ -5,7 +5,7 @@ import { updateUrlHash, encodeNotesForUrl, parseHashParams } from "../utils/urlP
 interface UseUrlSyncOptions {
   video: Video | null;
   notes: Note[];
-  isFromTimestampUrl: boolean;
+  sharedFromUrl: boolean;
   onLoadFromUrl?: (videoUrl: string, notes: Note[]) => void;
   debounceMs?: number;
 }
@@ -19,7 +19,7 @@ interface UseUrlSyncReturn {
 export function useUrlSync({
   video,
   notes,
-  isFromTimestampUrl,
+  sharedFromUrl,
   debounceMs = 500,
 }: UseUrlSyncOptions): UseUrlSyncReturn {
   const updateTimeoutRef = useRef<number | null>(null);
@@ -31,16 +31,16 @@ export function useUrlSync({
   };
 
   const syncToUrl = useCallback(() => {
-    if (isFromTimestampUrl) {
+    if (sharedFromUrl) {
       return;
     }
 
     const videoUrl = video?.url ?? null;
     updateUrlHash(videoUrl, notes);
-  }, [video?.url, notes, isFromTimestampUrl]);
+  }, [video?.url, notes, sharedFromUrl]);
 
   useEffect(() => {
-    if (isFromTimestampUrl) {
+    if (sharedFromUrl) {
       return;
     }
 
@@ -78,7 +78,7 @@ export function useUrlSync({
         updateTimeoutRef.current = null;
       }
     };
-  }, [video?.url, notes, isFromTimestampUrl, debounceMs, syncToUrl]);
+  }, [video?.url, notes, sharedFromUrl, debounceMs, syncToUrl]);
 
   useEffect(() => {
     return () => {

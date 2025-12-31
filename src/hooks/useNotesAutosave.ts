@@ -8,7 +8,7 @@ interface UseNotesAutosaveOpts {
   video?: Maybe<Video>;
   save: (payload: VoddingPayload) => Promise<unknown>;
   skipAutosave?: boolean;
-  isFromTimestampUrl?: boolean;
+  sharedFromUrl?: boolean;
   debounceMs?: number;
 }
 
@@ -18,7 +18,7 @@ export default function useNotesAutosave({
   video,
   save,
   skipAutosave = false,
-  isFromTimestampUrl = false,
+  sharedFromUrl = false,
   debounceMs = 700,
 }: UseNotesAutosaveOpts) {
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
@@ -78,7 +78,7 @@ export default function useNotesAutosave({
       prevNotesRef.current = notes;
       return;
     }
-    if (isFromTimestampUrl) {
+    if (sharedFromUrl) {
       prevNotesRef.current = notes;
       return;
     }
@@ -129,7 +129,7 @@ export default function useNotesAutosave({
         autosaveTimer.current = null;
       }
     };
-  }, [notes, doSave, video, vodding, skipAutosave, isFromTimestampUrl, debounceMs]);
+  }, [notes, doSave, video, vodding, skipAutosave, sharedFromUrl, debounceMs]);
 
   useEffect(() => {
     return () => {

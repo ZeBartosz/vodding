@@ -24,7 +24,7 @@ const VideoPlayer = lazy(() => import("./components/VideoPlayer"));
 const ResultBox = lazy(() => import("./components/Notes"));
 
 function App() {
-  const [isFromTimestampUrl, setIsFromTimestampUrl] = useState<boolean>(false);
+  const [sharedFromUrl, setSharedFromUrl] = useState<boolean>(false);
   const {
     handleProgress,
     currentTimeRef,
@@ -46,7 +46,7 @@ function App() {
     handleHash,
     urlNotes,
     clearUrlNotes,
-  } = useLink(currentTitle, setIsFromTimestampUrl);
+  } = useLink(currentTitle, setSharedFromUrl);
   const {
     save,
     voddingList,
@@ -58,19 +58,19 @@ function App() {
     setVodding,
   } = useSession(setCurrentTitle);
   const initialNotesSource =
-    isFromTimestampUrl && urlNotes.length > 0 ? urlNotes : vodding?.notes;
+    sharedFromUrl && urlNotes.length > 0 ? urlNotes : vodding?.notes;
   const { notes, setNotes } = useNotes(currentTimeRef, initialNotesSource);
   const { lastSavedAt, onRestoring, prevNotesRef } = useNotesAutosave({
     notes,
     vodding,
     video,
     save,
-    isFromTimestampUrl,
+    sharedFromUrl,
   });
   const { copyShareableUrl } = useUrlSync({
     video,
     notes,
-    isFromTimestampUrl,
+    sharedFromUrl,
   });
   const [saving, setSaving] = useState<boolean>(false);
 
@@ -108,7 +108,7 @@ function App() {
       if (savedPayload.id) {
         setNotes(payload.notes);
         setVideo(payload.video);
-        setIsFromTimestampUrl(false);
+        setSharedFromUrl(false);
         clearUrlNotes();
         return true;
       }
@@ -127,7 +127,7 @@ function App() {
     setNotes,
     setVideo,
     clearUrlNotes,
-    setIsFromTimestampUrl,
+    setSharedFromUrl,
     saving,
   ]);
 
@@ -158,7 +158,7 @@ function App() {
       setVodding(null);
       handleSetInputValue("");
       if (prevNotesRef.current) prevNotesRef.current = [];
-      setIsFromTimestampUrl(false);
+      setSharedFromUrl(false);
       clearUrlNotes();
 
       const cleanUrlParams = () => {
@@ -237,7 +237,7 @@ function App() {
         handleNewSession={handleNewSession}
         currentTitle={currentTitle}
         onCopyShareableUrl={copyShareableUrl}
-        onSaveShared={isFromTimestampUrl ? handleSaveShared : undefined}
+        onSaveShared={sharedFromUrl ? handleSaveShared : undefined}
       />
 
       <div className="main">
@@ -268,7 +268,7 @@ function App() {
               <div className="header-left">
                 <div className="h1">Session Notes</div>
                 <div className="small">
-                  {isFromTimestampUrl
+                  {sharedFromUrl
                     ? "Read-only session — notes are disabled"
                     : "Add your observations"}
                 </div>
@@ -285,7 +285,7 @@ function App() {
                   handleResetFocusAndScale={handleResetFocusAndScale}
                   initialNotes={notes}
                   onNotesChange={setNotes}
-                  readOnly={isFromTimestampUrl}
+                  readOnly={sharedFromUrl}
                 />
               </Suspense>
             </div>
