@@ -77,7 +77,7 @@ function App() {
   const handleSaveShared = useCallback(async (): Promise<boolean> => {
     try {
       if (saving) return false;
-      if (urlNotes.length === 0) return false;
+      if (!sharedFromUrl) return false;
       setSaving(true);
 
       const currentVideo = video ?? vodding?.video;
@@ -129,6 +129,7 @@ function App() {
     clearUrlNotes,
     setSharedFromUrl,
     saving,
+    sharedFromUrl,
   ]);
 
   const exportOptions = useMemo(

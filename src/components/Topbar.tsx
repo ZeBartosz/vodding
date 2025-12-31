@@ -77,20 +77,20 @@ const Topbar = ({
     try {
       const success = await onSaveShared();
       setSaveStatus(success ? "saved" : "error");
-
+      console.log("success", success);
+      console.log(onSaveShared);
       saveTimeoutRef.current = setTimeout(() => {
         setSaveStatus("idle");
         saveTimeoutRef.current = null;
       }, 2000);
 
-      return true;
+      return success;
     } catch {
       setSaveStatus("error");
       saveTimeoutRef.current = setTimeout(() => {
         setSaveStatus("idle");
         saveTimeoutRef.current = null;
       }, 2000);
-      return false;
     }
   }, [onSaveShared]);
 
