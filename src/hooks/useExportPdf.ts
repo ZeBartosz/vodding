@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Note } from "../types";
 import { jsPDF } from "jspdf";
-import { buildShareableUrl } from "../utils/urlParams";
 
 interface UseExportPdfParams {
   title?: string | null;

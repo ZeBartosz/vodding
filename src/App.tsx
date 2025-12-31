@@ -1,11 +1,4 @@
-import {
-  lazy,
-  Suspense,
-  useCallback,
-  useMemo,
-  useState,
-  useEffect,
-} from "react";
+import { lazy, Suspense, useCallback, useMemo, useState, useEffect } from "react";
 import "./css/App.css";
 import "./css/Notes.css";
 import "./css/VideoPlayer.css";
@@ -25,13 +18,8 @@ const ResultBox = lazy(() => import("./components/Notes"));
 
 function App() {
   const [sharedFromUrl, setSharedFromUrl] = useState<boolean>(false);
-  const {
-    handleProgress,
-    currentTimeRef,
-    currentTitle,
-    handleTitleChange,
-    setCurrentTitle,
-  } = useVideoMetaData();
+  const { handleProgress, currentTimeRef, currentTitle, handleTitleChange, setCurrentTitle } =
+    useVideoMetaData();
   const {
     playerRef,
     video,
@@ -47,18 +35,9 @@ function App() {
     urlNotes,
     clearUrlNotes,
   } = useLink(currentTitle, setSharedFromUrl);
-  const {
-    save,
-    voddingList,
-    deleteVodById,
-    loadWithId,
-    loading,
-    loadAll,
-    vodding,
-    setVodding,
-  } = useSession(setCurrentTitle);
-  const initialNotesSource =
-    sharedFromUrl && urlNotes.length > 0 ? urlNotes : vodding?.notes;
+  const { save, voddingList, deleteVodById, loadWithId, loading, loadAll, vodding, setVodding } =
+    useSession(setCurrentTitle);
+  const initialNotesSource = sharedFromUrl && urlNotes.length > 0 ? urlNotes : vodding?.notes;
   const { notes, setNotes } = useNotes(currentTimeRef, initialNotesSource);
   const { lastSavedAt, onRestoring, prevNotesRef } = useNotesAutosave({
     notes,
@@ -164,15 +143,11 @@ function App() {
 
       const cleanUrlParams = () => {
         const { origin, pathname, search, hash } = window.location;
-        const searchParams = new URLSearchParams(
-          search.startsWith("?") ? search.slice(1) : "",
-        );
+        const searchParams = new URLSearchParams(search.startsWith("?") ? search.slice(1) : "");
         searchParams.delete("v");
         searchParams.delete("t");
         searchParams.delete("n");
-        const newSearch = searchParams.toString()
-          ? `?${searchParams.toString()}`
-          : "";
+        const newSearch = searchParams.toString() ? `?${searchParams.toString()}` : "";
 
         let newHash = "";
         if (hash && hash.length > 1) {
@@ -196,10 +171,7 @@ function App() {
 
       try {
         const newUrl = cleanUrlParams();
-        if (
-          typeof window !== "undefined" &&
-          typeof window.history.replaceState === "function"
-        ) {
+        if (typeof window !== "undefined" && typeof window.history.replaceState === "function") {
           window.history.replaceState(null, "", newUrl);
         } else if (typeof window !== "undefined") {
           try {
@@ -218,15 +190,7 @@ function App() {
         //
       }
     })();
-  }, [
-    handleSetInputValue,
-    loadAll,
-    setVideo,
-    setNotes,
-    prevNotesRef,
-    clearUrlNotes,
-    setVodding,
-  ]);
+  }, [handleSetInputValue, loadAll, setVideo, setNotes, prevNotesRef, clearUrlNotes, setVodding]);
 
   return (
     <div className="container">

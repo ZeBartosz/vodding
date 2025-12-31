@@ -24,12 +24,8 @@ const Topbar = ({
   onCopyShareableUrl,
   onSaveShared,
 }: TopbarProps) => {
-  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">(
-    "idle",
-  );
-  const [saveStatus, setSaveStatus] = useState<"idle" | "saved" | "error">(
-    "idle",
-  );
+  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">("idle");
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saved" | "error">("idle");
 
   const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -135,9 +131,7 @@ const Topbar = ({
         </div>
         <div className="brand-title">
           <div className="title">
-            {currentTitle
-              ? (video?.name ?? <Skeleton height={16} />)
-              : "VOD Review Session"}
+            {currentTitle ? (video?.name ?? <Skeleton height={16} />) : "VOD Review Session"}
           </div>
           <div className="subtitle">Competitive Analysis</div>
         </div>
