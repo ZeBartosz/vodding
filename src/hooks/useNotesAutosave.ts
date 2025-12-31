@@ -8,8 +8,7 @@ interface UseNotesAutosaveOpts {
   video?: Maybe<Video>;
   save: (payload: VoddingPayload) => Promise<unknown>;
   skipAutosave?: boolean;
-  sharedFromUrl?: boolean;
-  debounceMs?: number;
+  sharedFromUrl: boolean;
 }
 
 export default function useNotesAutosave({
@@ -18,8 +17,7 @@ export default function useNotesAutosave({
   video,
   save,
   skipAutosave = false,
-  sharedFromUrl = false,
-  debounceMs = 700,
+  sharedFromUrl,
 }: UseNotesAutosaveOpts) {
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
 
@@ -28,6 +26,7 @@ export default function useNotesAutosave({
   const isRestoringRef = useRef<boolean>(false);
   const restoreClearTimer = useRef<number | null>(null);
   const draftMetaRef = useRef<{ id: string; createdAt: string } | null>(null);
+  const prevSharedFromUrlRef = useRef(sharedFromUrl);
 
   const doSave = useCallback(async () => {
     try {
@@ -96,6 +95,7 @@ export default function useNotesAutosave({
     const currLen = notes.length;
 
     const deleted = currLen < prevLen;
+    const added = currLen > prevLen;
     const edited =
       currLen === prevLen &&
       prevLen > 0 &&
@@ -109,19 +109,14 @@ export default function useNotesAutosave({
       autosaveTimer.current = null;
     }
 
-    if (edited || deleted) {
+    if (deleted || edited || added) {
       autosaveTimer.current = window.setTimeout(() => {
         void doSave();
       }, 0) as unknown as number;
       prevNotesRef.current = notes;
+      console.log("doSave");
       return;
     }
-
-    autosaveTimer.current = window.setTimeout(async () => {
-      await doSave();
-      prevNotesRef.current = notes;
-      autosaveTimer.current = null;
-    }, debounceMs) as unknown as number;
 
     return () => {
       if (autosaveTimer.current) {
@@ -129,7 +124,34 @@ export default function useNotesAutosave({
         autosaveTimer.current = null;
       }
     };
-  }, [notes, doSave, video, vodding, skipAutosave, sharedFromUrl, debounceMs]);
+  }, [notes, video, vodding, skipAutosave, doSave, sharedFromUrl]);
+
+  useEffect(() => {
+    const wasShared = prevSharedFromUrlRef.current;
+    prevSharedFromUrlRef.current = sharedFromUrl;
+
+    // fire once when we leave "shared" mode
+    if (
+      wasShared &&
+      !sharedFromUrl &&
+      !skipAutosave &&
+      !isRestoringRef.current &&
+      (video || vodding)
+    ) {
+      if (autosaveTimer.current) {
+        window.clearTimeout(autosaveTimer.current);
+        autosaveTimer.current = null;
+      }
+
+      autosaveTimer.current = window.setTimeout(() => {
+        void doSave();
+      }, 0) as unknown as number;
+
+      // keep refs in sync so your "change detection" doesn't think
+      // something changed just because we switched modes
+      prevNotesRef.current = notes;
+    }
+  }, [sharedFromUrl, skipAutosave, video, vodding, doSave, notes]);
 
   useEffect(() => {
     return () => {
