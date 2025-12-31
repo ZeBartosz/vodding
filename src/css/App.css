@@ -1,3 +1,4 @@
+/* CSS custom properties for theming */
 :root {
     --bg-dark: #0b1013;
     --panel-dark: #0f1619;
@@ -9,23 +10,24 @@
     --text: #dfe6e8;
 }
 
+/* Base reset and font styles for html, body, and React root */
 html,
 body,
 #root {
-    box-sizing: border-box;
-    width: 100%;
-    height: 100%;
-    padding: 0;
-    margin: 0;
-    font-family:
-        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
-        Arial;
-    color: var(--text);
-    background: var(--bg-dark);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--text);
+  background: var(--bg-dark);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* Main app container with dark gradient background */
 .container {
     box-sizing: border-box;
     display: flex;
@@ -40,11 +42,13 @@ body,
     );
 }
 
+/* Prevent flex children from overflowing */
 .container > * {
     min-width: 0;
     min-height: 0;
 }
 
+/* Top navigation bar */
 .topbar {
     z-index: 30;
     box-sizing: border-box;
@@ -67,6 +71,7 @@ body,
         inset 0 1px 0 rgb(255 255 255 / 4%);
 }
 
+/* Brand section in topbar containing logo and title */
 .topbar .brand {
     display: flex;
     flex: 0 1 auto;
@@ -75,6 +80,7 @@ body,
     min-width: 0;
 }
 
+/* App logo badge with gradient background */
 .brand-badge {
     display: flex;
     flex: 0 0 auto;
@@ -98,15 +104,18 @@ body,
         box-shadow 150ms ease;
 }
 
+/* Brand badge hover effect with lift animation */
 .brand-badge:hover {
     box-shadow: 0 6px 20px rgb(184 46 46 / 40%);
     transform: translateY(-2px);
 }
 
+/* Brand badge active/pressed state */
 .brand-badge:active {
     transform: translateY(0);
 }
 
+/* Container for brand title and subtitle text */
 .brand-title {
     display: flex;
     flex-direction: column;
@@ -116,6 +125,7 @@ body,
     line-height: 1.05;
 }
 
+/* Main brand title text */
 .brand-title .title {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -126,6 +136,7 @@ body,
     white-space: nowrap;
 }
 
+/* Brand subtitle/tagline text */
 .brand-title .subtitle {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -134,6 +145,13 @@ body,
     white-space: nowrap;
 }
 
+/* Generic small/muted text utility class */
+.small {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Right section of topbar containing actions and status */
 .topbar-right {
     display: flex;
     flex: 0 0 auto;
@@ -142,11 +160,13 @@ body,
     margin-left: auto;
 }
 
+/* Small text variant within topbar right section */
 .topbar-right .small {
     font-size: 13px;
     color: var(--muted);
 }
 
+/* Auto-save status indicator container */
 .topbar-saved {
     display: flex;
     gap: 8px;
@@ -154,12 +174,13 @@ body,
     padding: 6px 12px;
     font-size: 12px;
     font-weight: 500;
-    color: rgb(255 255 255 / 60%);
+    color: rgb(255 255 255 / 60%);  
     background: rgb(255 255 255 / 4%);
     border: 1px solid rgb(255 255 255 / 6%);
     border-radius: 8px;
 }
 
+/* Green pulsing dot indicating saved status */
 .saved-indicator {
     width: 8px;
     height: 8px;
@@ -169,25 +190,28 @@ body,
     animation: pulse-glow 2s ease-in-out infinite;
 }
 
+/* Pulsing glow animation for saved indicator */
 @keyframes pulse-glow {
-    0%,
-    100% {
-        opacity: 1;
-        box-shadow: 0 0 8px rgb(34 197 94 / 50%);
-    }
+  0%,
+  100% {
+    box-shadow: 0 0 8px rgb(34 197 94 / 50%);
+    opacity: 1;
+  }
 
-    50% {
-        opacity: 0.7;
-        box-shadow: 0 0 12px rgb(34 197 94 / 70%);
-    }
+  50% {
+    box-shadow: 0 0 12px rgb(34 197 94 / 70%);
+    opacity: 0.7;
+  }
 }
 
+/* Container for action buttons in topbar */
 .topbar-actions {
     display: flex;
     gap: 8px;
     align-items: center;
 }
 
+/* Standard button style for topbar actions */
 .topbar-btn {
     display: inline-flex;
     gap: 8px;
@@ -208,6 +232,7 @@ body,
         box-shadow 150ms ease;
 }
 
+/* Topbar button hover state with lift effect */
 .topbar-btn:hover {
     color: rgb(255 255 255 / 90%);
     background: rgb(255 255 255 / 8%);
@@ -215,18 +240,21 @@ body,
     transform: translateY(-1px);
 }
 
+/* Topbar button disabled state */
 .topbar-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
+  cursor: not-allowed;
+  opacity: 0.5;
+  transform: none;
 }
 
+/* SVG icon sizing within topbar buttons */
 .topbar-btn svg {
-    width: 16px;
-    height: 16px;
-    flex-shrink: 0;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
 }
 
+/* Primary/accent colored topbar button variant */
 .topbar-btn-primary {
     font-weight: 600;
     color: white;
@@ -239,15 +267,18 @@ body,
     box-shadow: 0 4px 12px rgb(184 46 46 / 25%);
 }
 
+/* Primary topbar button hover state */
 .topbar-btn-primary:hover {
     box-shadow: 0 6px 20px rgb(184 46 46 / 35%);
     transform: translateY(-2px);
 }
 
+/* Loading spinner animation class */
 .topbar-spinner {
     animation: spin 1s linear infinite;
 }
 
+/* 360 degree rotation animation for spinners */
 @keyframes spin {
     from {
         transform: rotate(0deg);
@@ -271,6 +302,7 @@ body,
     transform: translateY(-2px);
 }
 
+/* Note count badge/pill with gradient background */
 .notes-pill {
     z-index: 20;
     box-sizing: border-box;
@@ -294,6 +326,7 @@ body,
     box-shadow: 0 6px 20px rgb(208 67 67 / 16%);
 }
 
+/* Main content area containing video and sidebar */
 .main {
     display: flex;
     flex: 1;
@@ -302,6 +335,7 @@ body,
     overflow: hidden;
 }
 
+/* Left column containing the video player */
 .video-column {
     box-sizing: border-box;
     display: flex;
@@ -312,6 +346,7 @@ body,
     padding: 12px;
 }
 
+/* Video player wrapper with aspect ratio container */
 .video-player-wrap {
     position: relative;
     width: 100%;
@@ -324,6 +359,7 @@ body,
         0 6px 22px rgb(184 46 46 / 6%);
 }
 
+/* Red accent bar at bottom of video player */
 .video-player-wrap > div[aria-hidden] {
     position: absolute;
     right: 0;
@@ -340,6 +376,7 @@ body,
     box-shadow: 0 2px 10px rgb(208 67 67 / 12%);
 }
 
+/* Right sidebar panel for notes */
 .sidebar {
     box-sizing: border-box;
     display: flex;
@@ -363,6 +400,7 @@ body,
         inset 0 1px 0 rgb(255 255 255 / 3%);
 }
 
+/* Sidebar header with title and actions */
 .sidebar .sidebar-header {
     display: flex;
     gap: 10px;
@@ -372,12 +410,14 @@ body,
     border-bottom: 1px solid rgb(255 255 255 / 5%);
 }
 
+/* Left section of sidebar header */
 .sidebar .header-left {
     display: flex;
     flex-direction: column;
     gap: 4px;
 }
 
+/* Main heading in sidebar header */
 .sidebar .header-left .h1 {
     font-size: 16px;
     font-weight: 700;
@@ -385,15 +425,18 @@ body,
     letter-spacing: 0.2px;
 }
 
+/* Small text in sidebar header */
 .sidebar .header-left .small {
     font-size: 12px;
     color: rgb(255 255 255 / 50%);
 }
 
+/* Hidden separator dot in sidebar */
 .sidebar .dot {
     display: none;
 }
 
+/* Container for notes input and list */
 .input-container {
     position: relative;
     display: flex;
@@ -406,6 +449,7 @@ body,
     border-radius: 12px;
 }
 
+/* Overlay shown when notes are read-only */
 .readonly-overlay {
     position: absolute;
     inset: 0;
@@ -423,6 +467,7 @@ body,
     backdrop-filter: blur(8px);
 }
 
+/* Title text in readonly overlay */
 .readonly-overlay .readonly-title {
     margin-bottom: 8px;
     font-size: 15px;
@@ -430,6 +475,7 @@ body,
     color: #f0f2f4;
 }
 
+/* Description text in readonly overlay */
 .readonly-overlay .readonly-desc {
     max-width: 320px;
     font-size: 13px;
@@ -437,12 +483,7 @@ body,
     color: rgb(255 255 255 / 60%);
 }
 
-/* small visual tweak so the overlay text sits above the red border area */
-.input-container .result-list-top {
-    position: relative;
-    z-index: 1;
-}
-
+/* Root container for notes list */
 .result-list-root {
     display: flex;
     flex: 1 1 auto;
@@ -451,6 +492,7 @@ body,
     min-height: 0;
 }
 
+/* Top bar of notes list with search and count */
 .result-list-top {
     box-sizing: border-box;
     display: flex;
@@ -467,19 +509,13 @@ body,
     border-radius: 12px;
 }
 
-.result-list-top .notes-search {
-    flex: 1 1 auto;
-    min-width: 0;
-    margin-right: 0;
+/* Z-index tweak for result list top when inside input container */
+.input-container .result-list-top {
+  position: relative;
+  z-index: 1;
 }
 
-.result-list-top .notes-pill {
-    flex: 0 0 auto;
-    min-width: 64px;
-    margin-left: 0;
-    text-align: center;
-}
-
+/* Search input field for filtering notes */
 .notes-search,
 .result-list-top input[aria-label="Search notes"] {
     box-sizing: border-box;
@@ -496,18 +532,36 @@ body,
         box-shadow 150ms ease;
 }
 
-.notes-search:focus,
-.result-list-top input[aria-label="Search notes"]:focus {
-    border-color: rgb(184 46 46 / 50%);
-    outline: none;
-    box-shadow: 0 0 0 3px rgb(184 46 46 / 15%);
+/* Search input within result list top bar */
+.result-list-top .notes-search {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-right: 0;
 }
 
+/* Notes count pill within result list top bar */
+.result-list-top .notes-pill {
+  flex: 0 0 auto;
+  min-width: 64px;
+  margin-left: 0;
+  text-align: center;
+}
+
+/* Focus state for notes search input */
+.notes-search:focus,
+.result-list-top input[aria-label="Search notes"]:focus {
+  outline: none;
+  border-color: rgb(184 46 46 / 50%);
+  box-shadow: 0 0 0 3px rgb(184 46 46 / 15%);
+}
+
+/* Placeholder text color for search input */
 .notes-search::placeholder,
 .result-list-top input[aria-label="Search notes"]::placeholder {
     color: rgb(255 255 255 / 30%);
 }
 
+/* Scrollable container for note cards */
 .result-box {
     box-sizing: border-box;
     flex: 1 1 auto;
@@ -517,20 +571,24 @@ body,
     overflow-y: auto;
 }
 
+/* Custom scrollbar width for result box */
 .result-box::-webkit-scrollbar {
     width: 6px;
 }
 
+/* Custom scrollbar track styling */
 .result-box::-webkit-scrollbar-track {
     background: rgb(255 255 255 / 2%);
     border-radius: 3px;
 }
 
+/* Custom scrollbar thumb with accent color */
 .result-box::-webkit-scrollbar-thumb {
     background: rgb(184 46 46 / 40%);
     border-radius: 3px;
 }
 
+/* Individual note card container */
 .result-card {
     box-sizing: border-box;
     padding: 14px 16px;
@@ -548,10 +606,12 @@ body,
         transform 120ms ease;
 }
 
+/* Remove bottom margin from last note card */
 .result-card:last-child {
     margin-bottom: 0;
 }
 
+/* Note card hover state with accent highlight */
 .result-card:hover {
     background: linear-gradient(
         180deg,
@@ -561,6 +621,7 @@ body,
     border-color: rgb(184 46 46 / 15%);
 }
 
+/* Note content text area within card */
 .result-card .result-content {
     padding-top: 8px;
     line-height: 1.55;
@@ -568,6 +629,7 @@ body,
     white-space: pre-wrap;
 }
 
+/* Clickable timestamp badge showing video time */
 .result-meta .timestamp {
     display: inline-flex;
     gap: 6px;
@@ -592,22 +654,43 @@ body,
         box-shadow 120ms ease;
 }
 
+/* Timestamp badge hover state */
 .result-meta .timestamp:hover {
     box-shadow: 0 6px 16px rgb(184 46 46 / 30%);
     transform: translateY(-1px);
 }
 
-/* Tiny clock icon styling next to timestamp */
-.result-meta .timestamp .timestamp-icon,
-.result-meta .timestamp-icon {
-    display: inline-block;
-    flex: 0 0 12px;
-    width: 12px;
-    height: 12px;
-    opacity: 0.9;
-    stroke: currentcolor;
+/* Clock icon next to timestamp */
+.result-meta .timestamp-icon,
+.result-meta .timestamp .timestamp-icon {
+  display: inline-block;
+  flex: 0 0 12px;
+  width: 12px;
+  height: 12px;
+  opacity: 0.9;
+  stroke: currentcolor;
 }
 
+/* Base button styles for button-box and generic btn class */
+.button-box button,
+.btn {
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgb(255 255 255 / 70%);
+  cursor: pointer;
+  background: rgb(255 255 255 / 3%);
+  border: 1px solid rgb(255 255 255 / 5%);
+  border-radius: 8px;
+  transition:
+    background 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease,
+    transform 120ms ease,
+    box-shadow 150ms ease;
+}
+
+/* Action buttons within result cards */
 .result-actions button,
 .result-card button {
     display: inline-flex;
@@ -628,6 +711,7 @@ body,
         transform 120ms ease;
 }
 
+/* Hover state for result action buttons */
 .result-actions button:hover,
 .result-card button:hover {
     color: rgb(255 255 255 / 80%);
@@ -636,6 +720,7 @@ body,
     transform: translateY(-1px);
 }
 
+/* Header row of result card with meta and actions */
 .result-card-header,
 .result-card .result-row {
     display: flex;
@@ -645,12 +730,14 @@ body,
     margin-bottom: 8px;
 }
 
+/* Row containing action buttons */
 .result-actions-row {
     display: flex;
     gap: 6px;
     align-items: center;
 }
 
+/* Empty state container when no notes exist */
 .empty-state {
     display: flex;
     flex-direction: column;
@@ -660,6 +747,7 @@ body,
     text-align: center;
 }
 
+/* Large icon in empty state */
 .empty-icon {
     display: flex;
     align-items: center;
@@ -677,6 +765,7 @@ body,
     border-radius: 50%;
 }
 
+/* Title text in empty state */
 .empty-title {
     margin-bottom: 8px;
     font-size: 15px;
@@ -685,12 +774,14 @@ body,
     text-align: center;
 }
 
+/* Subtitle/description in empty state */
 .empty-sub {
     font-size: 13px;
     color: rgb(255 255 255 / 50%);
     text-align: center;
 }
 
+/* Container for new note input area */
 .input-box {
     display: flex;
     flex-direction: column;
@@ -706,6 +797,7 @@ body,
     border-radius: 12px;
 }
 
+/* Textarea for entering new notes */
 .input-box textarea,
 .input-textarea {
     box-sizing: border-box;
@@ -724,18 +816,21 @@ body,
         box-shadow 150ms ease;
 }
 
+/* Focus state for input textarea */
 .input-box textarea:focus,
 .input-textarea:focus {
-    border-color: rgb(184 46 46 / 50%);
-    outline: none;
-    box-shadow: 0 0 0 3px rgb(184 46 46 / 15%);
+  outline: none;
+  border-color: rgb(184 46 46 / 50%);
+  box-shadow: 0 0 0 3px rgb(184 46 46 / 15%);
 }
 
+/* Placeholder text styling for textarea */
 .input-box textarea::placeholder,
 .input-textarea::placeholder {
     color: rgb(255 255 255 / 30%);
 }
 
+/* Container for action buttons below input */
 .button-box {
     display: flex;
     gap: 8px;
@@ -743,13 +838,13 @@ body,
     justify-content: space-between;
 }
 
+/* Inner div wrapper for button groups */
 .button-box > div {
     display: flex;
     gap: 6px;
 }
 
-.btn,
-.button-box button,
+/* Button styles within input box */
 .input-box .button-box button {
     padding: 10px 14px;
     font-size: 13px;
@@ -767,6 +862,7 @@ body,
         box-shadow 150ms ease;
 }
 
+/* Hover state for buttons */
 .btn:hover,
 .button-box button:hover,
 .input-box .button-box button:hover {
@@ -775,6 +871,7 @@ body,
     border-color: rgb(255 255 255 / 10%);
 }
 
+/* Primary button variant with accent gradient */
 .btn-primary,
 .button-box .primary,
 .input-box .button-box button.btn-primary {
@@ -789,6 +886,7 @@ body,
     box-shadow: 0 4px 12px rgb(184 46 46 / 25%);
 }
 
+/* Primary button hover state */
 .btn-primary:hover,
 .button-box .primary:hover,
 .input-box .button-box button.btn-primary:hover {
@@ -796,16 +894,19 @@ body,
     transform: translateY(-1px);
 }
 
+/* Ghost/transparent button variant */
 .btn-ghost {
     background: transparent;
     border-color: transparent;
 }
 
+/* Ghost button hover state */
 .btn-ghost:hover {
     background: rgb(255 255 255 / 4%);
     border-color: rgb(255 255 255 / 6%);
 }
 
+/* Container shown when no video is loaded */
 .missing-video {
     box-sizing: border-box;
     display: flex;
@@ -818,6 +919,7 @@ body,
     background: transparent;
 }
 
+/* Form container for video URL input */
 .missing-video form {
     padding: 18px;
     color: var(--text);
@@ -826,18 +928,21 @@ body,
     border-radius: 8px;
 }
 
+/* Label for video URL input */
 .missing-video label {
     display: block;
     margin-bottom: 8px;
     color: var(--text);
 }
 
+/* Row containing input and submit button */
 .missing-video .missing-row {
     display: flex;
     gap: 8px;
     align-items: center;
 }
 
+/* Text input for video URL */
 .missing-video .missing-input,
 .missing-video input {
     box-sizing: border-box;
@@ -849,6 +954,7 @@ body,
     border-radius: 6px;
 }
 
+/* Submit button for video URL form */
 .missing-video .btn-primary,
 .missing-video button[type="submit"] {
     padding: 8px 12px;
@@ -863,40 +969,43 @@ body,
     border-radius: 6px;
 }
 
+/* Error message styling for forms */
 .form-error {
     margin-top: 10px;
     font-size: 13px;
     color: #f3bcbc;
 }
 
-.small {
-    font-size: 12px;
-    color: var(--muted);
-}
-
+/* Responsive styles for tablet screens */
 @media (width <= 900px) {
-    .sidebar {
-        width: 320px;
-        max-width: 45%;
-        padding: 16px;
-    }
+  /* Narrower sidebar on smaller screens */
+  .sidebar {
+    width: 320px;
+    max-width: 45%;
+    padding: 16px;
+  }
 
-    .missing-video .missing-input,
-    .missing-video input {
-        width: 240px;
-    }
+  /* Smaller video URL input on tablet */
+  .missing-video .missing-input,
+  .missing-video input {
+    width: 240px;
+  }
 
-    .video-player-wrap {
-        height: 56vh;
-    }
+  /* Reduced video player height on tablet */
+  .video-player-wrap {
+    height: 56vh;
+  }
 }
 
+/* Responsive styles for mobile screens */
 @media (width <= 640px) {
-    .sidebar {
-        display: none;
-    }
+  /* Hide sidebar completely on mobile */
+  .sidebar {
+    display: none;
+  }
 
-    .video-player-wrap {
-        height: 60vh;
-    }
+  /* Adjusted video player height on mobile */
+  .video-player-wrap {
+    height: 60vh;
+  }
 }
