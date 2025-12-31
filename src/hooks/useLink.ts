@@ -167,7 +167,7 @@ export const useLink = (
 
   const handleHash = useCallback(() => {
     try {
-      const { videoUrl, timestamp, notes } = parseHashParams();
+      const { videoUrl, timestamp, notes, shared } = parseHashParams();
 
       if (!videoUrl) return;
 
@@ -176,9 +176,7 @@ export const useLink = (
       const hasTimestamp = timestamp !== null && !Number.isNaN(timestamp);
 
       // Set read-only mode if we have notes or timestamp from URL
-      if (hasUrlNotes || hasTimestamp) {
-        setIsFromTimestampUrl(true);
-      }
+      setIsFromTimestampUrl(shared);
 
       // Store notes from URL
       if (hasUrlNotes) {

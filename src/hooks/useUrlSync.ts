@@ -107,6 +107,8 @@ export function useUrlSync({
       }
     }
 
+    params.set("s", "shared");
+
     return `${origin}${pathname}#${params.toString()}`;
   }, [video?.url, notes]);
 
@@ -130,6 +132,11 @@ export function useUrlSync({
 export function getNotesFromUrl(): Note[] {
   const { notes } = parseHashParams();
   return notes;
+}
+
+export function getShardState(): boolean {
+  const { shared } = parseHashParams();
+  return shared;
 }
 
 export default useUrlSync;

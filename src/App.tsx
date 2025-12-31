@@ -55,6 +55,7 @@ function App() {
     loading,
     loadAll,
     vodding,
+    setVodding,
   } = useSession(setCurrentTitle);
   const initialNotesSource =
     isFromTimestampUrl && urlNotes.length > 0 ? urlNotes : vodding?.notes;
@@ -154,6 +155,7 @@ function App() {
     (() => {
       setNotes([]);
       setVideo(null);
+      setVodding(null);
       handleSetInputValue("");
       if (prevNotesRef.current) prevNotesRef.current = [];
       setIsFromTimestampUrl(false);
@@ -222,6 +224,7 @@ function App() {
     setNotes,
     prevNotesRef,
     clearUrlNotes,
+    setVodding,
   ]);
 
   return (
@@ -234,7 +237,7 @@ function App() {
         handleNewSession={handleNewSession}
         currentTitle={currentTitle}
         onCopyShareableUrl={copyShareableUrl}
-        onSaveShared={urlNotes.length > 0 ? handleSaveShared : undefined}
+        onSaveShared={isFromTimestampUrl ? handleSaveShared : undefined}
       />
 
       <div className="main">

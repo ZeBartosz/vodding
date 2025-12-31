@@ -90,10 +90,11 @@ export function parseHashParams(): {
   videoUrl: string | null;
   timestamp: number | null;
   notes: Note[];
+  shared: boolean;
 } {
   const raw = window.location.hash || "";
   if (!raw) {
-    return { videoUrl: null, timestamp: null, notes: [] };
+    return { videoUrl: null, timestamp: null, notes: [], shared: false };
   }
 
   try {
@@ -103,18 +104,21 @@ export function parseHashParams(): {
     const v = params.get("v");
     const t = params.get("t");
     const n = params.get("n");
+    const s = params.get("s");
 
     const videoUrl = v ? decodeURIComponent(v) : null;
     const timestamp = t ? Number(t) : null;
     const notes = n ? decodeNotesFromUrl(n) : [];
+    const shared = s ? true : false;
 
     return {
       videoUrl,
       timestamp: Number.isNaN(timestamp) ? null : timestamp,
       notes,
+      shared,
     };
   } catch {
-    return { videoUrl: null, timestamp: null, notes: [] };
+    return { videoUrl: null, timestamp: null, notes: [], shared: false };
   }
 }
 
@@ -135,6 +139,18 @@ export function updateUrlHash(videoUrl: string | null, notes: Note[]): void {
       params.set("n", encodedNotes);
     }
   }
+
+  const newHash = `#${params.toString()}`;
+  const currentHash = window.location.hash;
+
+  if (currentHash !== newHash) {
+    window.history.replaceState(null, "", `${window.location.pathname}${newHash}`);
+  }
+}
+
+export function removeSharedFromUrl(): void {
+  const params = new URLSearchParams();
+  params.delete("s");
 
   const newHash = `#${params.toString()}`;
   const currentHash = window.location.hash;

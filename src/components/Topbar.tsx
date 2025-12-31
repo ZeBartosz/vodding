@@ -1,6 +1,7 @@
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import type { Video } from "../types";
 import Skeleton from "./ui/skeleton";
+import { removeSharedFromUrl } from "../utils/urlParams";
 
 interface TopbarProps {
   video: Video | null;
@@ -10,10 +11,6 @@ interface TopbarProps {
   handleNewSession: () => void;
   currentTitle: string | null;
   onCopyShareableUrl?: () => Promise<boolean>;
-  /**
-   * Save a shared VOD + notes into the client's session/store.
-   * Should return a boolean indicating success.
-   */
   onSaveShared?: () => Promise<boolean>;
 }
 
@@ -219,7 +216,12 @@ const Topbar = ({
             {onSaveShared && (
               <>
                 <button
-                  onClick={() => void handleSaveShared()}
+                  onClick={() =>
+                    setTimeout(() => {
+                      void handleSaveShared();
+                      removeSharedFromUrl();
+                    }, 0)
+                  }
                   disabled={exporting || saveStatus !== "idle"}
                   className={`topbar-btn ${saveStatus === "saved" ? "topbar-btn-success" : ""}`}
                   aria-label="Save shared session"
