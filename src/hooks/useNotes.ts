@@ -1,11 +1,15 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import type { KeyboardEvent, RefObject } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { RefObject } from "react";
 import type { Note } from "../types";
 import { v4 as uuidv4 } from "uuid";
+import { formatTime } from "../utils/formatTime";
 
 export const useNotes = (currentTimeRef?: RefObject<number>, initialNotes?: Note[]) => {
   const [notes, setNotes] = useState<Note[]>(initialNotes ?? []);
   const [inputValue, setInputValue] = useState<string>("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingValue, setEditingValue] = useState<string>("");
+  const [query, setQuery] = useState<string>("");
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const resultsRef = useRef<HTMLDivElement | null>(null);
@@ -16,6 +20,14 @@ export const useNotes = (currentTimeRef?: RefObject<number>, initialNotes?: Note
       setNotes(initialNotes);
     });
   }, [initialNotes]);
+
+  const filtered = useMemo(() => {
+    if (!query) return notes;
+    const q = query.toLowerCase().trim();
+    return notes.filter(
+      (n) => n.content.toLowerCase().includes(q) || formatTime(n.timestamp).includes(q),
+    );
+  }, [notes, query]);
 
   const addNote = useCallback(() => {
     if (!inputValue.trim()) return;
@@ -36,10 +48,14 @@ export const useNotes = (currentTimeRef?: RefObject<number>, initialNotes?: Note
     });
 
     setInputValue("");
+    requestAnimationFrame(() => {
+      const el = resultsRef.current;
+      if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+    });
   }, [inputValue, currentTimeRef]);
 
-  const deleteNote = useCallback((index: number) => {
-    setNotes((prev) => prev.filter((_, i) => i !== index));
+  const deleteNote = useCallback((id: string) => {
+    setNotes((prev) => prev.filter((n) => n.id !== id));
   }, []);
 
   const editNote = useCallback((id: string, newContent: string) => {
@@ -48,10 +64,13 @@ export const useNotes = (currentTimeRef?: RefObject<number>, initialNotes?: Note
         n.id === id ? { ...n, content: newContent, updatedAt: new Date().toISOString() } : n,
       ),
     );
+
+    setEditingId(null);
+    setEditingValue("");
   }, []);
 
   const handleKeyDown = useCallback(
-    (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
       if (e.key !== "Enter") return;
 
       if (e.ctrlKey || e.metaKey) {
@@ -61,14 +80,13 @@ export const useNotes = (currentTimeRef?: RefObject<number>, initialNotes?: Note
           setInputValue((prev) => prev + "\n");
           return;
         }
-
         const start = el.selectionStart;
         const end = el.selectionEnd;
         const newValue = inputValue.slice(0, start) + "\n" + inputValue.slice(end);
         setInputValue(newValue);
-
         requestAnimationFrame(() => {
-          el.selectionStart = el.selectionEnd = start + 1;
+          const t = textareaRef.current;
+          if (t) t.selectionStart = t.selectionEnd = start + 1;
         });
         return;
       }
@@ -81,22 +99,28 @@ export const useNotes = (currentTimeRef?: RefObject<number>, initialNotes?: Note
 
   useEffect(() => {
     const el = resultsRef.current;
-
     if (!el) return;
 
     el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
   }, [notes.length]);
 
   return {
-    notes,
+    items: notes,
+    setNotes,
+    addNote,
+    editNote,
     inputValue,
     setInputValue,
-    addNote,
+    editingId,
+    setEditingId,
+    editingValue,
+    setEditingValue,
+    query,
+    setQuery,
     deleteNote,
-    editNote,
     textareaRef,
     resultsRef,
     handleKeyDown,
-    setNotes,
+    filtered,
   };
 };

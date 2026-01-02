@@ -60,9 +60,9 @@ function App() {
   } = useSession(setCurrentTitle);
   const initialNotesSource =
     sharedFromUrl && urlNotes.length > 0 ? urlNotes : vodding?.notes;
-  const { notes, setNotes } = useNotes(currentTimeRef, initialNotesSource);
+  const notes = useNotes(currentTimeRef, initialNotesSource);
   const { lastSavedAt, onRestoring, prevNotesRef } = useNotesAutosave({
-    notes,
+    notes: notes.items,
     vodding,
     video,
     save,
@@ -70,7 +70,7 @@ function App() {
   });
   const { copyShareableUrl } = useUrlSync({
     video,
-    notes,
+    notes: notes.items,
     sharedFromUrl,
   });
   const [saving, setSaving] = useState<boolean>(false);
@@ -107,7 +107,7 @@ function App() {
       const savedPayload = await save(payload);
 
       if (savedPayload.id) {
-        setNotes(payload.notes);
+        notes.setNotes(payload.notes);
         setVideo(payload.video);
         setSharedFromUrl(false);
         clearUrlNotes();
@@ -125,7 +125,7 @@ function App() {
     video,
     vodding,
     save,
-    setNotes,
+    notes.setNotes,
     setVideo,
     clearUrlNotes,
     setSharedFromUrl,
@@ -137,10 +137,10 @@ function App() {
     () => ({
       title: video?.name ?? currentTitle,
       videoUrl: video?.url ?? "",
-      notes,
+      notes: notes.items,
       filename: `${(video?.name ?? "session").replace(/\s+/g, "_")}.pdf`,
     }),
-    [video?.name, video?.url, currentTitle, notes],
+    [video?.name, video?.url, currentTitle, notes.items],
   );
 
   const { exporting, handleExport } = useExportPdf(exportOptions);
@@ -155,7 +155,7 @@ function App() {
 
   const handleNewSession = useCallback(() => {
     (() => {
-      setNotes([]);
+      notes.setNotes([]);
       setVideo(null);
       setVodding(null);
       handleSetInputValue("");
@@ -191,7 +191,7 @@ function App() {
     handleSetInputValue,
     loadAll,
     setVideo,
-    setNotes,
+    notes.setNotes,
     prevNotesRef,
     clearUrlNotes,
     setVodding,
@@ -249,13 +249,26 @@ function App() {
             <div className="input-container">
               <Suspense fallback={<NotesSkeleton />}>
                 <ResultBox
-                  currentTime={currentTimeRef}
                   handleNoteJump={handleNoteJump}
                   handleMapView={handleMapView}
                   handleResetFocusAndScale={handleResetFocusAndScale}
-                  initialNotes={notes}
-                  onNotesChange={setNotes}
                   readOnly={sharedFromUrl}
+                  notes={notes.items}
+                  addNote={notes.addNote}
+                  editNote={notes.editNote}
+                  inputValue={notes.inputValue}
+                  setInputValue={notes.setInputValue}
+                  editingId={notes.editingId}
+                  setEditingId={notes.setEditingId}
+                  editingValue={notes.editingValue}
+                  setEditingValue={notes.setEditingValue}
+                  query={notes.query}
+                  setQuery={notes.setQuery}
+                  deleteNote={notes.deleteNote}
+                  textareaRef={notes.textareaRef}
+                  resultsRef={notes.resultsRef}
+                  handleKeyDown={notes.handleKeyDown}
+                  filtered={notes.filtered}
                 />
               </Suspense>
             </div>

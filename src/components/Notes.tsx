@@ -1,171 +1,53 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type RefObject,
-} from "react";
-import { v4 as uuidv4 } from "uuid";
+import React, { type RefObject } from "react";
 import { Send, Edit, Trash, Clock } from "lucide-react";
-import type { Note } from "../types";
 import { formatTime } from "../utils/formatTime";
+import type { Note } from "../types";
 
 interface NotesProps {
-  currentTime: RefObject<number>;
   handleMapView: (e: React.SyntheticEvent) => void;
   handleResetFocusAndScale: (e: React.SyntheticEvent) => void;
   handleNoteJump: (time: number) => void;
-  initialNotes?: Note[] | null;
-  onNotesChange?: (notes: Note[]) => void;
   readOnly?: boolean;
+  notes: Note[];
+  query: string;
+  setQuery: (query: string) => void;
+  filtered: Note[];
+  editingId: string | null;
+  setEditingId: (editingId: string | null) => void;
+  editingValue: string;
+  setEditingValue: (editingValue: string) => void;
+  editNote: (id: string, value: string) => void;
+  deleteNote: (id: string) => void;
+  addNote: () => void;
+  inputValue: string;
+  setInputValue: (inputValue: string) => void;
+  resultsRef: RefObject<HTMLDivElement | null>;
+  textareaRef: RefObject<HTMLTextAreaElement | null>;
+  handleKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
 }
 
 const Notes: React.FC<NotesProps> = ({
-  currentTime,
   handleMapView,
   handleResetFocusAndScale,
   handleNoteJump,
-  initialNotes,
-  onNotesChange,
   readOnly = false,
+  notes,
+  query,
+  setQuery,
+  filtered,
+  editingId,
+  setEditingId,
+  editingValue,
+  setEditingValue,
+  editNote,
+  deleteNote,
+  addNote,
+  inputValue,
+  setInputValue,
+  resultsRef,
+  textareaRef,
+  handleKeyDown,
 }) => {
-  const controlled = typeof onNotesChange === "function";
-
-  const [internalNotes, setInternalNotes] = useState<Note[]>(
-    initialNotes ?? [],
-  );
-
-  useEffect(() => {
-    if (initialNotes == null) return;
-    const id = requestAnimationFrame(() => {
-      setInternalNotes(initialNotes);
-    });
-    return () => {
-      cancelAnimationFrame(id);
-    };
-  }, [initialNotes]);
-
-  const [inputValue, setInputValue] = useState<string>("");
-
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editingValue, setEditingValue] = useState<string>("");
-
-  const [query, setQuery] = useState<string>("");
-
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-  const resultsRef = useRef<HTMLDivElement | null>(null);
-
-  const notes: Note[] = useMemo<Note[]>(
-    () => (controlled ? (initialNotes ?? []) : internalNotes),
-    [controlled, initialNotes, internalNotes],
-  );
-
-  const notify = useCallback(
-    (next: Note[]) => {
-      if (controlled) {
-        onNotesChange(next);
-      } else {
-        setInternalNotes(next);
-      }
-    },
-    [controlled, onNotesChange],
-  );
-
-  const addNote = useCallback(() => {
-    if (readOnly) return;
-    const text = inputValue.trim();
-    if (!text) return;
-
-    const timestamp =
-      typeof currentTime.current === "number" ? currentTime.current : 0;
-
-    const newNote: Note = {
-      id: uuidv4(),
-      content: text,
-      timestamp,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-
-    const next = [...notes, newNote];
-    notify(next);
-    setInputValue("");
-    requestAnimationFrame(() => {
-      const el = resultsRef.current;
-      if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-    });
-  }, [inputValue, currentTime, notes, notify, readOnly]);
-
-  const deleteNote = useCallback(
-    (id: string) => {
-      if (readOnly) return;
-      const next = notes.filter((n) => n.id !== id);
-      notify(next);
-    },
-    [notes, notify, readOnly],
-  );
-
-  const saveEdit = useCallback(
-    (id: string, newContent: string) => {
-      if (readOnly) return;
-      const next = notes.map((n) =>
-        n.id === id
-          ? { ...n, content: newContent, updatedAt: new Date().toISOString() }
-          : n,
-      );
-      notify(next);
-      setEditingId(null);
-      setEditingValue("");
-    },
-    [notes, notify, readOnly],
-  );
-
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-      if (e.key !== "Enter") return;
-
-      if (e.ctrlKey || e.metaKey) {
-        e.preventDefault();
-        const el = textareaRef.current;
-        if (!el) {
-          setInputValue((prev) => prev + "\n");
-          return;
-        }
-        const start = el.selectionStart;
-        const end = el.selectionEnd;
-        const newValue =
-          inputValue.slice(0, start) + "\n" + inputValue.slice(end);
-        setInputValue(newValue);
-        requestAnimationFrame(() => {
-          const t = textareaRef.current;
-          if (t) t.selectionStart = t.selectionEnd = start + 1;
-        });
-        return;
-      }
-
-      e.preventDefault();
-      addNote();
-    },
-    [inputValue, addNote],
-  );
-
-  const filtered = useMemo(() => {
-    if (!query) return notes;
-    const q = query.toLowerCase().trim();
-    return notes.filter(
-      (n) =>
-        n.content.toLowerCase().includes(q) ||
-        formatTime(n.timestamp).includes(q),
-    );
-  }, [notes, query]);
-
-  useEffect(() => {
-    const el = resultsRef.current;
-    if (!el) return;
-    el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-  }, [notes.length]);
-
   return (
     <div className="result-list-root">
       <div className="result-list-top">
@@ -289,7 +171,7 @@ const Notes: React.FC<NotesProps> = ({
                       <div className="note-edit-actions">
                         <button
                           onClick={() => {
-                            saveEdit(n.id, editingValue);
+                            editNote(n.id, editingValue);
                           }}
                           className="btn btn-primary"
                           disabled={readOnly}
