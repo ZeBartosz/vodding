@@ -56,6 +56,7 @@ export const useSession = (setCurrentTitle: (title: string | null) => void) => {
         currentVoddingIdRef.current === data.id &&
         currentUpdatedAtRef.current === data.updatedAt
       ) {
+        setLoading(false);
         return data;
       }
       _setVodding(data ?? null);
@@ -74,6 +75,7 @@ export const useSession = (setCurrentTitle: (title: string | null) => void) => {
       setError(msg);
       _setVodding(null);
       currentVoddingIdRef.current = null;
+      currentUpdatedAtRef.current = null;
       window.localStorage.removeItem("current_vodding_id");
       return null;
     } finally {
