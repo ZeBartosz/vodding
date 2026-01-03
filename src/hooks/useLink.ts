@@ -6,13 +6,14 @@ import {
   type Dispatch,
   type SetStateAction,
 } from "react";
-import type { Note, Video } from "../types";
+import type { Note, Video, VoddingPayload } from "../types";
 import { v4 as uuidv4 } from "uuid";
 import { parseHashParams } from "../utils/urlParams";
 
 export const useLink = (
   currentTitle: string | null,
   setSharedFromUrl: Dispatch<SetStateAction<boolean>>,
+  loadWithId: (id: string) => Promise<VoddingPayload | null>,
 ) => {
   const [video, setVideo] = useState<Video | null>(null);
   const [inputValue, setInputValue] = useState<string>("");
@@ -30,7 +31,6 @@ export const useLink = (
     const el: HTMLElement = internal.nodeName ? internal : internal;
 
     el.style.transformOrigin = `${(focus.x * 100).toFixed()}% ${(focus.y * 100).toFixed()}%`;
-
     el.style.transform = `scale(${scale.toString()})`;
     el.style.willChange = "transform";
     el.style.transition = "transform 250ms ease";
@@ -165,18 +165,32 @@ export const useLink = (
     [validateAndCleanUrl, currentTitle, video],
   );
 
-  const handleHash = useCallback(() => {
+  const handleHash = useCallback(async () => {
     try {
-      const { videoUrl, timestamp, notes, shared } = parseHashParams();
+      const { videoUrl, notes, shared } = parseHashParams();
 
       if (!videoUrl) return;
 
       // If we have notes from URL, this is a shared session (read-only)
       const hasUrlNotes = notes.length > 0;
-      const hasTimestamp = timestamp !== null && !Number.isNaN(timestamp);
 
       // Set read-only mode if we have notes or timestamp from URL
       setSharedFromUrl(shared);
+
+      if (!shared) {
+        const id = localStorage.getItem("current_vodding_id");
+        if (id) {
+          const data = await loadWithId(id);
+          if (data) {
+            const currentUrl = video?.url ?? null;
+            if (currentUrl !== data.video.url) {
+              setVideo(data.video);
+            }
+            setUrlNotes(data.notes);
+            return;
+          }
+        }
+      }
 
       // Store notes from URL
       if (hasUrlNotes) {
@@ -185,13 +199,13 @@ export const useLink = (
 
       const loaded = loadVideoFromUrl(videoUrl);
 
-      if (hasTimestamp) {
+      if (notes.length === 1 && notes[0].timestamp) {
         if (jumpTimeoutRef.current) clearTimeout(jumpTimeoutRef.current);
 
         jumpTimeoutRef.current = setTimeout(
           () => {
             jumpTimeoutRef.current = null;
-            handleNoteJump(timestamp);
+            handleNoteJump(notes[0].timestamp);
           },
           loaded ? 300 : 500,
         );
@@ -199,7 +213,7 @@ export const useLink = (
     } catch {
       //
     }
-  }, [loadVideoFromUrl, handleNoteJump, setSharedFromUrl]);
+  }, [loadVideoFromUrl, handleNoteJump, setSharedFromUrl, loadWithId, video]);
 
   const clearUrlNotes = useCallback(() => {
     setUrlNotes([]);

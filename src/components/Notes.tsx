@@ -1,170 +1,38 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from "react";
-import { v4 as uuidv4 } from "uuid";
-import { Send, Edit, Trash, Clock } from "lucide-react";
+import React, { memo, type RefObject } from "react";
 import type { Note } from "../types";
+import NoteCard from "./notes/NoteCard";
 
 interface NotesProps {
-  currentTime: RefObject<number>;
-  handleMapView: (e: React.SyntheticEvent) => void;
-  handleResetFocusAndScale: (e: React.SyntheticEvent) => void;
   handleNoteJump: (time: number) => void;
-  initialNotes?: Note[] | null;
-  onNotesChange?: (notes: Note[]) => void;
   readOnly?: boolean;
+  notes: Note[];
+  query: string;
+  setQuery: (query: string) => void;
+  filtered: Note[];
+  editingId: string | null;
+  setEditingId: (editingId: string | null) => void;
+  editingValue: string;
+  setEditingValue: (editingValue: string) => void;
+  editNote: (id: string, value: string) => void;
+  deleteNote: (id: string) => void;
+  resultsRef: RefObject<HTMLDivElement | null>;
 }
 
-const formatTime = (seconds: number): string => {
-  if (!Number.isFinite(seconds) || seconds <= 0) return "0:00";
-
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const secs = Math.floor(seconds % 60);
-
-  if (hours > 0) {
-    return `${hours.toString()}:${minutes.toString().padStart(2, "0")}:${secs
-      .toString()
-      .padStart(2, "0")}`;
-  }
-  return `${minutes.toString()}:${secs.toString().padStart(2, "0")}`;
-};
-
 const Notes: React.FC<NotesProps> = ({
-  currentTime,
-  handleMapView,
-  handleResetFocusAndScale,
   handleNoteJump,
-  initialNotes,
-  onNotesChange,
   readOnly = false,
+  notes,
+  query,
+  setQuery,
+  filtered,
+  editingId,
+  setEditingId,
+  editingValue,
+  setEditingValue,
+  editNote,
+  deleteNote,
+  resultsRef,
 }) => {
-  const controlled = typeof onNotesChange === "function";
-
-  const [internalNotes, setInternalNotes] = useState<Note[]>(initialNotes ?? []);
-
-  useEffect(() => {
-    if (initialNotes == null) return;
-    const id = requestAnimationFrame(() => {
-      setInternalNotes(initialNotes);
-    });
-    return () => {
-      cancelAnimationFrame(id);
-    };
-  }, [initialNotes]);
-
-  const [inputValue, setInputValue] = useState<string>("");
-
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editingValue, setEditingValue] = useState<string>("");
-
-  const [query, setQuery] = useState<string>("");
-
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-  const resultsRef = useRef<HTMLDivElement | null>(null);
-
-  const notes: Note[] = useMemo<Note[]>(
-    () => (controlled ? (initialNotes ?? []) : internalNotes),
-    [controlled, initialNotes, internalNotes],
-  );
-
-  const notify = useCallback(
-    (next: Note[]) => {
-      if (controlled) {
-        onNotesChange(next);
-      } else {
-        setInternalNotes(next);
-      }
-    },
-    [controlled, onNotesChange],
-  );
-
-  const addNote = useCallback(() => {
-    if (readOnly) return;
-    const text = inputValue.trim();
-    if (!text) return;
-
-    const timestamp = typeof currentTime.current === "number" ? currentTime.current : 0;
-
-    const newNote: Note = {
-      id: uuidv4(),
-      content: text,
-      timestamp,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-
-    const next = [...notes, newNote];
-    notify(next);
-    setInputValue("");
-    requestAnimationFrame(() => {
-      const el = resultsRef.current;
-      if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-    });
-  }, [inputValue, currentTime, notes, notify, readOnly]);
-
-  const deleteNote = useCallback(
-    (id: string) => {
-      if (readOnly) return;
-      const next = notes.filter((n) => n.id !== id);
-      notify(next);
-    },
-    [notes, notify, readOnly],
-  );
-
-  const saveEdit = useCallback(
-    (id: string, newContent: string) => {
-      if (readOnly) return;
-      const next = notes.map((n) =>
-        n.id === id ? { ...n, content: newContent, updatedAt: new Date().toISOString() } : n,
-      );
-      notify(next);
-      setEditingId(null);
-      setEditingValue("");
-    },
-    [notes, notify, readOnly],
-  );
-
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-      if (e.key !== "Enter") return;
-
-      if (e.ctrlKey || e.metaKey) {
-        e.preventDefault();
-        const el = textareaRef.current;
-        if (!el) {
-          setInputValue((prev) => prev + "\n");
-          return;
-        }
-        const start = el.selectionStart;
-        const end = el.selectionEnd;
-        const newValue = inputValue.slice(0, start) + "\n" + inputValue.slice(end);
-        setInputValue(newValue);
-        requestAnimationFrame(() => {
-          const t = textareaRef.current;
-          if (t) t.selectionStart = t.selectionEnd = start + 1;
-        });
-        return;
-      }
-
-      e.preventDefault();
-      addNote();
-    },
-    [inputValue, addNote],
-  );
-
-  const filtered = useMemo(() => {
-    if (!query) return notes;
-    const q = query.toLowerCase().trim();
-    return notes.filter(
-      (n) => n.content.toLowerCase().includes(q) || formatTime(n.timestamp).includes(q),
-    );
-  }, [notes, query]);
-
-  useEffect(() => {
-    const el = resultsRef.current;
-    if (!el) return;
-    el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-  }, [notes.length]);
-
   return (
     <div className="result-list-root">
       <div className="result-list-top">
@@ -213,143 +81,37 @@ const Notes: React.FC<NotesProps> = ({
             </div>
           </div>
         ) : (
-          filtered.map((n) => {
-            const isEditing = editingId === n.id;
-            return (
-              <div key={n.id} className={`result-card ${isEditing ? "editing" : ""}`}>
-                <div className="result-card-header">
-                  <div className="result-meta">
-                    <span className="timestamp">
-                      <Clock size={12} className="timestamp-icon" /> {formatTime(n.timestamp)}
-                    </span>
-                  </div>
-
-                  <div className="result-actions-row">
-                    <button
-                      onClick={() => {
-                        handleNoteJump(n.timestamp);
-                      }}
-                      aria-label="Jump to note"
-                      className="btn btn-ghost has-tooltip"
-                      data-tooltip="Jump"
-                    >
-                      <Send size={16} />
-                    </button>
-
-                    {!isEditing && !readOnly && (
-                      <button
-                        onClick={() => {
-                          setEditingId(n.id);
-                          setEditingValue(n.content);
-                        }}
-                        aria-label="Edit note"
-                        className="btn btn-ghost has-tooltip"
-                        data-tooltip="Edit"
-                      >
-                        <Edit size={16} />
-                      </button>
-                    )}
-
-                    {!readOnly && (
-                      <button
-                        onClick={() => {
-                          deleteNote(n.id);
-                        }}
-                        aria-label="Delete note"
-                        className="btn has-tooltip"
-                        data-tooltip="Delete"
-                      >
-                        <Trash size={16} className="text-red-600" />
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                <div className="result-content">
-                  {isEditing ? (
-                    <div className="note-edit-wrap">
-                      <textarea
-                        autoFocus
-                        className="note-edit-textarea"
-                        value={editingValue}
-                        readOnly={readOnly}
-                        onChange={(e) => {
-                          setEditingValue(e.target.value);
-                        }}
-                      />
-                      <div className="note-edit-actions">
-                        <button
-                          onClick={() => {
-                            saveEdit(n.id, editingValue);
-                          }}
-                          className="btn btn-primary"
-                          disabled={readOnly}
-                          title={readOnly ? "Disabled in read-only view" : undefined}
-                        >
-                          Save
-                        </button>
-                        <button
-                          onClick={() => {
-                            setEditingId(null);
-                            setEditingValue("");
-                          }}
-                          className="btn btn-ghost"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="note-content">{n.content}</div>
-                  )}
-                </div>
-              </div>
-            );
-          })
+          filtered.map((n) => (
+            <NoteCard
+              key={n.id}
+              note={n}
+              isEditing={editingId === n.id}
+              editingValue={editingValue}
+              readOnly={readOnly}
+              onJump={() => {
+                handleNoteJump(n.timestamp);
+              }}
+              onEdit={() => {
+                setEditingId(n.id);
+                setEditingValue(n.content);
+              }}
+              onDelete={() => {
+                deleteNote(n.id);
+              }}
+              onEditValueChange={setEditingValue}
+              onSave={() => {
+                editNote(n.id, editingValue);
+              }}
+              onCancel={() => {
+                setEditingId(null);
+                setEditingValue("");
+              }}
+            />
+          ))
         )}
-      </div>
-
-      <div className="input-box">
-        <div className="textarea-wrapper">
-          <textarea
-            ref={textareaRef}
-            value={inputValue}
-            readOnly={readOnly}
-            onChange={(e) => {
-              setInputValue(e.target.value);
-            }}
-            placeholder={readOnly ? "Read-only session" : "Write your observation..."}
-            onKeyDown={handleKeyDown}
-            className={`input-textarea ${readOnly ? "input-textarea-readonly" : ""}`}
-          />
-        </div>
-        <div className="button-box">
-          <div>
-            <button
-              onClick={handleResetFocusAndScale}
-              aria-label="Reset zoom"
-              className="btn btn-ghost"
-            >
-              Reset
-            </button>
-            <button onClick={handleMapView} aria-label="Map View" className="btn btn-ghost">
-              Map View
-            </button>
-          </div>
-          <button
-            onClick={() => {
-              addNote();
-            }}
-            className="btn btn-primary"
-            disabled={readOnly}
-            title={readOnly ? "Save this VOD to your session to add notes" : undefined}
-          >
-            {readOnly ? "Read-only" : "+ Add Note"}
-          </button>
-        </div>
       </div>
     </div>
   );
 };
 
-export default Notes;
+export default memo(Notes);

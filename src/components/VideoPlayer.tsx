@@ -1,4 +1,4 @@
-import React, { type FC, useCallback, useEffect, useState } from "react";
+import React, { type FC, useCallback, useEffect, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import "media-chrome";
 import {
@@ -50,12 +50,21 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
   const [embedError, setEmbedError] = useState(false);
   const [playerKey, setPlayerKey] = useState(0);
   const [copied, setCopied] = useState(false);
+  const copyTimeout = useRef<number | null>(null);
 
   useEffect(() => {
     requestAnimationFrame(() => {
       setEmbedError(false);
     });
   }, [video?.url]);
+
+  useEffect(() => {
+    return () => {
+      if (copyTimeout.current) {
+        clearTimeout(copyTimeout.current);
+      }
+    };
+  }, []);
 
   const handleCopy = useCallback(async (text: string) => {
     try {
@@ -67,8 +76,12 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
       if (clip && typeof clip.writeText === "function") {
         await clip.writeText(text);
         setCopied(true);
-        setTimeout(() => {
+
+        if (copyTimeout.current) clearTimeout(copyTimeout.current);
+
+        copyTimeout.current = setTimeout(() => {
           setCopied(false);
+          copyTimeout.current = null;
         }, 2000);
         return;
       }

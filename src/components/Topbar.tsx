@@ -9,7 +9,6 @@ interface TopbarProps {
   exporting: boolean;
   handleExport: () => void;
   handleNewSession: () => void;
-  currentTitle: string | null;
   onCopyShareableUrl?: () => Promise<boolean>;
   onSaveShared?: () => Promise<boolean>;
 }
@@ -20,7 +19,6 @@ const Topbar = ({
   exporting,
   handleExport,
   handleNewSession,
-  currentTitle,
   onCopyShareableUrl,
   onSaveShared,
 }: TopbarProps) => {
@@ -112,8 +110,6 @@ const Topbar = ({
     }
   };
 
-  console.log(currentTitle);
-
   return (
     <header className="topbar">
       <div className="brand">
@@ -135,7 +131,7 @@ const Topbar = ({
           <div className="title">
             {video?.name ? (
               video.name !== "Untitled" ? (
-                currentTitle
+                video.name
               ) : (
                 <Skeleton height={16} />
               )

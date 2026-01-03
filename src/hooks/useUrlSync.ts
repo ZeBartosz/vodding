@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 import type { Note, Video } from "../types";
-import { updateUrlHash, encodeNotesForUrl, parseHashParams } from "../utils/urlParams";
+import { updateUrlHash, parseHashParams, buildShareableUrl } from "../utils/urlParams";
 
 interface UseUrlSyncOptions {
   video: Video | null;
@@ -70,7 +70,7 @@ export function useUrlSync({
     updateTimeoutRef.current = window.setTimeout(() => {
       syncToUrl();
       updateTimeoutRef.current = null;
-    }, debounceMs) as unknown as number;
+    }, debounceMs);
 
     return () => {
       if (updateTimeoutRef.current) {
@@ -95,21 +95,7 @@ export function useUrlSync({
       return window.location.origin + window.location.pathname;
     }
 
-    const { origin, pathname } = window.location;
-    const params = new URLSearchParams();
-
-    params.set("v", encodeURIComponent(videoUrl));
-
-    if (notes.length > 0) {
-      const encodedNotes = encodeNotesForUrl(notes);
-      if (encodedNotes) {
-        params.set("n", encodedNotes);
-      }
-    }
-
-    params.set("s", "shared");
-
-    return `${origin}${pathname}#${params.toString()}`;
+    return buildShareableUrl(videoUrl, notes);
   }, [video?.url, notes]);
 
   const copyShareableUrl = useCallback(async (): Promise<boolean> => {
