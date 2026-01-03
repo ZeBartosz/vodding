@@ -73,7 +73,7 @@ export const useNotes = (currentTimeRef?: RefObject<number>, initialNotes?: Note
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
       if (e.key !== "Enter") return;
 
-      if (e.ctrlKey || e.metaKey) {
+      if (e.shiftKey || e.metaKey) {
         e.preventDefault();
         const el = textareaRef.current;
         if (!el) {
