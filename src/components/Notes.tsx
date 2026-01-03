@@ -1,11 +1,8 @@
-import React, { type RefObject } from "react";
-import { Send, Edit, Trash, Clock } from "lucide-react";
-import { formatTime } from "../utils/formatTime";
+import React, { memo, type RefObject } from "react";
 import type { Note } from "../types";
+import NoteCard from "./notes/NoteCard";
 
 interface NotesProps {
-  handleMapView: (e: React.SyntheticEvent) => void;
-  handleResetFocusAndScale: (e: React.SyntheticEvent) => void;
   handleNoteJump: (time: number) => void;
   readOnly?: boolean;
   notes: Note[];
@@ -18,17 +15,10 @@ interface NotesProps {
   setEditingValue: (editingValue: string) => void;
   editNote: (id: string, value: string) => void;
   deleteNote: (id: string) => void;
-  addNote: () => void;
-  inputValue: string;
-  setInputValue: (inputValue: string) => void;
   resultsRef: RefObject<HTMLDivElement | null>;
-  textareaRef: RefObject<HTMLTextAreaElement | null>;
-  handleKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
 }
 
 const Notes: React.FC<NotesProps> = ({
-  handleMapView,
-  handleResetFocusAndScale,
   handleNoteJump,
   readOnly = false,
   notes,
@@ -41,12 +31,7 @@ const Notes: React.FC<NotesProps> = ({
   setEditingValue,
   editNote,
   deleteNote,
-  addNote,
-  inputValue,
-  setInputValue,
   resultsRef,
-  textareaRef,
-  handleKeyDown,
 }) => {
   return (
     <div className="result-list-root">
@@ -100,159 +85,37 @@ const Notes: React.FC<NotesProps> = ({
             </div>
           </div>
         ) : (
-          filtered.map((n) => {
-            const isEditing = editingId === n.id;
-            return (
-              <div
-                key={n.id}
-                className={`result-card ${isEditing ? "editing" : ""}`}
-              >
-                <div className="result-card-header">
-                  <div className="result-meta">
-                    <span className="timestamp">
-                      <Clock size={12} className="timestamp-icon" />{" "}
-                      {formatTime(n.timestamp)}
-                    </span>
-                  </div>
-
-                  <div className="result-actions-row">
-                    <button
-                      onClick={() => {
-                        handleNoteJump(n.timestamp);
-                      }}
-                      aria-label="Jump to note"
-                      className="btn btn-ghost has-tooltip"
-                      data-tooltip="Jump"
-                    >
-                      <Send size={16} />
-                    </button>
-
-                    {!isEditing && !readOnly && (
-                      <button
-                        onClick={() => {
-                          setEditingId(n.id);
-                          setEditingValue(n.content);
-                        }}
-                        aria-label="Edit note"
-                        className="btn btn-ghost has-tooltip"
-                        data-tooltip="Edit"
-                      >
-                        <Edit size={16} />
-                      </button>
-                    )}
-
-                    {!readOnly && (
-                      <button
-                        onClick={() => {
-                          deleteNote(n.id);
-                        }}
-                        aria-label="Delete note"
-                        className="btn has-tooltip"
-                        data-tooltip="Delete"
-                      >
-                        <Trash size={16} className="text-red-600" />
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                <div className="result-content">
-                  {isEditing ? (
-                    <div className="note-edit-wrap">
-                      <textarea
-                        autoFocus
-                        className="note-edit-textarea"
-                        value={editingValue}
-                        readOnly={readOnly}
-                        onChange={(e) => {
-                          setEditingValue(e.target.value);
-                        }}
-                      />
-                      <div className="note-edit-actions">
-                        <button
-                          onClick={() => {
-                            editNote(n.id, editingValue);
-                          }}
-                          className="btn btn-primary"
-                          disabled={readOnly}
-                          title={
-                            readOnly ? "Disabled in read-only view" : undefined
-                          }
-                        >
-                          Save
-                        </button>
-                        <button
-                          onClick={() => {
-                            setEditingId(null);
-                            setEditingValue("");
-                          }}
-                          className="btn btn-ghost"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="note-content">{n.content}</div>
-                  )}
-                </div>
-              </div>
-            );
-          })
+          filtered.map((n) => (
+            <NoteCard
+              key={n.id}
+              note={n}
+              isEditing={editingId === n.id}
+              editingValue={editingValue}
+              readOnly={readOnly}
+              onJump={() => {
+                handleNoteJump(n.timestamp);
+              }}
+              onEdit={() => {
+                setEditingId(n.id);
+                setEditingValue(n.content);
+              }}
+              onDelete={() => {
+                deleteNote(n.id);
+              }}
+              onEditValueChange={setEditingValue}
+              onSave={() => {
+                editNote(n.id, editingValue);
+              }}
+              onCancel={() => {
+                setEditingId(null);
+                setEditingValue("");
+              }}
+            />
+          ))
         )}
-      </div>
-
-      <div className="input-box">
-        <div className="textarea-wrapper">
-          <textarea
-            ref={textareaRef}
-            value={inputValue}
-            readOnly={readOnly}
-            onChange={(e) => {
-              setInputValue(e.target.value);
-            }}
-            placeholder={
-              readOnly ? "Read-only session" : "Write your observation..."
-            }
-            onKeyDown={handleKeyDown}
-            className={`input-textarea ${readOnly ? "input-textarea-readonly" : ""}`}
-          />
-        </div>
-        <div className="button-box">
-          <div>
-            <button
-              onClick={handleResetFocusAndScale}
-              aria-label="Reset zoom"
-              className="btn btn-ghost"
-            >
-              Reset
-            </button>
-            <button
-              onClick={handleMapView}
-              aria-label="Map View"
-              className="btn btn-ghost"
-            >
-              Map View
-            </button>
-          </div>
-          <button
-            onClick={() => {
-              addNote();
-            }}
-            className="btn btn-primary"
-            disabled={readOnly}
-            title={
-              readOnly
-                ? "Save this VOD to your session to add notes"
-                : undefined
-            }
-          >
-            {readOnly ? "Read-only" : "+ Add Note"}
-          </button>
-        </div>
       </div>
     </div>
   );
 };
 
-export default Notes;
+export default memo(Notes);

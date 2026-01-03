@@ -21,6 +21,7 @@ import NotesSkeleton from "./components/ui/NotesSkeleton";
 import Skeleton from "./components/ui/skeleton";
 import { v4 as uuidv4 } from "uuid";
 import { cleanVideoParams } from "./utils/urlParams";
+import InputArea from "./components/notes/InputTextarea";
 const VideoPlayer = lazy(() => import("./components/VideoPlayer"));
 const ResultBox = lazy(() => import("./components/Notes"));
 
@@ -125,7 +126,7 @@ function App() {
     video,
     vodding,
     save,
-    notes.setNotes,
+    notes,
     setVideo,
     clearUrlNotes,
     setSharedFromUrl,
@@ -191,7 +192,7 @@ function App() {
     handleSetInputValue,
     loadAll,
     setVideo,
-    notes.setNotes,
+    notes,
     prevNotesRef,
     clearUrlNotes,
     setVodding,
@@ -250,14 +251,9 @@ function App() {
               <Suspense fallback={<NotesSkeleton />}>
                 <ResultBox
                   handleNoteJump={handleNoteJump}
-                  handleMapView={handleMapView}
-                  handleResetFocusAndScale={handleResetFocusAndScale}
                   readOnly={sharedFromUrl}
                   notes={notes.items}
-                  addNote={notes.addNote}
                   editNote={notes.editNote}
-                  inputValue={notes.inputValue}
-                  setInputValue={notes.setInputValue}
                   editingId={notes.editingId}
                   setEditingId={notes.setEditingId}
                   editingValue={notes.editingValue}
@@ -265,12 +261,20 @@ function App() {
                   query={notes.query}
                   setQuery={notes.setQuery}
                   deleteNote={notes.deleteNote}
-                  textareaRef={notes.textareaRef}
                   resultsRef={notes.resultsRef}
-                  handleKeyDown={notes.handleKeyDown}
                   filtered={notes.filtered}
                 />
               </Suspense>
+              <InputArea
+                handleKeyDown={notes.handleKeyDown}
+                handleMapView={handleMapView}
+                handleResetFocusAndScale={handleResetFocusAndScale}
+                readOnly={sharedFromUrl}
+                addNote={notes.addNote}
+                textareaRef={notes.textareaRef}
+                inputValue={notes.inputValue}
+                setInputValue={notes.setInputValue}
+              />
             </div>
           </aside>
         )}
