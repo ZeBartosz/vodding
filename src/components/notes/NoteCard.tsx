@@ -33,8 +33,7 @@ const NoteCard = ({
       <div className="result-card-header">
         <div className="result-meta">
           <span className="timestamp">
-            <Clock size={12} className="timestamp-icon" />{" "}
-            {formatTime(note.timestamp)}
+            <Clock size={12} className="timestamp-icon" /> {formatTime(note.timestamp)}
           </span>
         </div>
 
