@@ -185,8 +185,8 @@ export const useLink = (
             const currentUrl = video?.url ?? null;
             if (currentUrl !== data.video.url) {
               setVideo(data.video);
-              setUrlNotes(data.notes);
             }
+            setUrlNotes(data.notes);
             return;
           }
         }
