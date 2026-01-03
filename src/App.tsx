@@ -155,39 +155,37 @@ function App() {
   }, [handleHash]);
 
   const handleNewSession = useCallback(() => {
-    (() => {
-      notes.setNotes([]);
-      setVideo(null);
-      setVodding(null);
-      handleSetInputValue("");
-      if (prevNotesRef.current) prevNotesRef.current = [];
-      setSharedFromUrl(false);
-      clearUrlNotes();
+    notes.setNotes([]);
+    setVideo(null);
+    setVodding(null);
+    handleSetInputValue("");
+    if (prevNotesRef.current) prevNotesRef.current = [];
+    setSharedFromUrl(false);
+    clearUrlNotes();
 
-      try {
-        const newUrl = cleanVideoParams();
-        if (
-          typeof window !== "undefined" &&
-          typeof window.history.replaceState === "function"
-        ) {
-          window.history.replaceState(null, "", newUrl);
-        } else if (typeof window !== "undefined") {
-          try {
-            window.location.replace(newUrl);
-          } catch {
-            window.location.hash = "";
-          }
+    try {
+      const newUrl = cleanVideoParams();
+      if (
+        typeof window !== "undefined" &&
+        typeof window.history.replaceState === "function"
+      ) {
+        window.history.replaceState(null, "", newUrl);
+      } else if (typeof window !== "undefined") {
+        try {
+          window.location.replace(newUrl);
+        } catch {
+          window.location.hash = "";
         }
-      } catch {
-        //
       }
+    } catch {
+      //
+    }
 
-      try {
-        void loadAll();
-      } catch {
-        //
-      }
-    })();
+    try {
+      void loadAll();
+    } catch {
+      //
+    }
   }, [
     handleSetInputValue,
     loadAll,
