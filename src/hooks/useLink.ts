@@ -166,13 +166,12 @@ export const useLink = (
 
   const handleHash = useCallback(() => {
     try {
-      const { videoUrl, timestamp, notes, shared } = parseHashParams();
+      const { videoUrl, notes, shared } = parseHashParams();
 
       if (!videoUrl) return;
 
       // If we have notes from URL, this is a shared session (read-only)
       const hasUrlNotes = notes.length > 0;
-      const hasTimestamp = timestamp !== null && !Number.isNaN(timestamp);
 
       // Set read-only mode if we have notes or timestamp from URL
       setSharedFromUrl(shared);
@@ -184,13 +183,13 @@ export const useLink = (
 
       const loaded = loadVideoFromUrl(videoUrl);
 
-      if (hasTimestamp) {
+      if (notes.length === 1 && notes[0].timestamp) {
         if (jumpTimeoutRef.current) clearTimeout(jumpTimeoutRef.current);
 
         jumpTimeoutRef.current = setTimeout(
           () => {
             jumpTimeoutRef.current = null;
-            handleNoteJump(timestamp);
+            handleNoteJump(notes[0].timestamp);
           },
           loaded ? 300 : 500,
         );

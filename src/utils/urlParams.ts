@@ -83,18 +83,19 @@ export function buildShareableUrl(videoUrl: string, notes: Note[]): string {
     }
   }
 
+  params.set("s", "shared");
+
   return `${origin}${pathname}#${params.toString()}`;
 }
 
 export function parseHashParams(): {
   videoUrl: string | null;
-  timestamp: number | null;
   notes: Note[];
   shared: boolean;
 } {
   const raw = window.location.hash || "";
   if (!raw) {
-    return { videoUrl: null, timestamp: null, notes: [], shared: false };
+    return { videoUrl: null, notes: [], shared: false };
   }
 
   try {
@@ -102,23 +103,20 @@ export function parseHashParams(): {
     const params = new URLSearchParams(hash);
 
     const v = params.get("v");
-    const t = params.get("t");
     const n = params.get("n");
     const s = params.get("s");
 
     const videoUrl = v ? decodeURIComponent(v) : null;
-    const timestamp = t ? Number(t) : null;
     const notes = n ? decodeNotesFromUrl(n) : [];
     const shared = s ? true : false;
 
     return {
       videoUrl,
-      timestamp: Number.isNaN(timestamp) ? null : timestamp,
       notes,
       shared,
     };
   } catch {
-    return { videoUrl: null, timestamp: null, notes: [], shared: false };
+    return { videoUrl: null, notes: [], shared: false };
   }
 }
 
@@ -166,6 +164,7 @@ export const cleanVideoParams = () => {
   searchParams.delete("v");
   searchParams.delete("t");
   searchParams.delete("n");
+  searchParams.delete("s");
   const newSearch = searchParams.toString() ? `?${searchParams.toString()}` : "";
 
   let newHash = "";
@@ -176,6 +175,7 @@ export const cleanVideoParams = () => {
       hashParams.delete("v");
       hashParams.delete("t");
       hashParams.delete("n");
+      searchParams.delete("s");
       const hashStr = hashParams.toString();
       if (hashStr) {
         newHash = `#${hashStr}`;

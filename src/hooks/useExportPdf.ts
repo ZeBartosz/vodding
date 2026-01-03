@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { Note } from "../types";
 import { jsPDF } from "jspdf";
 import { formatTime } from "../utils/formatTime";
+import { buildShareableUrl } from "../utils/urlParams";
 
 interface UseExportPdfParams {
   title?: string | null;
@@ -95,7 +96,7 @@ export default function useExportPdf({
       doc.setFont("helvetica", "bold");
       const titleX = marginLeft + 50;
       const titleLines = doc.splitTextToSize(safeTitle, contentWidth - 60) as string[];
-      doc.text(titleLines, titleX, y + 6);
+      doc.text(titleLines, titleX, y + 14);
 
       y += titleLines.length * 24 + 20;
 
@@ -141,11 +142,19 @@ export default function useExportPdf({
         doc.setFont("helvetica", "normal");
         doc.setTextColor(colors.primary.r, colors.primary.g, colors.primary.b);
         const urlDisplay = videoUrl.length > 45 ? videoUrl.substring(0, 45) + "..." : videoUrl;
-        doc.text(urlDisplay, marginLeft + 240, y + 18);
-        try {
-          doc.link(marginLeft + 240, y + 8, 200, 14, { url: videoUrl });
-        } catch {
-          // ignore link errors
+        doc.textWithLink(urlDisplay, marginLeft + 240, y + 18, { url: videoUrl });
+
+        // Sharable URL
+        const sharableUrl = buildShareableUrl(videoUrl, notes ?? []);
+        if (sharableUrl) {
+          doc.setTextColor(colors.textMuted.r, colors.textMuted.g, colors.textMuted.b);
+          doc.setFont("helvetica", "bold");
+          doc.text("shareable URL:", marginLeft + 157, y + 35);
+          doc.setFont("helvetica", "normal");
+          doc.setTextColor(colors.primary.r, colors.primary.g, colors.primary.b);
+          const urlDisplay =
+            sharableUrl.length > 45 ? sharableUrl.substring(0, 45) + "..." : sharableUrl;
+          doc.textWithLink(urlDisplay, marginLeft + 240, y + 35, { url: sharableUrl });
         }
       }
 
@@ -203,7 +212,7 @@ export default function useExportPdf({
         // Make timestamp clickable
         if (videoUrl) {
           try {
-            const linkUrl = `${window.location.origin}${window.location.pathname}#v=${encodeURIComponent(videoUrl)}&t=${String(ts)}`;
+            const linkUrl = buildShareableUrl(videoUrl, [n]);
             doc.link(badgeX, badgeY, badgeWidth, badgeHeight, { url: linkUrl });
           } catch {
             // ignore
@@ -221,7 +230,7 @@ export default function useExportPdf({
         doc.setFontSize(11);
         doc.setFont("helvetica", "normal");
         const contentX = marginLeft + 80;
-        const contentY = y + 22;
+        const contentY = y + 25;
         doc.text(contentLines, contentX, contentY);
 
         y += cardHeight + 10;
