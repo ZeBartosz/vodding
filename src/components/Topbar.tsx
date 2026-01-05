@@ -1,4 +1,5 @@
 import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import type { Video } from "../types";
 import Skeleton from "./ui/skeleton";
 import { removeSharedFromUrl } from "../utils/urlParams";
@@ -24,6 +25,7 @@ const Topbar = ({
 }: TopbarProps) => {
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">("idle");
   const [saveStatus, setSaveStatus] = useState<"idle" | "saved" | "error">("idle");
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -309,6 +311,44 @@ const Topbar = ({
           </div>
         </div>
       )}
+      <div className="burger-menu">
+        <button
+          className="topbar-btn"
+          onClick={() => {
+            setMenuOpen(!menuOpen);
+          }}
+          aria-label="Menu"
+          title="Menu"
+          type="button"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+        {menuOpen && (
+          <div className="burger-menu-dropdown">
+            <Link
+              to="/feedback"
+              onClick={() => {
+                setMenuOpen(false);
+              }}
+            >
+              Feedback
+            </Link>
+          </div>
+        )}
+      </div>
     </header>
   );
 };
