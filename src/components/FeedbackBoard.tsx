@@ -69,6 +69,14 @@ export function FeedbackBoard() {
       script.src = "https://canny.io/sdk.js";
       script.async = true;
       script.onload = renderBoard;
+      script.onerror = () => {
+        console.error("Failed to load Canny SDK");
+        const boardElement = document.querySelector("[data-canny]");
+        if (boardElement) {
+          boardElement.innerHTML =
+            '<div style="padding: 20px; text-align: center; color: var(--muted);">Failed to load feedback widget. Please try again later.</div>';
+        }
+      };
       document.head.appendChild(script);
     } else {
       renderBoard();

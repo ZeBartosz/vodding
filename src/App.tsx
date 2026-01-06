@@ -8,7 +8,6 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/feedback/*" element={<FeedbackBoard />} />
-        <Route path="/feedback/:boardType" element={<FeedbackBoard />} />
       </Routes>
     </Router>
   );
