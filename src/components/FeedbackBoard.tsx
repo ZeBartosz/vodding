@@ -113,9 +113,7 @@ export function FeedbackBoard() {
                 ))}
               </div>
 
-              <p className="board-description">
-                {BOARDS[activeBoard].description}
-              </p>
+              <p className="board-description">{BOARDS[activeBoard].description}</p>
 
               <div data-canny key={activeBoard} />
             </div>
@@ -130,18 +128,7 @@ const TopBar = () => {
   return (
     <header className="topbar">
       <div className="brand">
-        <Link
-          to="/"
-          className="brand-badge"
-          title="Back to home"
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              window.location.href = "/";
-            }
-          }}
-        >
+        <Link to="/" className="brand-badge" title="Back to home">
           V
         </Link>
         <div className="brand-title">
