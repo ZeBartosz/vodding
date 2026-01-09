@@ -193,12 +193,12 @@ const TopBar = () => {
         {menuOpen && (
           <div className="burger-menu-dropdown">
             <Link
-              to="/"
+              to="/feedback"
               onClick={() => {
                 setMenuOpen(false);
               }}
             >
-              Back to Home
+              Feedback
             </Link>
           </div>
         )}
