@@ -1,4 +1,3 @@
-/* CSS custom properties for theming */
 :root {
   --bg-dark: #0b1013;
   --panel-dark: #0f1619;
@@ -10,7 +9,6 @@
   --text: #dfe6e8;
 }
 
-/* Base reset and font styles for html, body, and React root */
 html,
 body,
 #root {
@@ -46,6 +44,11 @@ body,
 .container > * {
   min-width: 0;
   min-height: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
 /* Top navigation bar */
@@ -266,7 +269,6 @@ body,
   animation: spin 1s linear infinite;
 }
 
-/* 360 degree rotation animation for spinners */
 @keyframes spin {
   from {
     transform: rotate(0deg);
@@ -288,6 +290,42 @@ body,
 .topbar-btn-success:hover {
   box-shadow: 0 6px 20px rgb(34 197 94 / 35%);
   transform: translateY(-2px);
+}
+
+.burger-menu {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.burger-menu-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 100;
+  min-width: 160px;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgb(32 18 20 / 95%) 0%, rgb(24 14 16 / 95%) 100%);
+  border: 1px solid rgb(184 46 46 / 12%);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgb(0 0 0 / 40%);
+}
+
+.burger-menu-dropdown a {
+  display: block;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgb(255 255 255 / 80%);
+  text-decoration: none;
+  transition:
+    background 150ms ease,
+    color 150ms ease;
+}
+
+.burger-menu-dropdown a:hover {
+  color: rgb(255 255 255 / 95%);
+  background: rgb(184 46 46 / 15%);
 }
 
 /* Note count badge/pill with gradient background */
@@ -921,6 +959,82 @@ body,
   color: #f3bcbc;
 }
 
+/* Feedback page specific styles */
+.feedback-sidebar {
+  width: 100%;
+  max-width: 900px;
+  margin: 12px auto;
+}
+
+.feedback-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: auto;
+  padding: 0;
+  overflow: visible;
+}
+
+/* Board tabs navigation */
+.board-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 0;
+  margin-bottom: 8px;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgb(255 255 255 / 60%);
+  cursor: pointer;
+  background: rgb(255 255 255 / 4%);
+  border: 1px solid rgb(255 255 255 / 6%);
+  border-radius: 10px;
+  transition: all 150ms ease;
+}
+
+.tab-button:hover {
+  color: rgb(255 255 255 / 80%);
+  background: rgb(255 255 255 / 8%);
+  border-color: rgb(255 255 255 / 12%);
+}
+
+.tab-button.active {
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, var(--accent-red), var(--accent-red-strong));
+  border: none;
+  box-shadow: 0 4px 12px rgb(184 46 46 / 25%);
+}
+
+.tab-button.active:hover {
+  box-shadow: 0 6px 16px rgb(184 46 46 / 35%);
+  transform: translateY(-1px);
+}
+
+/* Board description text */
+.board-description {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* Canny board container */
+.feedback-container [data-canny] {
+  position: relative;
+  min-height: 400px;
+  overflow: hidden;
+}
+
+.feedback-container [data-canny] iframe {
+  min-height: calc(100% + 50px);
+  margin-top: -45px;
+}
+
 /* Responsive styles for tablet screens */
 @media (width <= 900px) {
   /* Narrower sidebar on smaller screens */
@@ -940,6 +1054,12 @@ body,
   .video-player-wrap {
     height: 56vh;
   }
+
+  /* Adjust feedback sidebar on tablet */
+  .feedback-sidebar {
+    max-width: 100%;
+    padding: 0 16px;
+  }
 }
 
 /* Responsive styles for mobile screens */
@@ -952,5 +1072,21 @@ body,
   /* Adjusted video player height on mobile */
   .video-player-wrap {
     height: 60vh;
+  }
+
+  /* Show feedback sidebar on mobile */
+  .feedback-sidebar {
+    display: flex;
+    margin: 8px 0;
+  }
+
+  /* Stack tabs on mobile */
+  .board-tabs {
+    flex-direction: column;
+  }
+
+  /* Adjust feedback container for mobile */
+  .feedback-container {
+    gap: 16px;
   }
 }
