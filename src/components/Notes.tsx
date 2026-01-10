@@ -16,6 +16,8 @@ interface NotesProps {
   editNote: (id: string, value: string) => void;
   deleteNote: (id: string) => void;
   resultsRef: RefObject<HTMLDivElement | null>;
+  selectedNoteId: string | null;
+  setSelectedNoteId: (id: string | null) => void;
 }
 
 const Notes: React.FC<NotesProps> = ({
@@ -32,6 +34,8 @@ const Notes: React.FC<NotesProps> = ({
   editNote,
   deleteNote,
   resultsRef,
+  selectedNoteId,
+  setSelectedNoteId,
 }) => {
   return (
     <div className="result-list-root">
@@ -86,9 +90,11 @@ const Notes: React.FC<NotesProps> = ({
               key={n.id}
               note={n}
               isEditing={editingId === n.id}
+              isSelected={selectedNoteId === n.id}
               editingValue={editingValue}
               readOnly={readOnly}
               onJump={() => {
+                setSelectedNoteId(n.id);
                 handleNoteJump(n.timestamp);
               }}
               onEdit={() => {

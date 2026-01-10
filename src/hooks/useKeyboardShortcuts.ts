@@ -4,10 +4,15 @@ import { useEffect } from "react";
 // App.tsx
 //   - Alt-n: Create a new session
 //   - Alt-e: Export the current session
-// useNotes.ts
+// useNotes.ts (Note Navigation)
+//   - Alt+ArrowUp: Navigate up in note list
+//   - Alt+ArrowDown: Navigate down in note list
+//   - Alt+Enter: Jump to selected note's timestamp
+//   - Alt+l: Edit the selected note (when navigating)
+//   - Ctrl+Alt+l: Edit the last created note
+//   - Ctrl+Alt+d: Delete selected note (when navigating) or last note
+//   - Escape: Cancel editing, clear search, deselect note
 //   - Alt-a: Add a new note
-//   - Alt-l: Edit the last created note
-//   - Ctrl+Alt-d: Delete the last created note
 // useLink.ts (Video Playback)
 //   - Space / k: Play/pause
 //   - j: Seek -5s

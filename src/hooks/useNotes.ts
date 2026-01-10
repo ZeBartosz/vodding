@@ -5,12 +5,17 @@ import { v4 as uuidv4 } from "uuid";
 import { formatTime } from "../utils/formatTime";
 import { useKeyboardShortcuts } from "./useKeyboardShortcuts";
 
-export const useNotes = (currentTimeRef?: RefObject<number>, initialNotes?: Note[]) => {
+export const useNotes = (
+  currentTimeRef?: RefObject<number>,
+  initialNotes?: Note[],
+  onJumpToNote?: (time: number) => void,
+) => {
   const [notes, setNotes] = useState<Note[]>(initialNotes ?? []);
   const [inputValue, setInputValue] = useState<string>("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingValue, setEditingValue] = useState<string>("");
   const [query, setQuery] = useState<string>("");
+  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const resultsRef = useRef<HTMLDivElement | null>(null);
@@ -104,6 +109,66 @@ export const useNotes = (currentTimeRef?: RefObject<number>, initialNotes?: Note
     setEditingValue(latestId.content);
   }, [notes]);
 
+  const navigateNotes = useCallback(
+    (direction: "up" | "down") => {
+      const list = filtered;
+      if (list.length === 0) return;
+
+      const currentIndex = selectedNoteId ? list.findIndex((n) => n.id === selectedNoteId) : -1;
+
+      let newIndex: number;
+      if (direction === "down") {
+        newIndex = currentIndex + 1 >= list.length ? 0 : currentIndex + 1;
+      } else {
+        newIndex = currentIndex - 1 < 0 ? list.length - 1 : currentIndex - 1;
+      }
+
+      const newNote = list[newIndex];
+      setSelectedNoteId(newNote.id);
+
+      requestAnimationFrame(() => {
+        const resultsEl = resultsRef.current;
+        if (!resultsEl) return;
+
+        const noteEl = resultsEl.querySelector(`[data-note-id="${newNote.id}"]`);
+        if (!noteEl) return;
+
+        noteEl.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+    },
+    [filtered, selectedNoteId],
+  );
+
+  const jumpToSelectedNote = useCallback(() => {
+    if (!selectedNoteId || !onJumpToNote) return;
+    const note = filtered.find((n) => n.id === selectedNoteId);
+    if (note) {
+      onJumpToNote(note.timestamp);
+    }
+  }, [selectedNoteId, filtered, onJumpToNote]);
+
+  const handleEscape = useCallback(() => {
+    setEditingId(null);
+    setEditingValue("");
+    setQuery("");
+    setSelectedNoteId(null);
+  }, []);
+
+  const editSelectedNote = useCallback(() => {
+    if (!selectedNoteId) return;
+    const note = filtered.find((n) => n.id === selectedNoteId);
+    if (note) {
+      setEditingId(note.id);
+      setEditingValue(note.content);
+    }
+  }, [selectedNoteId, filtered]);
+
+  const deleteSelectedNote = useCallback(() => {
+    if (!selectedNoteId) return;
+    deleteNote(selectedNoteId);
+    setSelectedNoteId(null);
+  }, [selectedNoteId, deleteNote]);
+
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
       if (e.key !== "Enter") return;
@@ -140,17 +205,51 @@ export const useNotes = (currentTimeRef?: RefObject<number>, initialNotes?: Note
         addNote("Edit");
       },
       "alt+l": (e) => {
+        e.preventDefault();
+        if (selectedNoteId) {
+          editSelectedNote();
+        }
+      },
+      "ctrl+alt+l": (e) => {
         if (!currentTimeRef) return;
         e.preventDefault();
         editLatestNote();
       },
       "ctrl+alt+d": (e) => {
-        if (!currentTimeRef) return;
         e.preventDefault();
-        deleteLatesedNotes();
+        if (selectedNoteId) {
+          deleteSelectedNote();
+        } else if (currentTimeRef) {
+          deleteLatesedNotes();
+        }
+      },
+      "alt+arrowup": (e) => {
+        e.preventDefault();
+        navigateNotes("up");
+      },
+      "alt+arrowdown": (e) => {
+        e.preventDefault();
+        navigateNotes("down");
+      },
+      "alt+enter": (e) => {
+        e.preventDefault();
+        jumpToSelectedNote();
+      },
+      escape: () => {
+        handleEscape();
       },
     },
-    [currentTimeRef, addNote, editLatestNote, deleteLatesedNotes],
+    [
+      currentTimeRef,
+      addNote,
+      editLatestNote,
+      deleteLatesedNotes,
+      navigateNotes,
+      jumpToSelectedNote,
+      handleEscape,
+      editSelectedNote,
+      deleteSelectedNote,
+    ],
   );
 
   return {
@@ -171,5 +270,7 @@ export const useNotes = (currentTimeRef?: RefObject<number>, initialNotes?: Note
     resultsRef,
     handleKeyDown,
     filtered,
+    selectedNoteId,
+    setSelectedNoteId,
   };
 };

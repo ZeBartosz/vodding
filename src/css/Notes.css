@@ -261,6 +261,13 @@
   border-color: rgb(184 46 46 / 20%);
 }
 
+/* Result card in selected state (keyboard navigation) */
+.result-card.selected {
+  background: linear-gradient(180deg, rgb(184 46 46 / 10%) 0%, rgb(184 46 46 / 5%) 100%);
+  border-color: rgb(184 46 46 / 30%);
+  box-shadow: 0 4px 16px rgb(184 46 46 / 15%);
+}
+
 /* Note content text display */
 .result-content > div,
 .note-content {

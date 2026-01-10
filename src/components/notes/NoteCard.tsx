@@ -7,6 +7,7 @@ import { EditTextarea } from "./InputTextarea";
 interface NoteCardProps {
   note: Note;
   isEditing: boolean;
+  isSelected?: boolean;
   editingValue: string;
   readOnly: boolean;
   onJump: () => void;
@@ -20,6 +21,7 @@ interface NoteCardProps {
 const NoteCard = ({
   note,
   isEditing,
+  isSelected,
   editingValue,
   readOnly,
   onJump,
@@ -30,7 +32,10 @@ const NoteCard = ({
   onCancel,
 }: NoteCardProps) => {
   return (
-    <div className={`result-card ${isEditing ? "editing" : ""}`}>
+    <div
+      data-note-id={note.id}
+      className={`result-card ${isEditing ? "editing" : ""} ${isSelected ? "selected" : ""}`}
+    >
       <div className="result-card-header">
         <div className="result-meta " onClick={onJump}>
           <span className="timestamp">

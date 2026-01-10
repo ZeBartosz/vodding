@@ -41,7 +41,7 @@ function App() {
     clearUrlNotes,
   } = useLink(currentTitle, setSharedFromUrl, loadWithId);
   const initialNotesSource = sharedFromUrl && urlNotes.length > 0 ? urlNotes : vodding?.notes;
-  const notes = useNotes(currentTimeRef, initialNotesSource);
+  const notes = useNotes(currentTimeRef, initialNotesSource, handleNoteJump);
   const { lastSavedAt, onRestoring, prevNotesRef } = useNotesAutosave({
     notes: notes.items,
     vodding,
@@ -259,6 +259,8 @@ function App() {
                   deleteNote={notes.deleteNote}
                   resultsRef={notes.resultsRef}
                   filtered={notes.filtered}
+                  selectedNoteId={notes.selectedNoteId}
+                  setSelectedNoteId={notes.setSelectedNoteId}
                 />
               </Suspense>
               <InputArea
