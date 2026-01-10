@@ -31,7 +31,7 @@ const NoteCard = ({
   return (
     <div className={`result-card ${isEditing ? "editing" : ""}`}>
       <div className="result-card-header">
-        <div className="result-meta">
+        <div className="result-meta " onClick={onJump}>
           <span className="timestamp">
             <Clock size={12} className="timestamp-icon" /> {formatTime(note.timestamp)}
           </span>
