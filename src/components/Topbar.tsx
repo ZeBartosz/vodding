@@ -2,6 +2,7 @@ import { memo, useCallback, useEffect, useRef, useState } from "react";
 import type { Video } from "../types";
 import Skeleton from "./ui/skeleton";
 import { removeSharedFromUrl } from "../utils/urlParams";
+import Shortcuts from "./Shortcuts";
 
 interface TopbarProps {
   video: Video | null;
@@ -22,8 +23,12 @@ const Topbar = ({
   onCopyShareableUrl,
   onSaveShared,
 }: TopbarProps) => {
-  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">("idle");
-  const [saveStatus, setSaveStatus] = useState<"idle" | "saved" | "error">("idle");
+  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">(
+    "idle",
+  );
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saved" | "error">(
+    "idle",
+  );
 
   const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -306,6 +311,7 @@ const Topbar = ({
                 </>
               )}
             </button>
+            <Shortcuts />
           </div>
         </div>
       )}
