@@ -120,6 +120,66 @@ export const useLink = (
     setFocus({ x: 0.02, y: 0.05 });
   }, []);
 
+  const handleNoteJump = useCallback((time: number) => {
+    const e = playerRef.current;
+    if (!e) return;
+
+    try {
+      e.currentTime = time;
+      if (typeof e.play === "function") {
+        void e.play();
+      }
+    } catch {
+      //
+    }
+  }, []);
+
+  const togglePlay = useCallback(() => {
+    const e = playerRef.current;
+    if (!e) return;
+
+    try {
+      if (e.paused) {
+        void e.play();
+      } else {
+        e.pause();
+      }
+    } catch {
+      //
+    }
+  }, []);
+
+  const seekBy = useCallback((seconds: number) => {
+    const e = playerRef.current;
+    if (!e) return;
+
+    try {
+      e.currentTime = Math.max(0, Math.min(e.duration || 0, e.currentTime + seconds));
+    } catch {
+      //
+    }
+  }, []);
+
+  const adjustVolume = useCallback((delta: number) => {
+    const e = playerRef.current;
+    if (!e) return;
+
+    try {
+      e.volume = Math.max(0, Math.min(1, e.volume + delta));
+    } catch {
+      //
+    }
+  }, []);
+
+  const isTyping = useCallback(() => {
+    const active = document.activeElement;
+    return (
+      active?.tagName === "INPUT" ||
+      active?.tagName === "TEXTAREA" ||
+      active?.getAttribute("contenteditable") === "true"
+    );
+  }, []);
+
   useKeyboardShortcuts(
     {
       "alt+m": (e) => {
@@ -128,23 +188,49 @@ export const useLink = (
         if (mapViewRef.current) handleResetFocusAndScale();
         else handleMapView();
       },
+      space: (e) => {
+        if (!video || isTyping()) return;
+        e.preventDefault();
+        togglePlay();
+      },
+      k: (e) => {
+        if (!video || isTyping()) return;
+        e.preventDefault();
+        togglePlay();
+      },
+      j: (e) => {
+        if (!video || isTyping()) return;
+        e.preventDefault();
+        seekBy(-5);
+      },
+      l: (e) => {
+        if (!video || isTyping()) return;
+        e.preventDefault();
+        seekBy(5);
+      },
+      arrowleft: (e) => {
+        if (!video || isTyping()) return;
+        e.preventDefault();
+        seekBy(-10);
+      },
+      arrowright: (e) => {
+        if (!video || isTyping()) return;
+        e.preventDefault();
+        seekBy(10);
+      },
+      arrowup: (e) => {
+        if (!video || isTyping()) return;
+        e.preventDefault();
+        adjustVolume(0.1);
+      },
+      arrowdown: (e) => {
+        if (!video || isTyping()) return;
+        e.preventDefault();
+        adjustVolume(-0.1);
+      },
     },
-    [video, handleResetFocusAndScale, handleMapView],
+    [video, handleResetFocusAndScale, handleMapView, togglePlay, seekBy, adjustVolume, isTyping],
   );
-
-  const handleNoteJump = useCallback((time: number) => {
-    const el = playerRef.current;
-    if (!el) return;
-
-    try {
-      el.currentTime = time;
-      if (typeof el.play === "function") {
-        void el.play();
-      }
-    } catch {
-      // Ignore errors
-    }
-  }, []);
 
   const handleUpdateVideoName = useCallback((name: string) => {
     setVideo((prev) => (prev ? { ...prev, name } : prev));

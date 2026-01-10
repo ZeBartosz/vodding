@@ -8,7 +8,14 @@ import { useEffect } from "react";
 //   - Alt-a: Add a new note
 //   - Alt-l: Edit the last created note
 //   - Ctrl+Alt-d: Delete the last created note
-// useLink.ts
+// useLink.ts (Video Playback)
+//   - Space / k: Play/pause
+//   - j: Seek -5s
+//   - l: Seek +5s
+//   - ArrowLeft: Seek -10s
+//   - ArrowRight: Seek +10s
+//   - ArrowUp: Volume up 10%
+//   - ArrowDown: Volume down 10%
 //   - Alt-m: Toggle map view
 
 type ShortcutHandler = (e: KeyboardEvent) => void;
