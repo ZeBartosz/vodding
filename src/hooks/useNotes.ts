@@ -83,7 +83,7 @@ export const useNotes = (
     setNotes((prev) => prev.filter((n) => n.id !== id));
   }, []);
 
-  const deleteLatestNotes = useCallback(() => {
+  const deleteLatesedNotes = useCallback(() => {
     setNotes((prev) => prev.slice(0, -1));
   }, []);
 
@@ -99,14 +99,13 @@ export const useNotes = (
   }, []);
 
   const editLatestNote = useCallback(() => {
-    const latestId = notes.reduce((prev, curr) => {
-      if (prev.createdAt > curr.createdAt) return prev;
-      return curr;
-    });
+    if (notes.length === 0) return;
+    const latestNote = notes.reduce((prev, curr) =>
+      prev.createdAt > curr.createdAt ? prev : curr,
+    );
 
-    if (!latestId.id) return;
-    setEditingId(latestId.id);
-    setEditingValue(latestId.content);
+    setEditingId(latestNote.id);
+    setEditingValue(latestNote.content);
   }, [notes]);
 
   const navigateNotes = useCallback(
@@ -220,7 +219,7 @@ export const useNotes = (
         if (selectedNoteId) {
           deleteSelectedNote();
         } else if (currentTimeRef) {
-          deleteLatestNotes();
+          deleteLatesedNotes();
         }
       },
       "alt+arrowup": (e: KeyboardEvent) => {
@@ -243,7 +242,7 @@ export const useNotes = (
       addNote,
       currentTimeRef,
       selectedNoteId,
-      deleteLatestNotes,
+      deleteLatesedNotes,
       deleteSelectedNote,
       handleEscape,
       navigateNotes,
