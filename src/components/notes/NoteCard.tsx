@@ -2,10 +2,12 @@ import { Clock, Edit, Send, Trash } from "lucide-react";
 import type { Note } from "../../types";
 import { formatTime } from "../../utils/formatTime";
 import { memo } from "react";
+import { EditTextarea } from "./InputTextarea";
 
 interface NoteCardProps {
   note: Note;
   isEditing: boolean;
+  isSelected?: boolean;
   editingValue: string;
   readOnly: boolean;
   onJump: () => void;
@@ -19,6 +21,7 @@ interface NoteCardProps {
 const NoteCard = ({
   note,
   isEditing,
+  isSelected,
   editingValue,
   readOnly,
   onJump,
@@ -29,9 +32,12 @@ const NoteCard = ({
   onCancel,
 }: NoteCardProps) => {
   return (
-    <div className={`result-card ${isEditing ? "editing" : ""}`}>
+    <div
+      data-note-id={note.id}
+      className={`result-card ${isEditing ? "editing" : ""} ${isSelected ? "selected" : ""}`}
+    >
       <div className="result-card-header">
-        <div className="result-meta">
+        <div className="result-meta " onClick={onJump}>
           <span className="timestamp">
             <Clock size={12} className="timestamp-icon" /> {formatTime(note.timestamp)}
           </span>
@@ -73,30 +79,13 @@ const NoteCard = ({
 
       <div className="result-content">
         {isEditing ? (
-          <div className="note-edit-wrap">
-            <textarea
-              autoFocus
-              className="note-edit-textarea"
-              value={editingValue}
-              readOnly={readOnly}
-              onChange={(e) => {
-                onEditValueChange(e.target.value);
-              }}
-            />
-            <div className="note-edit-actions">
-              <button
-                onClick={onSave}
-                className="btn btn-primary"
-                disabled={readOnly}
-                title={readOnly ? "Disabled in read-only view" : undefined}
-              >
-                Save
-              </button>
-              <button onClick={onCancel} className="btn btn-ghost">
-                Cancel
-              </button>
-            </div>
-          </div>
+          <EditTextarea
+            editingValue={editingValue}
+            onEditValueChange={onEditValueChange}
+            readOnly={readOnly}
+            onSave={onSave}
+            onCancel={onCancel}
+          />
         ) : (
           <div className="note-content">{note.content}</div>
         )}

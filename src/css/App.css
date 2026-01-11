@@ -137,6 +137,103 @@ body,
   white-space: nowrap;
 }
 
+/* Keyboard shortcuts trigger icon */
+.shortcuts-trigger {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  color: rgb(255 255 255 / 50%);
+  cursor: pointer;
+  background: rgb(255 255 255 / 4%);
+  border: 1px solid rgb(255 255 255 / 6%);
+  border-radius: 8px;
+  transition:
+    color 150ms ease,
+    background 150ms ease,
+    border-color 150ms ease;
+}
+
+/* Keyboard trigger hover state */
+.shortcuts-trigger:hover {
+  color: rgb(255 255 255 / 80%);
+  background: rgb(255 255 255 / 8%);
+  border-color: rgb(255 255 255 / 12%);
+}
+
+/* Dropdown panel for keyboard shortcuts */
+.shortcuts-panel {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  gap: 24px;
+  padding: 16px;
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--text);
+  background: linear-gradient(180deg, rgb(24 16 18 / 98%) 0%, rgb(18 12 14 / 98%) 100%);
+  border: 1px solid rgb(255 255 255 / 8%);
+  border-radius: 12px;
+  box-shadow:
+    0 8px 32px rgb(0 0 0 / 40%),
+    0 0 0 1px rgb(255 255 255 / 3%);
+}
+
+/* Section container for shortcuts */
+.shortcuts-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Section title */
+.shortcuts-title {
+  margin-bottom: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgb(255 255 255 / 40%);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Individual shortcut row */
+.shortcut-item {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  white-space: nowrap;
+}
+
+/* Key badge styling */
+kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  padding: 4px 8px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgb(255 255 255 / 70%);
+  background: rgb(8 12 14 / 80%);
+  border: 1px solid rgb(255 255 255 / 8%);
+  border-radius: 6px;
+}
+
+/* Action description */
+.shortcut-item span {
+  color: rgb(255 255 255 / 60%);
+}
+
+/* Arrow between key combinations */
+.shortcut-item .separator {
+  margin: 0 4px;
+  color: rgb(255 255 255 / 30%);
+}
+
 /* Generic small/muted text utility class */
 .small {
   font-size: 12px;

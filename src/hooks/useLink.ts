@@ -1,6 +1,7 @@
 import {
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type Dispatch,
@@ -9,6 +10,7 @@ import {
 import type { Note, Video, VoddingPayload } from "../types";
 import { v4 as uuidv4 } from "uuid";
 import { parseHashParams } from "../utils/urlParams";
+import { useKeyboardShortcuts } from "./useKeyboardShortcuts";
 
 export const useLink = (
   currentTitle: string | null,
@@ -19,10 +21,12 @@ export const useLink = (
   const [inputValue, setInputValue] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [urlNotes, setUrlNotes] = useState<Note[]>([]);
-  const jumpTimeoutRef = useRef<number | null>(null);
-  const playerRef = useRef<HTMLVideoElement | null>(null);
   const [focus, setFocus] = useState({ x: 0.5, y: 0.5 });
   const [scale, setScale] = useState(1);
+
+  const jumpTimeoutRef = useRef<number | null>(null);
+  const playerRef = useRef<HTMLVideoElement | null>(null);
+  const mapViewRef = useRef<boolean>(false);
 
   useEffect(() => {
     const internal = playerRef.current;
@@ -103,31 +107,133 @@ export const useLink = (
     setInputValue(value);
   }, []);
 
-  const handleResetFocusAndScale = useCallback((e: React.SyntheticEvent) => {
-    e.stopPropagation();
+  const handleResetFocusAndScale = useCallback((e?: React.SyntheticEvent) => {
+    e?.stopPropagation();
+    mapViewRef.current = false;
     setFocus({ x: 0.5, y: 0.5 });
     setScale(1);
   }, []);
 
-  const handleMapView = useCallback((e: React.SyntheticEvent) => {
-    e.stopPropagation();
+  const handleMapView = useCallback((e?: React.SyntheticEvent) => {
+    e?.stopPropagation();
+    mapViewRef.current = true;
     setScale(2.7);
     setFocus({ x: 0.02, y: 0.05 });
   }, []);
 
   const handleNoteJump = useCallback((time: number) => {
-    const el = playerRef.current;
-    if (!el) return;
+    const e = playerRef.current;
+    if (!e) return;
 
     try {
-      el.currentTime = time;
-      if (typeof el.play === "function") {
-        void el.play();
+      e.currentTime = time;
+      if (typeof e.play === "function") {
+        void e.play();
       }
     } catch {
-      // Ignore errors
+      //
     }
   }, []);
+
+  const togglePlay = useCallback(() => {
+    const e = playerRef.current;
+    if (!e) return;
+
+    try {
+      if (e.paused) {
+        void e.play();
+      } else {
+        e.pause();
+      }
+    } catch {
+      //
+    }
+  }, []);
+
+  const seekBy = useCallback((seconds: number) => {
+    const e = playerRef.current;
+    if (!e) return;
+
+    try {
+      e.currentTime = Math.max(0, Math.min(e.duration || 0, e.currentTime + seconds));
+    } catch {
+      //
+    }
+  }, []);
+
+  const adjustVolume = useCallback((delta: number) => {
+    const e = playerRef.current;
+    if (!e) return;
+
+    try {
+      e.volume = Math.max(0, Math.min(1, e.volume + delta));
+    } catch {
+      //
+    }
+  }, []);
+
+  const isTyping = useCallback(() => {
+    const active = document.activeElement;
+    return (
+      active?.tagName === "INPUT" ||
+      active?.tagName === "TEXTAREA" ||
+      active?.getAttribute("contenteditable") === "true"
+    );
+  }, []);
+
+  const shortcutsBindings = useMemo(
+    () => ({
+      "alt+m": (e: KeyboardEvent) => {
+        if (!video) return;
+        e.preventDefault();
+        if (mapViewRef.current) handleResetFocusAndScale();
+        else handleMapView();
+      },
+      space: (e: KeyboardEvent) => {
+        if (!video || isTyping()) return;
+        e.preventDefault();
+        togglePlay();
+      },
+      k: (e: KeyboardEvent) => {
+        if (!video || isTyping()) return;
+        e.preventDefault();
+        togglePlay();
+      },
+      j: (e: KeyboardEvent) => {
+        if (!video || isTyping()) return;
+        e.preventDefault();
+        seekBy(-5);
+      },
+      l: (e: KeyboardEvent) => {
+        if (!video || isTyping()) return;
+        e.preventDefault();
+        seekBy(5);
+      },
+      arrowleft: (e: KeyboardEvent) => {
+        if (!video || isTyping()) return;
+        e.preventDefault();
+        seekBy(-10);
+      },
+      arrowright: (e: KeyboardEvent) => {
+        if (!video || isTyping()) return;
+        e.preventDefault();
+        seekBy(10);
+      },
+      arrowup: (e: KeyboardEvent) => {
+        if (!video || isTyping()) return;
+        e.preventDefault();
+        adjustVolume(0.1);
+      },
+      arrowdown: (e: KeyboardEvent) => {
+        if (!video || isTyping()) return;
+        e.preventDefault();
+        adjustVolume(-0.1);
+      },
+    }),
+    [adjustVolume, handleMapView, handleResetFocusAndScale, isTyping, seekBy, togglePlay, video],
+  );
+
+  useKeyboardShortcuts(shortcutsBindings);
 
   const handleUpdateVideoName = useCallback((name: string) => {
     setVideo((prev) => (prev ? { ...prev, name } : prev));

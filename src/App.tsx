@@ -14,7 +14,8 @@ import NotesSkeleton from "./components/ui/NotesSkeleton";
 import Skeleton from "./components/ui/skeleton";
 import { v4 as uuidv4 } from "uuid";
 import { cleanVideoParams } from "./utils/urlParams";
-import InputArea from "./components/notes/InputTextarea";
+import { InputArea } from "./components/notes/InputTextarea";
+import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 const VideoPlayer = lazy(() => import("./components/VideoPlayer"));
 const ResultBox = lazy(() => import("./components/Notes"));
 
@@ -40,7 +41,7 @@ function App() {
     clearUrlNotes,
   } = useLink(currentTitle, setSharedFromUrl, loadWithId);
   const initialNotesSource = sharedFromUrl && urlNotes.length > 0 ? urlNotes : vodding?.notes;
-  const notes = useNotes(currentTimeRef, initialNotesSource);
+  const notes = useNotes(currentTimeRef, initialNotesSource, handleNoteJump);
   const { lastSavedAt, onRestoring, prevNotesRef } = useNotesAutosave({
     notes: notes.items,
     vodding,
@@ -180,6 +181,22 @@ function App() {
     setVodding,
   ]);
 
+  const shortcutsBindings = useMemo(
+    () => ({
+      "alt+n": (e: KeyboardEvent) => {
+        e.preventDefault();
+        handleNewSession();
+      },
+      "alt+e": (e: KeyboardEvent) => {
+        e.preventDefault();
+        handleExport();
+      },
+    }),
+    [handleNewSession, handleExport],
+  );
+
+  useKeyboardShortcuts(shortcutsBindings);
+
   return (
     <div className="container">
       <Topbar
@@ -244,6 +261,8 @@ function App() {
                   deleteNote={notes.deleteNote}
                   resultsRef={notes.resultsRef}
                   filtered={notes.filtered}
+                  selectedNoteId={notes.selectedNoteId}
+                  setSelectedNoteId={notes.setSelectedNoteId}
                 />
               </Suspense>
               <InputArea
