@@ -54,9 +54,9 @@ export const useNotes = (
   }, [notes, query]);
 
   const addNote = useCallback(
-    (value?: string) => {
+    (value?: string, force?: boolean) => {
       const content = value ?? inputValue;
-      if (!content.trim()) return;
+      if (!content.trim() && !force) return;
 
       const timestamp = typeof currentTimeRef?.current === "number" ? currentTimeRef.current : 0;
 
@@ -201,7 +201,7 @@ export const useNotes = (
       "alt+a": (e: KeyboardEvent) => {
         if (!currentTimeRef) return;
         e.preventDefault();
-        addNote("Edit");
+        addNote(undefined, true);
       },
       "alt+l": (e: KeyboardEvent) => {
         e.preventDefault();
