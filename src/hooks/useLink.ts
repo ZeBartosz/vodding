@@ -8,6 +8,7 @@ import {
   type SetStateAction,
 } from "react";
 import type { Note, Video, VoddingPayload } from "../types";
+import type { ReactPlayerRef } from "../types/player";
 import { v4 as uuidv4 } from "uuid";
 import { parseHashParams } from "../utils/urlParams";
 import { useKeyboardShortcuts } from "./useKeyboardShortcuts";
@@ -25,15 +26,14 @@ export const useLink = (
   const [scale, setScale] = useState(1);
 
   const jumpTimeoutRef = useRef<number | null>(null);
-  const playerRef = useRef<HTMLVideoElement | null>(null);
+  const playerRef = useRef<ReactPlayerRef>(null);
   const mapViewRef = useRef<boolean>(false);
 
   useEffect(() => {
-    const internal = playerRef.current;
-    if (!internal) return;
+    const player = playerRef.current;
+    if (!player) return;
 
-    const el: HTMLElement = internal.nodeName ? internal : internal;
-
+    const el = player as HTMLElement;
     el.style.transformOrigin = `${(focus.x * 100).toFixed()}% ${(focus.y * 100).toFixed()}%`;
     el.style.transform = `scale(${scale.toString()})`;
     el.style.willChange = "transform";
@@ -122,28 +122,41 @@ export const useLink = (
   }, []);
 
   const handleNoteJump = useCallback((time: number) => {
-    const e = playerRef.current;
-    if (!e) return;
+    const player = playerRef.current;
+    if (!player) {
+      console.error("Player ref is null when trying to jump to", time);
+      return;
+    }
 
     try {
-      e.currentTime = time;
-      if (typeof e.play === "function") {
-        void e.play();
+      if (!player) return;
+      player.currentTime = time;
+      const internal = player.getInternalPlayer?.();
+      if (internal?.playVideo) {
+        internal.playVideo();
       }
-    } catch {
-      //
+      console.log("Jumped to time:", time);
+    } catch (error) {
+      console.error("Error jumping to time:", time, error);
     }
   }, []);
 
   const togglePlay = useCallback(() => {
-    const e = playerRef.current;
-    if (!e) return;
+    const player = playerRef.current;
+    if (!player) return;
 
     try {
-      if (e.paused) {
-        void e.play();
-      } else {
-        e.pause();
+      if (!player) return;
+      const internal = player.getInternalPlayer?.();
+      if (!internal) return;
+
+      const playerState = internal.getPlayerState?.();
+      if (playerState !== undefined && internal.playVideo && internal.pauseVideo) {
+        if (playerState === 1) {
+          internal.pauseVideo();
+        } else {
+          internal.playVideo();
+        }
       }
     } catch {
       //
@@ -151,22 +164,29 @@ export const useLink = (
   }, []);
 
   const seekBy = useCallback((seconds: number) => {
-    const e = playerRef.current;
-    if (!e) return;
+    const player = playerRef.current;
+    if (!player) return;
 
     try {
-      e.currentTime = Math.max(0, Math.min(e.duration || 0, e.currentTime + seconds));
+      if (!player) return;
+      const currentTime = player.currentTime ?? 0;
+      const duration = player.duration ?? 0;
+      const newTime = Math.max(0, Math.min(duration || 0, currentTime + seconds));
+      player.currentTime = newTime;
     } catch {
       //
     }
   }, []);
 
   const adjustVolume = useCallback((delta: number) => {
-    const e = playerRef.current;
-    if (!e) return;
+    const player = playerRef.current;
+    if (!player) return;
 
     try {
-      e.volume = Math.max(0, Math.min(1, e.volume + delta));
+      if (!player) return;
+      const currentVolume = player.volume ?? 1;
+      const newVolume = Math.max(0, Math.min(1, currentVolume + delta));
+      player.volume = newVolume;
     } catch {
       //
     }
