@@ -68,6 +68,15 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
     setPlayerKey((k) => k + 1);
   }, []);
 
+  const handlePlayerClick = useCallback(() => {
+    setTimeout(() => {
+      if (document.activeElement instanceof HTMLElement) {
+        console.log(document.activeElement);
+        document.activeElement.blur();
+      }
+    }, 0);
+  }, []);
+
   if (video === null) {
     return (
       <MissingURL
@@ -197,13 +206,20 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
   }
 
   return (
-    <div className="video-player-wrap">
+    <div className="video-player-wrap" onClick={handlePlayerClick}>
       <ReactPlayer
         key={playerKey}
         ref={playerRef}
         src={video.url}
         controls={true}
         className="react-player"
+        config={{
+          youtube: {
+            disablekb: 1,
+          },
+        }}
+        onPlay={handlePlayerClick}
+        onPause={handlePlayerClick}
         onLoadedMetadata={handleTitleChange}
         onProgress={handleProgress}
         onError={() => {

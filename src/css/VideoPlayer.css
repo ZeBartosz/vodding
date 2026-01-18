@@ -6,6 +6,14 @@
   background: #000;
 }
 
+.react-player iframe {
+  pointer-events: auto;
+}
+
+.video-player-wrap {
+  position: relative;
+}
+
 /* Video player container with rounded corners */
 .video-player-wrap {
   position: relative;
