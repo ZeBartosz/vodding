@@ -5,16 +5,19 @@ export const useVideoMetaData = () => {
   const currentTimeRef = useRef<number>(0);
   const [currentTitle, setCurrentTitle] = useState<string | null>(null);
 
-  const handleProgress = useCallback((e: React.SyntheticEvent<HTMLMediaElement> | ReactPlayerProgress) => {
-    if ("playedSeconds" in e) {
-      currentTimeRef.current = e.playedSeconds ?? 0;
-    } else {
-      const event = e;
-      const el = event.currentTarget;
-      currentTimeRef.current = el.currentTime;
-      setCurrentTitle(el.title);
-    }
-  }, []);
+  const handleProgress = useCallback(
+    (e: React.SyntheticEvent<HTMLMediaElement> | ReactPlayerProgress) => {
+      if ("playedSeconds" in e) {
+        currentTimeRef.current = e.playedSeconds ?? 0;
+      } else {
+        const event = e;
+        const el = event.currentTarget;
+        currentTimeRef.current = el.currentTime;
+        setCurrentTitle(el.title);
+      }
+    },
+    [],
+  );
 
   const handleTitleChange = useCallback((e: React.SyntheticEvent<HTMLMediaElement>) => {
     const el = e.currentTarget as HTMLMediaElement;

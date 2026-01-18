@@ -1,4 +1,4 @@
-import type { Video, VoddingPayload } from './index';
+import type { Video, VoddingPayload } from "./index";
 
 export interface ReactPlayerRef extends HTMLVideoElement {
   currentTime: number;
