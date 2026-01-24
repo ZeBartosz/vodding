@@ -1,10 +1,10 @@
 import type { Dispatch, SetStateAction } from "react";
 import type { Note, Video, VoddingPayload } from "./index";
 
-export interface ReactPlayerRef extends HTMLVideoElement {
-  currentTime: number;
-  duration: number;
-  volume: number;
+export interface ReactPlayerRef {
+  getCurrentTime?: () => number;
+  getDuration?: () => number;
+  seekTo?: (amount: number, type?: "seconds" | "fraction") => void;
   getInternalPlayer: () => YouTubeInternalPlayer | null;
 }
 
@@ -25,7 +25,7 @@ export interface ReactPlayerProgress {
 }
 
 export interface VideoPlayerProps {
-  handleProgress: (e: React.SyntheticEvent<HTMLVideoElement>) => void;
+  handleProgress: (e: React.SyntheticEvent<HTMLVideoElement> | ReactPlayerProgress) => void;
   handleTitleChange: (e: React.SyntheticEvent<HTMLVideoElement>) => void;
   playerRef: React.RefObject<HTMLVideoElement | null>;
   video: Video | null;
@@ -45,7 +45,7 @@ export interface MissingURLProps {
   handleSubmit: (e: React.FormEvent) => void;
   inputValue: string;
   handleSetInputValue: (value: string) => void;
-  error: string;
+  error: string | null;
   voddingList: VoddingPayload[];
   deleteVodById: (id: string) => Promise<void>;
   loadWithId: (id: string) => Promise<VoddingPayload | null>;

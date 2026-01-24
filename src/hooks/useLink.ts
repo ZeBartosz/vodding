@@ -234,7 +234,7 @@ export const useLink = (
       }
 
       if (isReactPlayerRef(player)) {
-        const rp = player as ReactPlayerRef;
+        const rp = player;
         const internal = (
           rp as { getInternalPlayer?: () => InternalPlayerLike | null }
         ).getInternalPlayer?.();
@@ -248,7 +248,7 @@ export const useLink = (
           return;
         }
 
-        const pRec = player as Record<string, unknown>;
+        const pRec = player;
         if ("play" in pRec && "pause" in pRec && typeof pRec.play === "function") {
           const media = player as unknown as HTMLMediaElement;
           if (media.paused) void media.play();
@@ -294,7 +294,7 @@ export const useLink = (
         }
 
         if (isReactPlayerRef(player)) {
-          const rp = player as ReactPlayerRef;
+          const rp = player;
           const internal = (
             rp as { getInternalPlayer?: () => InternalPlayerLike | null }
           ).getInternalPlayer?.();
@@ -350,7 +350,7 @@ export const useLink = (
         }
 
         if (isReactPlayerRef(player)) {
-          const rp = player as ReactPlayerRef;
+          const rp = player;
           const internal = rp.getInternalPlayer() as InternalPlayerLike | null | undefined;
           if (
             internal &&
@@ -363,7 +363,7 @@ export const useLink = (
             return;
           }
 
-          const pRec = player as Record<string, unknown>;
+          const pRec = player;
           if ("volume" in pRec && typeof pRec.volume === "number") {
             try {
               (pRec as { volume: number }).volume = Math.max(0, Math.min(1, pRec.volume + delta));
@@ -374,8 +374,8 @@ export const useLink = (
           }
         }
 
-        if ("volume" in (player as Record<string, unknown>)) {
-          const pRec = player as Record<string, unknown> & { volume?: number };
+        if ("volume" in player) {
+          const pRec = player;
           const v = pRec.volume;
           if (typeof v === "number") {
             try {
