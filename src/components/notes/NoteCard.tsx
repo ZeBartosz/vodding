@@ -1,7 +1,7 @@
 import { Clock, Edit, Send, Trash } from "lucide-react";
 import type { Note } from "../../types";
 import { formatTime } from "../../utils/formatTime";
-import { memo } from "react";
+import { memo, useEffect, useRef } from "react";
 import { EditTextarea } from "./InputTextarea";
 
 interface NoteCardProps {
@@ -31,8 +31,35 @@ const NoteCard = ({
   onSave,
   onCancel,
 }: NoteCardProps) => {
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const requestTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!isEditing) return;
+    rootRef.current?.querySelector("textarea");
+    if (rootRef.current) {
+      try {
+        requestTimeoutRef.current = requestAnimationFrame(() => {
+          rootRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+        });
+      } catch {
+        //
+      }
+    }
+
+    return () => {
+      if (requestTimeoutRef.current !== null) {
+        cancelAnimationFrame(requestTimeoutRef.current);
+      }
+    };
+  }, [isEditing]);
+
   return (
     <div
+      ref={rootRef}
       data-note-id={note.id}
       className={`result-card ${isEditing ? "editing" : ""} ${isSelected ? "selected" : ""}`}
     >
