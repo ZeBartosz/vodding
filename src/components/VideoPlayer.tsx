@@ -241,28 +241,27 @@ const MissingURL: FC<MissingURLProps> = ({
   setVideo,
   onRestoring,
 }) => {
-  const handleRestore = async (v: VoddingPayload) => {
-    onRestoring?.(true);
+  const handleRestore = useCallback(
+    async (v: VoddingPayload) => {
+      onRestoring?.(true);
 
-    try {
       if (v.video.url) handleSetInputValue(v.video.url);
       if (v.id) await loadWithId(v.id);
-      setVideo(v.video);
-    } catch (err) {
-      console.error("Failed to restore VOD:", err);
-    } finally {
-      setTimeout(() => onRestoring?.(false), 400);
-    }
-  };
 
-  const handleDelete = async (id?: string) => {
-    if (!id) return;
-    try {
+      setVideo(v.video);
+      setTimeout(() => onRestoring?.(false), 400);
+    },
+    [handleSetInputValue, loadWithId, setVideo, onRestoring],
+  );
+
+  const handleDelete = useCallback(
+    async (id?: string) => {
+      if (!id) return;
+
       await deleteVodById(id);
-    } catch (err) {
-      console.error("Failed to delete VOD:", err);
-    }
-  };
+    },
+    [deleteVodById],
+  );
 
   return (
     <div className="missing-video">
