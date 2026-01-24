@@ -1,4 +1,5 @@
-import type { Video, VoddingPayload } from "./index";
+import type { Dispatch, SetStateAction } from "react";
+import type { Note, Video, VoddingPayload } from "./index";
 
 export interface ReactPlayerRef extends HTMLVideoElement {
   currentTime: number;
@@ -51,4 +52,56 @@ export interface MissingURLProps {
   loading: boolean;
   setVideo: (v: Video | null) => void;
   onRestoring?: (isRestoring: boolean) => void;
+}
+
+export interface ApiSeekable {
+  api: { seekTo: (time: number, units?: string | boolean) => void };
+}
+
+export interface InternalPlayerLike {
+  getCurrentTime?: () => number;
+  getDuration?: () => number;
+  seekTo?: (time: number, smooth?: boolean) => void;
+  api?: {
+    seekTo?: (time: number, units?: string | boolean) => void;
+    getPlayerState?: () => number;
+    playVideo?: () => void;
+    pauseVideo?: () => void;
+    getVolume?: () => number;
+    setVolume?: (v: number) => void;
+  };
+  getPlayerState?: () => number;
+  playVideo?: () => void;
+  pauseVideo?: () => void;
+  getVolume?: () => number;
+  setVolume?: (v: number) => void;
+}
+
+export interface ApiWithControls {
+  api: {
+    seekTo?: (time: number, units?: string | boolean) => void;
+    getPlayerState?: () => number;
+    playVideo?: () => void;
+    pauseVideo?: () => void;
+  };
+}
+
+export interface UseLinkReturn {
+  video: Video | null;
+  setVideo: Dispatch<SetStateAction<Video | null>>;
+  handleSubmit: (e: React.FormEvent) => void;
+  handleSetInputValue: (value: string) => void;
+  handleResetFocusAndScale: (e?: React.SyntheticEvent) => void;
+  inputValue: string;
+  error: string;
+  playerRef: React.RefObject<ReactPlayerRef | HTMLVideoElement | null>;
+  focus: { x: number; y: number };
+  scale: number;
+  handleMapView: (e?: React.SyntheticEvent) => void;
+  handleNoteJump: (time: number) => void;
+  loadVideoFromUrl: (url: string, name?: string) => boolean;
+  handleUpdateVideoName: (name: string) => void;
+  handleHash: () => Promise<void>;
+  urlNotes: Note[];
+  clearUrlNotes: () => void;
 }

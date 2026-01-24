@@ -8,20 +8,22 @@ import {
   type SetStateAction,
 } from "react";
 import type { Note, Video, VoddingPayload } from "../types";
-import type { ReactPlayerRef } from "../types/player";
+import type {
+  ApiSeekable,
+  ApiWithControls,
+  InternalPlayerLike,
+  ReactPlayerRef,
+  UseLinkReturn,
+} from "../types/player";
 import { v4 as uuidv4 } from "uuid";
 import { parseHashParams } from "../utils/urlParams";
 import { useKeyboardShortcuts } from "./useKeyboardShortcuts";
-
-interface ApiSeekable {
-  api: { seekTo: (time: number, units?: string | boolean) => void };
-}
 
 export const useLink = (
   currentTitle: string | null,
   setSharedFromUrl: Dispatch<SetStateAction<boolean>>,
   loadWithId: (id: string) => Promise<VoddingPayload | null>,
-) => {
+): UseLinkReturn => {
   const [video, setVideo] = useState<Video | null>(null);
   const [inputValue, setInputValue] = useState<string>("");
   const [error, setError] = useState<string>("");
@@ -177,27 +179,28 @@ export const useLink = (
             if (media.paused) void media.play();
             return;
           }
+
           return;
         }
 
         if (isReactPlayerRef(player)) {
-          const getInternal = player.getInternalPlayer;
+          const rp = player;
+          const getInternal = (rp as { getInternalPlayer?: () => InternalPlayerLike | null })
+            .getInternalPlayer;
           if (typeof getInternal === "function") {
             const internal = getInternal();
             if (internal) {
-              const anyInternal = internal;
-
-              if (anyInternal?.api && typeof anyInternal.api.seekTo === "function") {
-                anyInternal.api.seekTo(time, "seconds");
-              } else if (typeof anyInternal.seekTo === "function") {
-                anyInternal.seekTo(time, true);
+              if (internal.api && typeof internal.api.seekTo === "function") {
+                internal.api.seekTo(time, "seconds");
+              } else if (typeof internal.seekTo === "function") {
+                internal.seekTo(time, true);
               } else if (
-                typeof anyInternal.getCurrentTime === "function" &&
-                typeof anyInternal.playVideo === "function"
+                typeof internal.getCurrentTime === "function" &&
+                typeof internal.playVideo === "function"
               ) {
-                anyInternal.playVideo();
-              } else if (typeof anyInternal.playVideo === "function") {
-                anyInternal.playVideo();
+                internal.playVideo();
+              } else if (typeof internal.playVideo === "function") {
+                internal.playVideo();
               }
 
               return;
@@ -231,7 +234,10 @@ export const useLink = (
       }
 
       if (isReactPlayerRef(player)) {
-        const internal = player.getInternalPlayer;
+        const rp = player as ReactPlayerRef;
+        const internal = (
+          rp as { getInternalPlayer?: () => InternalPlayerLike | null }
+        ).getInternalPlayer?.();
         if (internal && typeof internal.getPlayerState === "function") {
           const state = internal.getPlayerState();
           if (state === 1) {
@@ -242,7 +248,8 @@ export const useLink = (
           return;
         }
 
-        if ("play" in player && "pause" in player && typeof player.play === "function") {
+        const pRec = player as Record<string, unknown>;
+        if ("play" in pRec && "pause" in pRec && typeof pRec.play === "function") {
           const media = player as unknown as HTMLMediaElement;
           if (media.paused) void media.play();
           else media.pause();
@@ -251,18 +258,19 @@ export const useLink = (
       }
 
       if (hasApiSeekTo(player)) {
-        const api = (player as ApiSeekable & Record<string, unknown>).api as Record<
-          string,
-          unknown
-        >;
-        const state = api.getPlayerState();
-        const paused = state !== 1;
-        if (paused && "playVideo" in api && typeof api.playVideo === "function") {
-          api.playVideo();
-          return;
-        } else if (!paused && "pauseVideo" in api && typeof api.pauseVideo === "function") {
-          api.pauseVideo();
-          return;
+        const apiObj = (player as ApiWithControls).api as Record<string, unknown> | undefined;
+        if (apiObj) {
+          if (typeof apiObj.getPlayerState === "function") {
+            const state = (apiObj.getPlayerState as () => number)();
+            const paused = state !== 1;
+            if (paused && typeof apiObj.playVideo === "function") {
+              (apiObj.playVideo as () => void)();
+              return;
+            } else if (!paused && typeof apiObj.pauseVideo === "function") {
+              (apiObj.pauseVideo as () => void)();
+              return;
+            }
+          }
         }
       }
     } catch {
@@ -276,7 +284,6 @@ export const useLink = (
       if (!player) return;
 
       try {
-        // 1) standard HTMLMediaElement
         if (isHtmlMediaElement(player)) {
           const media = player as HTMLMediaElement;
           const currentTime = Number.isFinite(media.currentTime) ? media.currentTime : 0;
@@ -287,30 +294,41 @@ export const useLink = (
         }
 
         if (isReactPlayerRef(player)) {
-          const internal = player.getInternalPlayer?.();
+          const rp = player as ReactPlayerRef;
+          const internal = (
+            rp as { getInternalPlayer?: () => InternalPlayerLike | null }
+          ).getInternalPlayer?.();
           if (internal) {
-            const hasGetCurrent = typeof (internal as any).getCurrentTime === "function";
-            const hasGetDuration = typeof (internal as any).getDuration === "function";
-            const currentTime = hasGetCurrent ? (internal as any).getCurrentTime() : 0;
-            const duration = hasGetDuration ? (internal as any).getDuration() : Infinity;
+            const hasGetCurrent = typeof internal.getCurrentTime === "function";
+            const hasGetDuration = typeof internal.getDuration === "function";
+            const currentTime = hasGetCurrent ? (internal.getCurrentTime?.() ?? 0) : 0;
+            const duration = hasGetDuration ? (internal.getDuration?.() ?? Infinity) : Infinity;
             const newTime = Math.max(0, Math.min(duration, currentTime + seconds));
-            if (typeof (internal as any).seekTo === "function") {
-              (internal as any).seekTo(newTime, true);
-            } else if (typeof (internal as any)?.api?.seekTo === "function") {
-              (internal as any).api.seekTo(newTime, "seconds");
+
+            if (typeof internal.seekTo === "function") {
+              internal.seekTo(newTime, true);
+            } else if (internal.api && typeof internal.api.seekTo === "function") {
+              internal.api.seekTo(newTime, "seconds");
             }
             return;
           }
         }
 
         if (hasApiSeekTo(player)) {
-          const current = "currentTime" in player ? ((player as any).currentTime ?? 0) : 0;
-          const duration = "duration" in player ? ((player as any).duration ?? Infinity) : Infinity;
+          const apiPlayer = player as ApiSeekable;
+          const current =
+            "currentTime" in apiPlayer
+              ? ((apiPlayer as unknown as { currentTime?: number }).currentTime ?? 0)
+              : 0;
+          const duration =
+            "duration" in apiPlayer
+              ? ((apiPlayer as unknown as { duration?: number }).duration ?? Infinity)
+              : Infinity;
           const newTime = Math.max(0, Math.min(duration, current + seconds));
-          player.api.seekTo(newTime, "seconds");
+          apiPlayer.api.seekTo(newTime, "seconds");
           return;
         }
-      } catch (e) {
+      } catch {
         //
       }
     },
@@ -323,7 +341,6 @@ export const useLink = (
       if (!player) return;
 
       try {
-        // HTMLMediaElement first
         if (isHtmlMediaElement(player)) {
           const media = player as HTMLMediaElement;
           const current = typeof media.volume === "number" ? media.volume : 1;
@@ -333,21 +350,23 @@ export const useLink = (
         }
 
         if (isReactPlayerRef(player)) {
-          const internal = player.getInternalPlayer?.();
+          const rp = player as ReactPlayerRef;
+          const internal = rp.getInternalPlayer() as InternalPlayerLike | null | undefined;
           if (
             internal &&
-            typeof (internal as any).getVolume === "function" &&
-            typeof (internal as any).setVolume === "function"
+            typeof internal.getVolume === "function" &&
+            typeof internal.setVolume === "function"
           ) {
-            const current = ((internal as any).getVolume() as number) / 100;
+            const current = internal.getVolume() / 100;
             const newVolume = Math.max(0, Math.min(1, current + delta));
-            (internal as any).setVolume(Math.round(newVolume * 100));
+            internal.setVolume(Math.round(newVolume * 100));
             return;
           }
 
-          if ("volume" in player && typeof (player as any).volume === "number") {
+          const pRec = player as Record<string, unknown>;
+          if ("volume" in pRec && typeof pRec.volume === "number") {
             try {
-              (player as any).volume = Math.max(0, Math.min(1, (player as any).volume + delta));
+              (pRec as { volume: number }).volume = Math.max(0, Math.min(1, pRec.volume + delta));
               return;
             } catch {
               //
@@ -356,10 +375,11 @@ export const useLink = (
         }
 
         if ("volume" in (player as Record<string, unknown>)) {
-          const v = player.volume;
+          const pRec = player as Record<string, unknown> & { volume?: number };
+          const v = pRec.volume;
           if (typeof v === "number") {
             try {
-              player.volume = Math.max(0, Math.min(1, v + delta));
+              pRec.volume = Math.max(0, Math.min(1, v + delta));
             } catch {
               //
             }
