@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo, useEffect, useRef } from "react";
 import { useKeyboardShortcuts } from "../../hooks/useKeyboardShortcuts";
 
 export const InputArea = memo(
@@ -91,6 +91,21 @@ export const EditTextarea = memo(
     onSave: () => void;
     onCancel: () => void;
   }) => {
+    const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+    useEffect(() => {
+      const el = textareaRef.current;
+      if (!el) return;
+      try {
+        const len = el.value ? el.value.length : 0;
+
+        el.focus();
+        el.setSelectionRange(len, len);
+        el.scrollTop = el.scrollHeight;
+      } catch {
+        //
+      }
+    }, []);
     const handleKeyDown = useCallback(
       (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter" && !e.shiftKey) {
@@ -107,6 +122,7 @@ export const EditTextarea = memo(
     return (
       <div className="note-edit-wrap">
         <textarea
+          ref={textareaRef}
           autoFocus
           className="note-edit-textarea"
           value={editingValue}
