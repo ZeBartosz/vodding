@@ -208,7 +208,12 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
     <div className="video-player-wrap" onClick={handlePlayerClick}>
       <ReactPlayer
         key={playerKey}
-        ref={playerRef}
+        ref={(r) => {
+          const playerRefRef = playerRef as { current?: unknown } | undefined;
+          if (playerRefRef && typeof playerRefRef === "object") {
+            playerRefRef.current = r as unknown;
+          }
+        }}
         src={video.url}
         controls={true}
         className="react-player"

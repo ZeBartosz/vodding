@@ -1,4 +1,4 @@
-import type { Dispatch, SetStateAction } from "react";
+import type { Dispatch, RefObject, SetStateAction } from "react";
 import type { Note, Video, VoddingPayload } from "./index";
 
 export interface ReactPlayerRef {
@@ -27,7 +27,7 @@ export interface ReactPlayerProgress {
 export interface VideoPlayerProps {
   handleProgress: (e: React.SyntheticEvent<HTMLVideoElement> | ReactPlayerProgress) => void;
   handleTitleChange: (e: React.SyntheticEvent<HTMLVideoElement>) => void;
-  playerRef: React.RefObject<HTMLVideoElement | null>;
+  playerRef: RefObject<ReactPlayerRef | HTMLVideoElement | null>;
   video: Video | null;
   handleSubmit: (e: React.FormEvent) => void;
   inputValue: string;
