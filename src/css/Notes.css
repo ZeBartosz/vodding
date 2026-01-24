@@ -280,7 +280,7 @@
 
 /* Note edit wrapper within result card */
 .result-card .note-edit-wrap {
-  margin-top: 10px;
+  margin-top: 0;
 }
 
 /* Responsive adjustments for tablet screens */
