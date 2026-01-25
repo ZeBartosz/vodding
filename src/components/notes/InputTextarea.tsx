@@ -43,7 +43,9 @@ export const InputArea = memo(
             onChange={(e) => {
               setInputValue(e.target.value);
             }}
-            placeholder={readOnly ? "Read-only session" : "Write your observation..."}
+            placeholder={
+              readOnly ? "Read-only session" : "Write your observation..."
+            }
             onKeyDown={handleKeyDown}
             className={`input-textarea ${readOnly ? "input-textarea-readonly" : ""}`}
           />
@@ -57,7 +59,11 @@ export const InputArea = memo(
             >
               Reset
             </button>
-            <button onClick={handleMapView} aria-label="Map View" className="btn btn-ghost">
+            <button
+              onClick={handleMapView}
+              aria-label="Map View"
+              className="btn btn-ghost"
+            >
               Map View
             </button>
           </div>
@@ -67,7 +73,11 @@ export const InputArea = memo(
             }}
             className="btn btn-primary"
             disabled={readOnly}
-            title={readOnly ? "Save this VOD to your session to add notes" : undefined}
+            title={
+              readOnly
+                ? "Save this VOD to your session to add notes"
+                : undefined
+            }
           >
             {readOnly ? "Read-only" : "+ Add Note"}
           </button>
@@ -106,6 +116,7 @@ export const EditTextarea = memo(
         //
       }
     }, []);
+
     const handleKeyDown = useCallback(
       (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter" && !e.shiftKey) {
@@ -134,7 +145,9 @@ export const EditTextarea = memo(
         />
         <div className="note-edit-actions">
           <button
-            onClick={() =>{  onSave(textareaRef.current?.value ?? ""); }}
+            onClick={() => {
+              onSave(textareaRef.current?.value ?? "");
+            }}
             className="btn btn-primary"
             disabled={readOnly}
             title={readOnly ? "Disabled in read-only view" : undefined}
