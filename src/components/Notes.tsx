@@ -1,4 +1,4 @@
-import React, { memo, type RefObject } from "react";
+import React, { memo, useCallback, type RefObject } from "react";
 import type { Note } from "../types";
 import NoteCard from "./notes/NoteCard";
 
@@ -37,6 +37,42 @@ const Notes: React.FC<NotesProps> = ({
   selectedNoteId,
   setSelectedNoteId,
 }) => {
+  const handleJump = useCallback(
+    (id: string, timestamp: number) => {
+      setSelectedNoteId(id);
+      handleNoteJump(timestamp);
+    },
+    [setSelectedNoteId, handleNoteJump],
+  );
+
+  const handleDelete = useCallback(
+    (id: string) => {
+      deleteNote(id);
+    },
+    [deleteNote],
+  );
+
+  const handleEdit = useCallback(
+    (id: string, content: string) => {
+      setEditingId(id);
+      setEditingValue(content);
+    },
+    [setEditingId, setEditingValue],
+  );
+
+  const handleSave = useCallback(
+    (id: string, content: string) => {
+      editNote(id, content);
+      setEditingId(null);
+      setEditingValue("");
+    },
+    [editNote, setEditingId, setEditingValue],
+  );
+
+  const handleCancel = useCallback(() => {
+    setEditingId(null);
+    setEditingValue("");
+  }, [setEditingId, setEditingValue]);
   return (
     <div className="result-list-root">
       <div className="result-list-top">
@@ -91,27 +127,14 @@ const Notes: React.FC<NotesProps> = ({
               note={n}
               isEditing={editingId === n.id}
               isSelected={selectedNoteId === n.id}
-              editingValue={editingValue}
+              editingValue={editingId === n.id ? editingValue : undefined}
               readOnly={readOnly}
-              onJump={() => {
-                setSelectedNoteId(n.id);
-                handleNoteJump(n.timestamp);
-              }}
-              onEdit={() => {
-                setEditingId(n.id);
-                setEditingValue(n.content);
-              }}
-              onDelete={() => {
-                deleteNote(n.id);
-              }}
+              onJump={handleJump}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
               onEditValueChange={setEditingValue}
-              onSave={() => {
-                editNote(n.id, editingValue);
-              }}
-              onCancel={() => {
-                setEditingId(null);
-                setEditingValue("");
-              }}
+              onSave={handleSave}
+              onCancel={handleCancel}
             />
           ))
         )}

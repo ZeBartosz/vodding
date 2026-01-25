@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo, useEffect, useRef } from "react";
 import { useKeyboardShortcuts } from "../../hooks/useKeyboardShortcuts";
 
 export const InputArea = memo(
@@ -88,25 +88,42 @@ export const EditTextarea = memo(
     editingValue: string;
     onEditValueChange: (value: string) => void;
     readOnly: boolean;
-    onSave: () => void;
+    onSave: (content: string) => void;
     onCancel: () => void;
   }) => {
+    const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+    useEffect(() => {
+      const el = textareaRef.current;
+      if (!el) return;
+      try {
+        const len = el.value ? el.value.length : 0;
+
+        el.focus();
+        el.setSelectionRange(len, len);
+        el.scrollTop = el.scrollHeight;
+      } catch {
+        //
+      }
+    }, []);
+
     const handleKeyDown = useCallback(
       (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter" && !e.shiftKey) {
           e.preventDefault();
-          onSave();
+          onSave(editingValue);
         } else if (e.key === "Escape") {
           e.preventDefault();
           onCancel();
         }
       },
-      [onSave, onCancel],
+      [onSave, onCancel, editingValue],
     );
 
     return (
       <div className="note-edit-wrap">
         <textarea
+          ref={textareaRef}
           autoFocus
           className="note-edit-textarea"
           value={editingValue}
@@ -118,7 +135,9 @@ export const EditTextarea = memo(
         />
         <div className="note-edit-actions">
           <button
-            onClick={onSave}
+            onClick={() => {
+              onSave(editingValue);
+            }}
             className="btn btn-primary"
             disabled={readOnly}
             title={readOnly ? "Disabled in read-only view" : undefined}

@@ -8,6 +8,13 @@ import {
   type SetStateAction,
 } from "react";
 import type { Note, Video, VoddingPayload } from "../types";
+import type {
+  ApiSeekable,
+  ApiWithControls,
+  InternalPlayerLike,
+  ReactPlayerRef,
+  UseLinkReturn,
+} from "../types/player";
 import { v4 as uuidv4 } from "uuid";
 import { parseHashParams } from "../utils/urlParams";
 import { useKeyboardShortcuts } from "./useKeyboardShortcuts";
@@ -16,7 +23,7 @@ export const useLink = (
   currentTitle: string | null,
   setSharedFromUrl: Dispatch<SetStateAction<boolean>>,
   loadWithId: (id: string) => Promise<VoddingPayload | null>,
-) => {
+): UseLinkReturn => {
   const [video, setVideo] = useState<Video | null>(null);
   const [inputValue, setInputValue] = useState<string>("");
   const [error, setError] = useState<string>("");
@@ -25,15 +32,14 @@ export const useLink = (
   const [scale, setScale] = useState(1);
 
   const jumpTimeoutRef = useRef<number | null>(null);
-  const playerRef = useRef<HTMLVideoElement | null>(null);
+  const playerRef = useRef<ReactPlayerRef | HTMLVideoElement | null>(null);
   const mapViewRef = useRef<boolean>(false);
 
   useEffect(() => {
-    const internal = playerRef.current;
-    if (!internal) return;
+    const player = playerRef.current;
+    if (!player) return;
 
-    const el: HTMLElement = internal.nodeName ? internal : internal;
-
+    const el = player as HTMLElement;
     el.style.transformOrigin = `${(focus.x * 100).toFixed()}% ${(focus.y * 100).toFixed()}%`;
     el.style.transform = `scale(${scale.toString()})`;
     el.style.willChange = "transform";
@@ -121,56 +127,271 @@ export const useLink = (
     setFocus({ x: 0.02, y: 0.05 });
   }, []);
 
-  const handleNoteJump = useCallback((time: number) => {
-    const e = playerRef.current;
-    if (!e) return;
+  const isReactPlayerRef = useCallback((p: unknown): p is ReactPlayerRef => {
+    return (
+      typeof p === "object" &&
+      p !== null &&
+      "getInternalPlayer" in (p as Record<string, unknown>) &&
+      typeof (p as ReactPlayerRef).getInternalPlayer === "function"
+    );
+  }, []);
 
+  const hasApiSeekTo = useCallback((p: unknown): p is ApiSeekable => {
+    if (typeof p !== "object" || p === null) return false;
+    const obj = p as Record<string, unknown>;
+    if (!("api" in obj)) return false;
+    const api = obj.api;
+    return (
+      typeof api === "object" &&
+      api !== null &&
+      typeof (api as Record<string, unknown>).seekTo === "function"
+    );
+  }, []);
+
+  const isHtmlMediaElement = useCallback((p: unknown): p is HTMLMediaElement => {
     try {
-      e.currentTime = time;
-      if (typeof e.play === "function") {
-        void e.play();
-      }
+      return p instanceof HTMLMediaElement;
     } catch {
-      //
+      return (
+        typeof p === "object" &&
+        p !== null &&
+        "currentTime" in (p as Record<string, unknown>) &&
+        "play" in (p as Record<string, unknown>)
+      );
     }
   }, []);
+
+  const handleNoteJump = useCallback(
+    (time: number) => {
+      const player = playerRef.current;
+      if (!player) return;
+
+      try {
+        if (hasApiSeekTo(player)) {
+          try {
+            (player as ApiSeekable).api.seekTo(time, "seconds");
+          } catch {
+            //
+          }
+
+          if (isHtmlMediaElement(player)) {
+            const media = player as HTMLMediaElement;
+            if (media.paused) void media.play();
+            return;
+          }
+
+          return;
+        }
+
+        if (isReactPlayerRef(player)) {
+          const rp = player;
+          const getInternal = (rp as { getInternalPlayer?: () => InternalPlayerLike | null })
+            .getInternalPlayer;
+          if (typeof getInternal === "function") {
+            const internal = getInternal();
+            if (internal) {
+              if (internal.api && typeof internal.api.seekTo === "function") {
+                internal.api.seekTo(time, "seconds");
+              } else if (typeof internal.seekTo === "function") {
+                internal.seekTo(time, true);
+              } else if (
+                typeof internal.getCurrentTime === "function" &&
+                typeof internal.playVideo === "function"
+              ) {
+                internal.playVideo();
+              } else if (typeof internal.playVideo === "function") {
+                internal.playVideo();
+              }
+
+              return;
+            }
+          }
+        }
+
+        if (isHtmlMediaElement(player)) {
+          const media = player as HTMLMediaElement;
+          media.currentTime = time;
+          if (media.paused) void media.play();
+          return;
+        }
+      } catch {
+        //
+      }
+    },
+    [hasApiSeekTo, isHtmlMediaElement, isReactPlayerRef],
+  );
 
   const togglePlay = useCallback(() => {
-    const e = playerRef.current;
-    if (!e) return;
+    const player = playerRef.current;
+    if (!player) return;
 
     try {
-      if (e.paused) {
-        void e.play();
-      } else {
-        e.pause();
+      if (isHtmlMediaElement(player)) {
+        const media = player as HTMLMediaElement;
+        if (media.paused) void media.play();
+        else media.pause();
+        return;
+      }
+
+      if (isReactPlayerRef(player)) {
+        const rp = player;
+        const internal = (
+          rp as { getInternalPlayer?: () => InternalPlayerLike | null }
+        ).getInternalPlayer?.();
+        if (internal && typeof internal.getPlayerState === "function") {
+          const state = internal.getPlayerState();
+          if (state === 1) {
+            if (typeof internal.pauseVideo === "function") internal.pauseVideo();
+          } else {
+            if (typeof internal.playVideo === "function") internal.playVideo();
+          }
+          return;
+        }
+
+        const pRec = player;
+        if ("play" in pRec && "pause" in pRec && typeof pRec.play === "function") {
+          const media = player as unknown as HTMLMediaElement;
+          if (media.paused) void media.play();
+          else media.pause();
+          return;
+        }
+      }
+
+      if (hasApiSeekTo(player)) {
+        const apiObj = (player as ApiWithControls).api as Record<string, unknown> | undefined;
+        if (apiObj) {
+          if (typeof apiObj.getPlayerState === "function") {
+            const state = (apiObj.getPlayerState as () => number)();
+            const paused = state !== 1;
+            if (paused && typeof apiObj.playVideo === "function") {
+              (apiObj.playVideo as () => void)();
+              return;
+            } else if (!paused && typeof apiObj.pauseVideo === "function") {
+              (apiObj.pauseVideo as () => void)();
+              return;
+            }
+          }
+        }
       }
     } catch {
       //
     }
-  }, []);
+  }, [hasApiSeekTo, isHtmlMediaElement, isReactPlayerRef]);
 
-  const seekBy = useCallback((seconds: number) => {
-    const e = playerRef.current;
-    if (!e) return;
+  const seekBy = useCallback(
+    (seconds: number) => {
+      const player = playerRef.current;
+      if (!player) return;
 
-    try {
-      e.currentTime = Math.max(0, Math.min(e.duration || 0, e.currentTime + seconds));
-    } catch {
-      //
-    }
-  }, []);
+      try {
+        if (isHtmlMediaElement(player)) {
+          const media = player as HTMLMediaElement;
+          const currentTime = Number.isFinite(media.currentTime) ? media.currentTime : 0;
+          const duration = Number.isFinite(media.duration) ? media.duration : Infinity;
+          const newTime = Math.max(0, Math.min(duration, currentTime + seconds));
+          media.currentTime = newTime;
+          return;
+        }
 
-  const adjustVolume = useCallback((delta: number) => {
-    const e = playerRef.current;
-    if (!e) return;
+        if (isReactPlayerRef(player)) {
+          const rp = player;
+          const internal = (
+            rp as { getInternalPlayer?: () => InternalPlayerLike | null }
+          ).getInternalPlayer?.();
+          if (internal) {
+            const hasGetCurrent = typeof internal.getCurrentTime === "function";
+            const hasGetDuration = typeof internal.getDuration === "function";
+            const currentTime = hasGetCurrent ? (internal.getCurrentTime?.() ?? 0) : 0;
+            const duration = hasGetDuration ? (internal.getDuration?.() ?? Infinity) : Infinity;
+            const newTime = Math.max(0, Math.min(duration, currentTime + seconds));
 
-    try {
-      e.volume = Math.max(0, Math.min(1, e.volume + delta));
-    } catch {
-      //
-    }
-  }, []);
+            if (typeof internal.seekTo === "function") {
+              internal.seekTo(newTime, true);
+            } else if (internal.api && typeof internal.api.seekTo === "function") {
+              internal.api.seekTo(newTime, "seconds");
+            }
+            return;
+          }
+        }
+
+        if (hasApiSeekTo(player)) {
+          const apiPlayer = player as ApiSeekable;
+          const current =
+            "currentTime" in apiPlayer
+              ? ((apiPlayer as unknown as { currentTime?: number }).currentTime ?? 0)
+              : 0;
+          const duration =
+            "duration" in apiPlayer
+              ? ((apiPlayer as unknown as { duration?: number }).duration ?? Infinity)
+              : Infinity;
+          const newTime = Math.max(0, Math.min(duration, current + seconds));
+          apiPlayer.api.seekTo(newTime, "seconds");
+          return;
+        }
+      } catch {
+        //
+      }
+    },
+    [hasApiSeekTo, isHtmlMediaElement, isReactPlayerRef],
+  );
+
+  const adjustVolume = useCallback(
+    (delta: number) => {
+      const player = playerRef.current;
+      if (!player) return;
+
+      try {
+        if (isHtmlMediaElement(player)) {
+          const media = player as HTMLMediaElement;
+          const current = typeof media.volume === "number" ? media.volume : 1;
+          const newVolume = Math.max(0, Math.min(1, current + delta));
+          media.volume = newVolume;
+          return;
+        }
+
+        if (isReactPlayerRef(player)) {
+          const rp = player;
+          const internal = rp.getInternalPlayer() as InternalPlayerLike | null | undefined;
+          if (
+            internal &&
+            typeof internal.getVolume === "function" &&
+            typeof internal.setVolume === "function"
+          ) {
+            const current = internal.getVolume() / 100;
+            const newVolume = Math.max(0, Math.min(1, current + delta));
+            internal.setVolume(Math.round(newVolume * 100));
+            return;
+          }
+
+          const pRec = player;
+          if ("volume" in pRec && typeof pRec.volume === "number") {
+            try {
+              (pRec as { volume: number }).volume = Math.max(0, Math.min(1, pRec.volume + delta));
+              return;
+            } catch {
+              //
+            }
+          }
+        }
+
+        if ("volume" in player) {
+          const pRec = player;
+          const v = pRec.volume;
+          if (typeof v === "number") {
+            try {
+              pRec.volume = Math.max(0, Math.min(1, v + delta));
+            } catch {
+              //
+            }
+          }
+          return;
+        }
+      } catch {
+        //
+      }
+    },
+    [isHtmlMediaElement, isReactPlayerRef],
+  );
 
   const isTyping = useCallback(() => {
     const active = document.activeElement;
@@ -308,16 +529,19 @@ export const useLink = (
       if (notes.length === 1 && notes[0].timestamp) {
         if (jumpTimeoutRef.current) clearTimeout(jumpTimeoutRef.current);
 
-        jumpTimeoutRef.current = setTimeout(
+        jumpTimeoutRef.current = window.setTimeout(
           () => {
             jumpTimeoutRef.current = null;
-            handleNoteJump(notes[0].timestamp);
+            if (typeof notes[0].timestamp === "number") {
+              handleNoteJump(notes[0].timestamp);
+            }
           },
           loaded ? 300 : 500,
         );
       }
-    } catch {
+    } catch (e) {
       //
+      console.debug("handleHash error", e);
     }
   }, [loadVideoFromUrl, handleNoteJump, setSharedFromUrl, loadWithId, video]);
 
@@ -334,7 +558,7 @@ export const useLink = (
         return { ...prev, name: currentTitle };
       });
     });
-  }, [currentTitle, setVideo]);
+  }, [currentTitle]);
 
   return {
     video,
