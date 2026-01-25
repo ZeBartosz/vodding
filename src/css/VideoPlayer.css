@@ -16,11 +16,11 @@
   width: 100%;
   height: 80vh;
   overflow: hidden;
-  background: #000;
+  background: var(--card-bg);
   border-radius: 6px;
   box-shadow:
-    inset 0 0 0 1px rgb(208 67 67 / 3%),
-    0 6px 22px rgb(184 46 46 / 6%);
+    inset 0 0 0 1px rgba(208, 67, 67, 0.03),
+    0 6px 22px rgba(184, 46, 46, 0.06);
 }
 
 /* VOD list wrapper container */
@@ -29,13 +29,13 @@
   width: 100%;
   max-width: 800px;
   padding: 24px 28px;
-  background: linear-gradient(180deg, rgb(18 12 14 / 75%) 0%, rgb(12 8 10 / 80%) 100%);
-  border: 1px solid rgb(184 46 46 / 12%);
+  background: linear-gradient(180deg, rgba(18,12,14,0.75) 0%, rgba(12,8,10,0.80) 100%);
+  border: 1px solid rgba(184,46,46,0.12);
   border-radius: 16px;
   box-shadow:
     0 4px 24px rgb(0 0 0 / 35%),
-    0 0 0 1px rgb(255 255 255 / 2%),
-    inset 0 1px 0 rgb(255 255 255 / 3%);
+    0 0 0 1px rgba(255,255,255,0.02),
+    inset 0 1px 0 rgba(255,255,255,0.03);
 }
 
 /* VOD list heading */
@@ -43,7 +43,7 @@
   margin: 0 0 16px;
   font-size: 16px;
   font-weight: 700;
-  color: #f0f2f4;
+  color: var(--text);
   letter-spacing: 0.3px;
 }
 
@@ -64,13 +64,13 @@
 
 /* Custom scrollbar track */
 .vodding-list::-webkit-scrollbar-track {
-  background: rgb(255 255 255 / 2%);
+  background: rgba(255,255,255,0.02);
   border-radius: 3px;
 }
 
 /* Custom scrollbar thumb with accent color */
 .vodding-list::-webkit-scrollbar-thumb {
-  background: rgb(184 46 46 / 40%);
+  background: rgba(184,46,46,0.40);
   border-radius: 3px;
 }
 
@@ -82,8 +82,8 @@
   padding: 14px 16px;
   margin-bottom: 10px;
   cursor: pointer;
-  background: linear-gradient(180deg, rgb(255 255 255 / 3%) 0%, rgb(255 255 255 / 1%) 100%);
-  border: 1px solid rgb(255 255 255 / 5%);
+  background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+  border: 1px solid rgba(255,255,255,0.05);
   border-radius: 12px;
   transition:
     background 160ms ease,
@@ -120,7 +120,7 @@
   user-select: none;
   background: linear-gradient(135deg, var(--accent-red), var(--accent-red-strong));
   border-radius: 10px;
-  box-shadow: 0 6px 18px rgb(208 67 67 / 12%);
+  box-shadow: 0 6px 18px rgba(208, 67, 67, 0.12);
 }
 
 /* Icon inside VOD thumbnail */
@@ -149,7 +149,7 @@
   text-overflow: ellipsis;
   font-size: 14px;
   font-weight: 600;
-  color: #f0f2f4;
+  color: var(--text);
   white-space: nowrap;
 }
 
@@ -199,7 +199,7 @@
   color: #fff;
   background: linear-gradient(135deg, var(--accent-red), var(--accent-red-strong));
   border: none;
-  box-shadow: 0 4px 12px rgb(208 67 67 / 25%);
+  box-shadow: 0 4px 12px rgba(208, 67, 67, 0.25);
 }
 
 /* Time/duration badge with subtle styling */
@@ -240,7 +240,7 @@
 /* Restore button hover and focus states */
 .restore-btn:hover,
 .restore-btn:focus {
-  box-shadow: 0 6px 20px rgb(184 46 46 / 35%);
+  box-shadow: 0 6px 20px rgba(184, 46, 46, 0.35);
   transform: translateY(-2px);
 }
 
@@ -323,7 +323,7 @@
   margin-bottom: 12px;
   font-size: 15px;
   font-weight: 600;
-  color: #f0f2f4;
+  color: var(--text);
   letter-spacing: 0.2px;
 }
 
@@ -350,8 +350,8 @@
   padding: 12px 16px;
   font-size: 14px;
   color: #eaeef0;
-  background: rgb(8 12 14 / 80%);
-  border: 1px solid rgb(255 255 255 / 6%);
+  background: rgba(var(--card-bg-rgb), 0.8);
+  border: 1px solid rgba(var(--white-rgb), 0.06);
   border-radius: 10px;
   transition:
     border-color 150ms ease,
@@ -362,8 +362,8 @@
 .missing-video .missing-input:focus,
 .missing-video input:focus {
   outline: none;
-  border-color: rgb(184 46 46 / 50%);
-  box-shadow: 0 0 0 3px rgb(184 46 46 / 15%);
+  border-color: rgba(var(--accent-red-rgb), 0.50);
+  box-shadow: 0 0 0 3px rgba(var(--accent-red-rgb), 0.15);
 }
 
 /* Placeholder text styling */
@@ -384,7 +384,7 @@
   background: linear-gradient(135deg, var(--accent-red), var(--accent-red-strong));
   border: none;
   border-radius: 10px;
-  box-shadow: 0 4px 12px rgb(184 46 46 / 30%);
+  box-shadow: 0 4px 12px rgba(184, 46, 46, 0.30);
   transition:
     transform 120ms ease,
     box-shadow 120ms ease;
@@ -393,7 +393,7 @@
 /* Submit button hover state */
 .missing-video .btn-primary:hover,
 .missing-video button[type="submit"]:hover {
-  box-shadow: 0 6px 20px rgb(184 46 46 / 40%);
+  box-shadow: 0 6px 20px rgba(184, 46, 46, 0.40);
   transform: translateY(-1px);
 }
 
