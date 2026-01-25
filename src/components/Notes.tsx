@@ -42,14 +42,14 @@ const Notes: React.FC<NotesProps> = ({
       setSelectedNoteId(id);
       handleNoteJump(timestamp);
     },
-    [setSelectedNoteId, handleNoteJump]
+    [setSelectedNoteId, handleNoteJump],
   );
 
   const handleDelete = useCallback(
     (id: string) => {
       deleteNote(id);
     },
-    [deleteNote]
+    [deleteNote],
   );
 
   const handleEdit = useCallback(
@@ -57,16 +57,16 @@ const Notes: React.FC<NotesProps> = ({
       setEditingId(id);
       setEditingValue(content);
     },
-    [setEditingId, setEditingValue]
+    [setEditingId, setEditingValue],
   );
 
   const handleSave = useCallback(
-    (id: string) => {
-      editNote(id, editingValue);
+    (id: string, content: string) => {
+      editNote(id, content);
       setEditingId(null);
       setEditingValue("");
     },
-    [editNote, editingValue, setEditingId, setEditingValue]
+    [editNote, setEditingId, setEditingValue],
   );
 
   const handleCancel = useCallback(() => {
@@ -101,11 +101,7 @@ const Notes: React.FC<NotesProps> = ({
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <path
-                  d="M11 6H13V12H11V6Z"
-                  fill="currentColor"
-                  opacity="0.85"
-                />
+                <path d="M11 6H13V12H11V6Z" fill="currentColor" opacity="0.85" />
                 <path
                   d="M12 17.25C10.481 17.25 9.25 16.019 9.25 14.5C9.25 12.981 10.481 11.75 12 11.75C13.519 11.75 14.75 12.981 14.75 14.5C14.75 16.019 13.519 17.25 12 17.25Z"
                   fill="currentColor"

@@ -88,7 +88,7 @@ export const EditTextarea = memo(
     editingValue: string;
     onEditValueChange: (value: string) => void;
     readOnly: boolean;
-    onSave: () => void;
+    onSave: (content: string) => void;
     onCancel: () => void;
   }) => {
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -110,7 +110,7 @@ export const EditTextarea = memo(
       (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter" && !e.shiftKey) {
           e.preventDefault();
-          onSave();
+          onSave(textareaRef.current?.value ?? "");
         } else if (e.key === "Escape") {
           e.preventDefault();
           onCancel();
@@ -134,7 +134,7 @@ export const EditTextarea = memo(
         />
         <div className="note-edit-actions">
           <button
-            onClick={onSave}
+            onClick={() =>{  onSave(textareaRef.current?.value ?? ""); }}
             className="btn btn-primary"
             disabled={readOnly}
             title={readOnly ? "Disabled in read-only view" : undefined}
