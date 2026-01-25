@@ -3,7 +3,7 @@
   display: block;
   width: 100% !important;
   height: 100% !important;
-  background: #000;
+  background: var(--card-bg);
 }
 
 .react-player iframe {
@@ -116,7 +116,7 @@
   font-size: 14px;
   font-weight: 700;
   line-height: 1;
-  color: #fff;
+  color: var(--text);
   user-select: none;
   background: linear-gradient(135deg, var(--accent-red), var(--accent-red-strong));
   border-radius: 10px;
@@ -196,10 +196,10 @@
 /* Notes count badge with accent gradient */
 .notes-badge {
   font-weight: 700;
-  color: #fff;
+  color: var(--text);
   background: linear-gradient(135deg, var(--accent-red), var(--accent-red-strong));
   border: none;
-  box-shadow: 0 4px 12px rgba(208, 67, 67, 0.25);
+  box-shadow: 0 4px 12px rgba(var(--accent-red-strong-rgb), 0.25);
 }
 
 /* Time/duration badge with subtle styling */
@@ -268,9 +268,9 @@
 /* Delete button hover and focus states */
 .delete-btn:hover,
 .delete-btn:focus {
-  color: #f3bcbc;
-  background: rgb(243 188 188 / 10%);
-  border-color: rgb(243 188 188 / 20%);
+  color: var(--error);
+  background: rgba(243, 188, 188, 0.10);
+  border-color: rgba(243, 188, 188, 0.20);
 }
 
 /* Muted/secondary text utility */
@@ -297,7 +297,7 @@
   height: 100%;
   padding: 40px 20px;
   overflow-y: auto;
-  color: #fff;
+  color: var(--text);
   background: transparent;
 }
 
@@ -349,7 +349,7 @@
   width: 100%;
   padding: 12px 16px;
   font-size: 14px;
-  color: #eaeef0;
+  color: var(--text);
   background: rgba(var(--card-bg-rgb), 0.8);
   border: 1px solid rgba(var(--white-rgb), 0.06);
   border-radius: 10px;
@@ -401,7 +401,7 @@
 .form-error {
   margin-top: 12px;
   font-size: 13px;
-  color: #f3bcbc;
+  color: var(--error);
 }
 
 /* Responsive styles for tablet screens */
@@ -480,7 +480,7 @@
   margin: 12px;
   color: var(--text);
   text-align: center;
-  background: var(--card-bg, #fff);
+  background: var(--card-bg);
   border: 1px solid rgb(16 18 20 / 6%);
   border-radius: 14px;
   box-shadow: 0 18px 50px rgb(2 6 23 / 45%);
@@ -554,8 +554,8 @@
 
 /* Primary button variant in embed unavailable */
 .embed-unavailable-actions .embed-btn-primary {
-  color: #fff;
-  background: #0f0f0f;
+  color: var(--text);
+  background: var(--card-bg);
   border: none;
   box-shadow: 0 8px 24px rgb(0 0 0 / 28%);
 }
@@ -563,7 +563,7 @@
 /* Standard button in embed unavailable */
 .embed-unavailable-actions .embed-btn {
   color: var(--text);
-  background: #fff;
+  background: rgba(var(--white-rgb), 1);
   border: 1px solid rgb(16 18 20 / 6%);
 }
 

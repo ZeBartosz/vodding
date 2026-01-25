@@ -15,6 +15,7 @@
   --text: #dfe6e8;
   --accent-green: #22c55e;
   --accent-green-rgb: 34, 197, 94;
+  --error: #f3bcbc;
 }
 
 /* Base reset and font styles for html, body, and React root */
@@ -238,7 +239,7 @@ kbd {
 /* Arrow between key combinations */
 .shortcut-item .separator {
   margin: 0 4px;
-  color: rgb(255 255 255 / 30%);
+  color: rgba(var(--white-rgb), 0.3);
 }
 
 /* Generic small/muted text utility class */
@@ -539,7 +540,7 @@ kbd {
   align-items: center;
   justify-content: center;
   padding: 20px;
-  color: #fff;
+  color: var(--text);
   text-align: center;
   pointer-events: auto;
   background: rgba(var(--card-bg-rgb), 0.85);
@@ -601,8 +602,8 @@ kbd {
   padding: 10px 14px;
   font-size: 13px;
   color: var(--text);
-  background: rgb(8 12 14 / 80%);
-  border: 1px solid rgb(255 255 255 / 6%);
+  background: rgba(var(--card-bg-rgb), 0.8);
+  border: 1px solid rgba(var(--white-rgb), 0.06);
   border-radius: 10px;
   transition:
     border-color 150ms ease,
@@ -628,8 +629,8 @@ kbd {
 .notes-search:focus,
 .result-list-top input[aria-label="Search notes"]:focus {
   outline: none;
-  border-color: rgb(184 46 46 / 50%);
-  box-shadow: 0 0 0 3px rgb(184 46 46 / 15%);
+  border-color: rgba(var(--accent-red-rgb), 0.50);
+  box-shadow: 0 0 0 3px rgba(var(--accent-red-rgb), 0.15);
 }
 
 /* Placeholder text color for search input */
@@ -968,7 +969,7 @@ kbd {
   justify-content: center;
   width: 100%;
   height: 100%;
-  color: #fff;
+  color: var(--text);
   background: transparent;
 }
 
@@ -1001,7 +1002,7 @@ kbd {
   box-sizing: border-box;
   width: 420px;
   padding: 8px;
-  color: #eaeef0;
+  color: var(--text);
   background: rgba(var(--card-bg-rgb), 0.85);
   border: 1px solid rgba(var(--white-rgb), 0.04);
   border-radius: 6px;
@@ -1022,7 +1023,7 @@ kbd {
 .form-error {
   margin-top: 10px;
   font-size: 13px;
-  color: #f3bcbc;
+  color: var(--error);
 }
 
 /* Responsive styles for tablet screens */
