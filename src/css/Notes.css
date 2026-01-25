@@ -29,8 +29,8 @@
   white-space: nowrap;
   pointer-events: none;
   content: attr(data-tooltip);
-  background: rgba(var(--card-bg-rgb), 0.95);
-  border: 1px solid rgba(var(--accent-red-rgb), 0.20);
+  background: rgb(var(--card-bg-rgb), 0.95);
+  border: 1px solid rgb(var(--accent-red-rgb), 0.2);
   border-radius: 6px;
   box-shadow: 0 4px 12px rgb(0 0 0 / 40%);
   opacity: 0;
@@ -83,9 +83,9 @@
   min-width: 34px;
   min-height: 34px;
   padding: 6px 8px;
-  color: rgba(var(--white-rgb), 0.5);
-  background: rgba(var(--white-rgb), 0.03);
-  border: 1px solid rgba(var(--white-rgb), 0.05);
+  color: rgb(var(--white-rgb), 0.5);
+  background: rgb(var(--white-rgb), 0.03);
+  border: 1px solid rgb(var(--white-rgb), 0.05);
   border-radius: 8px;
   transition:
     background-color 150ms ease,
@@ -97,9 +97,9 @@
 
 /* Hover state for action buttons */
 .result-actions-row .btn:hover {
-  color: rgba(var(--white-rgb), 0.8);
-  background: rgba(var(--white-rgb), 0.06);
-  border-color: rgba(var(--white-rgb), 0.10);
+  color: rgb(var(--white-rgb), 0.8);
+  background: rgb(var(--white-rgb), 0.06);
+  border-color: rgb(var(--white-rgb), 0.1);
   box-shadow: 0 4px 12px rgb(0 0 0 / 20%);
   transform: translateY(-2px);
 }
@@ -107,8 +107,8 @@
 /* Focus state for action buttons */
 .result-actions-row .btn:focus {
   outline: none;
-  border-color: rgba(var(--accent-red-rgb), 0.40);
-  box-shadow: 0 0 0 3px rgba(var(--accent-red-rgb), 0.12);
+  border-color: rgb(var(--accent-red-rgb), 0.4);
+  box-shadow: 0 0 0 3px rgb(var(--accent-red-rgb), 0.12);
 }
 
 /* SVG icon alignment within action buttons */
@@ -121,7 +121,7 @@
 
 /* Red color for delete/trash icon */
 .result-actions-row .btn .text-red-600 {
-  color: rgba(var(--accent-red-rgb), 0.80);
+  color: rgb(var(--accent-red-rgb), 0.8);
   transition: color 150ms ease;
 }
 
@@ -138,9 +138,9 @@
   min-width: 34px;
   min-height: 34px;
   padding: 6px 8px;
-  color: rgba(var(--white-rgb), 0.5);
-  background: rgba(var(--white-rgb), 0.03);
-  border: 1px solid rgba(var(--white-rgb), 0.05);
+  color: rgb(var(--white-rgb), 0.5);
+  background: rgb(var(--white-rgb), 0.03);
+  border: 1px solid rgb(var(--white-rgb), 0.05);
   border-radius: 8px;
   transition:
     background-color 150ms ease,
@@ -152,9 +152,9 @@
 
 /* Hover state for result card action buttons */
 .result-card .result-actions-row .btn:hover {
-  color: rgba(var(--white-rgb), 0.8);
-  background: rgba(var(--white-rgb), 0.06);
-  border-color: rgba(var(--white-rgb), 0.10);
+  color: rgb(var(--white-rgb), 0.8);
+  background: rgb(var(--white-rgb), 0.06);
+  border-color: rgb(var(--white-rgb), 0.1);
   box-shadow: 0 4px 12px rgb(0 0 0 / 20%);
   transform: translateY(-2px);
 }
@@ -176,7 +176,7 @@
 
 /* Red color for result card delete/trash icon */
 .result-card .result-actions-row .btn .text-red-600 {
-  color: rgba(var(--accent-red-rgb), 0.80);
+  color: rgb(var(--accent-red-rgb), 0.8);
   transition: color 150ms ease;
 }
 
@@ -197,8 +197,8 @@
   line-height: 1.5;
   color: var(--text);
   resize: vertical;
-  background: rgba(var(--card-bg-rgb), 0.8);
-  border: 1px solid rgba(var(--white-rgb), 0.06);
+  background: rgb(var(--card-bg-rgb), 0.8);
+  border: 1px solid rgb(var(--white-rgb), 0.06);
   border-radius: 10px;
   transition:
     border-color 150ms ease,
@@ -209,8 +209,8 @@
 .note-edit-textarea:focus,
 .edit-area textarea:focus {
   outline: none;
-  border-color: rgba(var(--accent-red-rgb), 0.50);
-  box-shadow: 0 0 0 3px rgba(var(--accent-red-rgb), 0.15);
+  border-color: rgb(var(--accent-red-rgb), 0.5);
+  box-shadow: 0 0 0 3px rgb(var(--accent-red-rgb), 0.15);
 }
 
 /* Primary button in note edit actions */
@@ -221,13 +221,13 @@
   color: white;
   background: linear-gradient(135deg, var(--accent-red), var(--accent-red-strong));
   border: none;
-  box-shadow: 0 4px 12px rgba(var(--accent-red-rgb), 0.25);
+  box-shadow: 0 4px 12px rgb(var(--accent-red-rgb), 0.25);
 }
 
 /* Hover state for primary button */
 .note-edit-actions .btn-primary:hover,
 .edit-actions .btn-primary:hover {
-  box-shadow: 0 6px 16px rgba(var(--accent-red-rgb), 0.35);
+  box-shadow: 0 6px 16px rgb(var(--accent-red-rgb), 0.35);
   transform: translateY(-1px);
 }
 
@@ -235,37 +235,45 @@
 .note-edit-actions .btn-primary:focus,
 .edit-actions .btn-primary:focus {
   box-shadow:
-    0 4px 16px rgba(var(--accent-red-rgb), 0.20),
-    0 0 0 3px rgba(var(--accent-red-rgb), 0.15);
+    0 4px 16px rgb(var(--accent-red-rgb), 0.2),
+    0 0 0 3px rgb(var(--accent-red-rgb), 0.15);
 }
 
 /* Ghost/transparent button variant */
 .note-edit-actions .btn-ghost,
 .edit-actions .btn-ghost {
-  color: rgba(var(--white-rgb), 0.6);
+  color: rgb(var(--white-rgb), 0.6);
   background: transparent;
-  border: 1px solid rgba(var(--white-rgb), 0.06);
+  border: 1px solid rgb(var(--white-rgb), 0.06);
 }
 
 /* Hover state for ghost button */
 .note-edit-actions .btn-ghost:hover,
 .edit-actions .btn-ghost:hover {
-  color: rgba(var(--white-rgb), 0.8);
-  background: rgba(var(--white-rgb), 0.04);
-  border-color: rgba(var(--white-rgb), 0.10);
+  color: rgb(var(--white-rgb), 0.8);
+  background: rgb(var(--white-rgb), 0.04);
+  border-color: rgb(var(--white-rgb), 0.1);
 }
 
 /* Result card in editing mode */
 .result-card.editing {
-  background: linear-gradient(180deg, rgba(var(--accent-red-rgb), 0.06) 0%, rgba(var(--accent-red-rgb), 0.03) 100%);
-  border-color: rgba(var(--accent-red-rgb), 0.20);
+  background: linear-gradient(
+    180deg,
+    rgb(var(--accent-red-rgb), 0.06) 0%,
+    rgb(var(--accent-red-rgb), 0.03) 100%
+  );
+  border-color: rgb(var(--accent-red-rgb), 0.2);
 }
 
 /* Result card in selected state (keyboard navigation) */
 .result-card.selected {
-  background: linear-gradient(180deg, rgba(var(--accent-red-rgb), 0.10) 0%, rgba(var(--accent-red-rgb), 0.05) 100%);
-  border-color: rgba(var(--accent-red-rgb), 0.70);
-  box-shadow: 0 4px 16px rgba(var(--accent-red-rgb), 0.15);
+  background: linear-gradient(
+    180deg,
+    rgb(var(--accent-red-rgb), 0.1) 0%,
+    rgb(var(--accent-red-rgb), 0.05) 100%
+  );
+  border-color: rgb(var(--accent-red-rgb), 0.7);
+  box-shadow: 0 4px 16px rgb(var(--accent-red-rgb), 0.15);
 }
 
 /* Note content text display */

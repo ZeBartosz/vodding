@@ -11,7 +11,7 @@
   --card-bg: #0c1416;
   --card-bg-rgb: 12, 20, 22;
   --white-rgb: 255, 255, 255;
-  --border: rgba(var(--white-rgb), 0.06);
+  --border: rgb(var(--white-rgb), 0.06);
   --text: #dfe6e8;
   --accent-green: #22c55e;
   --accent-green-rgb: 34, 197, 94;
@@ -66,13 +66,13 @@ body,
   justify-content: space-between;
   padding: 14px 20px;
   white-space: nowrap;
-  background: linear-gradient(180deg, rgba(32,18,20,0.70) 0%, rgba(24,14,16,0.75) 100%);
-  border: 1px solid rgba(var(--accent-red-rgb), 0.12);
+  background: linear-gradient(180deg, rgb(32 18 20 / 70%) 0%, rgb(24 14 16 / 75%) 100%);
+  border: 1px solid rgb(var(--accent-red-rgb), 0.12);
   border-top: none;
   border-radius: 0 0 16px 16px;
   box-shadow:
     0 4px 24px rgb(0 0 0 / 25%),
-    inset 0 1px 0 rgba(var(--white-rgb), 0.04);
+    inset 0 1px 0 rgb(var(--white-rgb), 0.04);
 }
 
 /* Brand section in topbar containing logo and title */
@@ -98,7 +98,7 @@ body,
   cursor: pointer;
   background: linear-gradient(135deg, var(--accent-red), var(--accent-red-strong));
   border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(var(--accent-red-rgb), 0.30);
+  box-shadow: 0 4px 16px rgb(var(--accent-red-rgb), 0.3);
   transition:
     transform 150ms ease,
     box-shadow 150ms ease;
@@ -106,7 +106,7 @@ body,
 
 /* Brand badge hover effect with lift animation */
 .brand-badge:hover {
-  box-shadow: 0 6px 20px rgba(var(--accent-red-rgb), 0.40);
+  box-shadow: 0 6px 20px rgb(var(--accent-red-rgb), 0.4);
   transform: translateY(-2px);
 }
 
@@ -152,10 +152,10 @@ body,
   align-items: center;
   justify-content: center;
   padding: 8px;
-  color: rgba(var(--white-rgb), 0.5);
+  color: rgb(var(--white-rgb), 0.5);
   cursor: pointer;
-  background: rgba(var(--white-rgb), 0.04);
-  border: 1px solid rgba(var(--white-rgb), 0.06);
+  background: rgb(var(--white-rgb), 0.04);
+  border: 1px solid rgb(var(--white-rgb), 0.06);
   border-radius: 8px;
   transition:
     color 150ms ease,
@@ -165,9 +165,9 @@ body,
 
 /* Keyboard trigger hover state */
 .shortcuts-trigger:hover {
-  color: rgba(var(--white-rgb), 0.8);
-  background: rgba(var(--white-rgb), 0.08);
-  border-color: rgba(var(--white-rgb), 0.12);
+  color: rgb(var(--white-rgb), 0.8);
+  background: rgb(var(--white-rgb), 0.08);
+  border-color: rgb(var(--white-rgb), 0.12);
 }
 
 /* Dropdown panel for keyboard shortcuts */
@@ -183,11 +183,11 @@ body,
   font-size: 13px;
   color: var(--text);
   background: linear-gradient(180deg, rgb(24 16 18 / 98%) 0%, rgb(18 12 14 / 98%) 100%);
-  border: 1px solid rgba(var(--white-rgb), 0.08);
+  border: 1px solid rgb(var(--white-rgb), 0.08);
   border-radius: 12px;
   box-shadow:
     0 8px 32px rgb(0 0 0 / 40%),
-    0 0 0 1px rgba(var(--white-rgb), 0.03);
+    0 0 0 1px rgb(var(--white-rgb), 0.03);
 }
 
 /* Section container for shortcuts */
@@ -202,7 +202,7 @@ body,
   margin-bottom: 4px;
   font-size: 11px;
   font-weight: 700;
-  color: rgba(var(--white-rgb), 0.4);
+  color: rgb(var(--white-rgb), 0.4);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -225,21 +225,21 @@ kbd {
   font-family: inherit;
   font-size: 11px;
   font-weight: 600;
-  color: rgba(var(--white-rgb), 0.7);
-  background: rgba(var(--card-bg-rgb), 0.8);
-  border: 1px solid rgba(var(--white-rgb), 0.08);
+  color: rgb(var(--white-rgb), 0.7);
+  background: rgb(var(--card-bg-rgb), 0.8);
+  border: 1px solid rgb(var(--white-rgb), 0.08);
   border-radius: 6px;
 }
 
 /* Action description */
 .shortcut-item span {
-  color: rgba(var(--white-rgb), 0.6);
+  color: rgb(var(--white-rgb), 0.6);
 }
 
 /* Arrow between key combinations */
 .shortcut-item .separator {
   margin: 0 4px;
-  color: rgba(var(--white-rgb), 0.3);
+  color: rgb(var(--white-rgb), 0.3);
 }
 
 /* Generic small/muted text utility class */
@@ -283,7 +283,7 @@ kbd {
   height: 8px;
   background: linear-gradient(135deg, var(--accent-green), #16a34a);
   border-radius: 50%;
-  box-shadow: 0 0 8px rgba(var(--accent-green-rgb), 0.50);
+  box-shadow: 0 0 8px rgb(var(--accent-green-rgb), 0.5);
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
@@ -291,12 +291,12 @@ kbd {
 @keyframes pulse-glow {
   0%,
   100% {
-    box-shadow: 0 0 8px rgba(var(--accent-green-rgb), 0.50);
+    box-shadow: 0 0 8px rgb(var(--accent-green-rgb), 0.5);
     opacity: 1;
   }
 
   50% {
-    box-shadow: 0 0 12px rgba(var(--accent-green-rgb), 0.70);
+    box-shadow: 0 0 12px rgb(var(--accent-green-rgb), 0.7);
     opacity: 0.7;
   }
 }
@@ -316,10 +316,10 @@ kbd {
   padding: 10px 16px;
   font-size: 13px;
   font-weight: 500;
-  color: rgba(var(--white-rgb), 0.7);
+  color: rgb(var(--white-rgb), 0.7);
   cursor: pointer;
-  background: rgba(var(--white-rgb), 0.04);
-  border: 1px solid rgba(var(--white-rgb), 0.06);
+  background: rgb(var(--white-rgb), 0.04);
+  border: 1px solid rgb(var(--white-rgb), 0.06);
   border-radius: 10px;
   transition:
     background 150ms ease,
@@ -331,9 +331,9 @@ kbd {
 
 /* Topbar button hover state with lift effect */
 .topbar-btn:hover {
-  color: rgba(var(--white-rgb), 0.9);
-  background: rgba(var(--white-rgb), 0.08);
-  border-color: rgba(var(--white-rgb), 0.12);
+  color: rgb(var(--white-rgb), 0.9);
+  background: rgb(var(--white-rgb), 0.08);
+  border-color: rgb(var(--white-rgb), 0.12);
   transform: translateY(-1px);
 }
 
@@ -357,12 +357,12 @@ kbd {
   color: white;
   background: linear-gradient(135deg, var(--accent-red), var(--accent-red-strong));
   border: none;
-  box-shadow: 0 4px 12px rgba(var(--accent-red-rgb), 0.25);
+  box-shadow: 0 4px 12px rgb(var(--accent-red-rgb), 0.25);
 }
 
 /* Primary topbar button hover state */
 .topbar-btn-primary:hover {
-  box-shadow: 0 6px 20px rgba(var(--accent-red-rgb), 0.35);
+  box-shadow: 0 6px 20px rgb(var(--accent-red-rgb), 0.35);
   transform: translateY(-2px);
 }
 
@@ -387,11 +387,11 @@ kbd {
   color: white;
   background: linear-gradient(135deg, var(--accent-green), #16a34a);
   border: none;
-  box-shadow: 0 4px 12px rgba(var(--accent-green-rgb), 0.25);
+  box-shadow: 0 4px 12px rgb(var(--accent-green-rgb), 0.25);
 }
 
 .topbar-btn-success:hover {
-  box-shadow: 0 6px 20px rgba(var(--accent-green-rgb), 0.35);
+  box-shadow: 0 6px 20px rgb(var(--accent-green-rgb), 0.35);
   transform: translateY(-2px);
 }
 
@@ -444,8 +444,8 @@ kbd {
   background: var(--card-bg);
   border-radius: 6px;
   box-shadow:
-    inset 0 0 0 1px rgba(var(--accent-red-strong-rgb), 0.03),
-    0 6px 22px rgba(var(--accent-red-rgb), 0.06);
+    inset 0 0 0 1px rgb(var(--accent-red-strong-rgb), 0.03),
+    0 6px 22px rgb(var(--accent-red-rgb), 0.06);
 }
 
 /* Red accent bar at bottom of video player */
@@ -456,9 +456,13 @@ kbd {
   left: 0;
   height: 6px;
   pointer-events: none;
-  background: linear-gradient(90deg, rgba(var(--accent-red-rgb), 0.95), rgba(var(--accent-red-strong-rgb), 0.95));
-  border-top: 1px solid rgba(var(--white-rgb), 0.02);
-  box-shadow: 0 2px 10px rgba(var(--accent-red-strong-rgb), 0.12);
+  background: linear-gradient(
+    90deg,
+    rgb(var(--accent-red-rgb), 0.95),
+    rgb(var(--accent-red-strong-rgb), 0.95)
+  );
+  border-top: 1px solid rgb(var(--white-rgb), 0.02);
+  box-shadow: 0 2px 10px rgb(var(--accent-red-strong-rgb), 0.12);
 }
 
 /* Right sidebar panel for notes */
@@ -473,12 +477,12 @@ kbd {
   padding: 20px;
   margin: 12px 12px 12px 0;
   background: linear-gradient(180deg, rgb(18 12 14 / 85%) 0%, rgb(12 8 10 / 90%) 100%);
-  border: 1px solid rgba(var(--accent-red-rgb), 0.12);
+  border: 1px solid rgb(var(--accent-red-rgb), 0.12);
   border-radius: 16px;
   box-shadow:
     0 4px 24px rgb(0 0 0 / 35%),
-    0 0 0 1px rgba(var(--white-rgb), 0.02),
-    inset 0 1px 0 rgba(var(--white-rgb), 0.03);
+    0 0 0 1px rgb(var(--white-rgb), 0.02),
+    inset 0 1px 0 rgb(var(--white-rgb), 0.03);
 }
 
 /* Sidebar header with title and actions */
@@ -488,7 +492,7 @@ kbd {
   align-items: center;
   justify-content: space-between;
   padding: 4px 0 12px;
-  border-bottom: 1px solid rgba(var(--white-rgb), 0.05);
+  border-bottom: 1px solid rgb(var(--white-rgb), 0.05);
 }
 
 /* Left section of sidebar header */
@@ -509,7 +513,7 @@ kbd {
 /* Small text in sidebar header */
 .sidebar .header-left .small {
   font-size: 12px;
-  color: rgba(var(--white-rgb), 0.5);
+  color: rgb(var(--white-rgb), 0.5);
 }
 
 /* Hidden separator dot in sidebar */
@@ -543,8 +547,8 @@ kbd {
   color: var(--text);
   text-align: center;
   pointer-events: auto;
-  background: rgba(var(--card-bg-rgb), 0.85);
-  border: 1px solid rgba(var(--accent-red-rgb), 0.15);
+  background: rgb(var(--card-bg-rgb), 0.85);
+  border: 1px solid rgb(var(--accent-red-rgb), 0.15);
   border-radius: 12px;
   backdrop-filter: blur(8px);
 }
@@ -582,8 +586,12 @@ kbd {
   align-items: center;
   width: 100%;
   padding: 12px 14px;
-  background: linear-gradient(180deg, rgba(var(--white-rgb), 0.03) 0%, rgba(var(--white-rgb), 0.01) 100%);
-  border: 1px solid rgba(var(--white-rgb), 0.05);
+  background: linear-gradient(
+    180deg,
+    rgb(var(--white-rgb), 0.03) 0%,
+    rgb(var(--white-rgb), 0.01) 100%
+  );
+  border: 1px solid rgb(var(--white-rgb), 0.05);
   border-radius: 12px;
 }
 
@@ -602,8 +610,8 @@ kbd {
   padding: 10px 14px;
   font-size: 13px;
   color: var(--text);
-  background: rgba(var(--card-bg-rgb), 0.8);
-  border: 1px solid rgba(var(--white-rgb), 0.06);
+  background: rgb(var(--card-bg-rgb), 0.8);
+  border: 1px solid rgb(var(--white-rgb), 0.06);
   border-radius: 10px;
   transition:
     border-color 150ms ease,
@@ -629,8 +637,8 @@ kbd {
 .notes-search:focus,
 .result-list-top input[aria-label="Search notes"]:focus {
   outline: none;
-  border-color: rgba(var(--accent-red-rgb), 0.50);
-  box-shadow: 0 0 0 3px rgba(var(--accent-red-rgb), 0.15);
+  border-color: rgb(var(--accent-red-rgb), 0.5);
+  box-shadow: 0 0 0 3px rgb(var(--accent-red-rgb), 0.15);
 }
 
 /* Placeholder text color for search input */
@@ -866,8 +874,8 @@ kbd {
   line-height: 1.5;
   color: var(--text);
   resize: none;
-  background: rgba(var(--card-bg-rgb), 0.8);
-  border: 1px solid rgba(var(--white-rgb), 0.06);
+  background: rgb(var(--card-bg-rgb), 0.8);
+  border: 1px solid rgb(var(--white-rgb), 0.06);
   border-radius: 10px;
   transition:
     border-color 150ms ease,
@@ -878,8 +886,8 @@ kbd {
 .input-box textarea:focus,
 .input-textarea:focus {
   outline: none;
-  border-color: rgba(var(--accent-red-rgb), 0.50);
-  box-shadow: 0 0 0 3px rgba(var(--accent-red-rgb), 0.15);
+  border-color: rgb(var(--accent-red-rgb), 0.5);
+  box-shadow: 0 0 0 3px rgb(var(--accent-red-rgb), 0.15);
 }
 
 /* Placeholder text styling for textarea */
@@ -977,7 +985,7 @@ kbd {
 .missing-video form {
   padding: 18px;
   color: var(--text);
-  background: linear-gradient(180deg, rgba(20,14,16,0.60) 0%, rgba(15,10,12,0.60) 100%);
+  background: linear-gradient(180deg, rgb(20 14 16 / 60%) 0%, rgb(15 10 12 / 60%) 100%);
   border: 1px solid var(--border);
   border-radius: 8px;
 }
@@ -1003,8 +1011,8 @@ kbd {
   width: 420px;
   padding: 8px;
   color: var(--text);
-  background: rgba(var(--card-bg-rgb), 0.85);
-  border: 1px solid rgba(var(--white-rgb), 0.04);
+  background: rgb(var(--card-bg-rgb), 0.85);
+  border: 1px solid rgb(var(--white-rgb), 0.04);
   border-radius: 6px;
 }
 
@@ -1014,7 +1022,11 @@ kbd {
   padding: 8px 12px;
   color: white;
   cursor: pointer;
-  background: linear-gradient(90deg, rgba(var(--accent-red-rgb), 0.95), rgba(var(--accent-red-strong-rgb), 0.95));
+  background: linear-gradient(
+    90deg,
+    rgb(var(--accent-red-rgb), 0.95),
+    rgb(var(--accent-red-strong-rgb), 0.95)
+  );
   border: none;
   border-radius: 6px;
 }
