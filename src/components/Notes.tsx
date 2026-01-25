@@ -1,4 +1,4 @@
-import React, { memo, type RefObject } from "react";
+import React, { memo, useCallback, type RefObject } from "react";
 import type { Note } from "../types";
 import NoteCard from "./notes/NoteCard";
 
@@ -37,6 +37,42 @@ const Notes: React.FC<NotesProps> = ({
   selectedNoteId,
   setSelectedNoteId,
 }) => {
+  const handleJump = useCallback(
+    (id: string, timestamp: number) => {
+      setSelectedNoteId(id);
+      handleNoteJump(timestamp);
+    },
+    [setSelectedNoteId, handleNoteJump]
+  );
+
+  const handleDelete = useCallback(
+    (id: string) => {
+      deleteNote(id);
+    },
+    [deleteNote]
+  );
+
+  const handleEdit = useCallback(
+    (id: string, content: string) => {
+      setEditingId(id);
+      setEditingValue(content);
+    },
+    [setEditingId, setEditingValue]
+  );
+
+  const handleSave = useCallback(
+    (id: string) => {
+      editNote(id, editingValue);
+      setEditingId(null);
+      setEditingValue("");
+    },
+    [editNote, editingValue, setEditingId, setEditingValue]
+  );
+
+  const handleCancel = useCallback(() => {
+    setEditingId(null);
+    setEditingValue("");
+  }, [setEditingId, setEditingValue]);
   return (
     <div className="result-list-root">
       <div className="result-list-top">
@@ -65,7 +101,11 @@ const Notes: React.FC<NotesProps> = ({
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <path d="M11 6H13V12H11V6Z" fill="currentColor" opacity="0.85" />
+                <path
+                  d="M11 6H13V12H11V6Z"
+                  fill="currentColor"
+                  opacity="0.85"
+                />
                 <path
                   d="M12 17.25C10.481 17.25 9.25 16.019 9.25 14.5C9.25 12.981 10.481 11.75 12 11.75C13.519 11.75 14.75 12.981 14.75 14.5C14.75 16.019 13.519 17.25 12 17.25Z"
                   fill="currentColor"
@@ -91,27 +131,14 @@ const Notes: React.FC<NotesProps> = ({
               note={n}
               isEditing={editingId === n.id}
               isSelected={selectedNoteId === n.id}
-              editingValue={editingValue}
+              editingValue={editingId === n.id ? editingValue : undefined}
               readOnly={readOnly}
-              onJump={() => {
-                setSelectedNoteId(n.id);
-                handleNoteJump(n.timestamp);
-              }}
-              onEdit={() => {
-                setEditingId(n.id);
-                setEditingValue(n.content);
-              }}
-              onDelete={() => {
-                deleteNote(n.id);
-              }}
+              onJump={handleJump}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
               onEditValueChange={setEditingValue}
-              onSave={() => {
-                editNote(n.id, editingValue);
-              }}
-              onCancel={() => {
-                setEditingId(null);
-                setEditingValue("");
-              }}
+              onSave={handleSave}
+              onCancel={handleCancel}
             />
           ))
         )}

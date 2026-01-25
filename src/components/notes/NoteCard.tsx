@@ -6,15 +6,15 @@ import { EditTextarea } from "./InputTextarea";
 
 interface NoteCardProps {
   note: Note;
-  isEditing: boolean;
+  isEditing?: boolean;
   isSelected?: boolean;
-  editingValue: string;
+  editingValue?: string;
   readOnly: boolean;
-  onJump: () => void;
-  onEdit: () => void;
-  onDelete: () => void;
+  onJump: (id: string, timestamp: number) => void;
+  onEdit: (id: string, content: string) => void;
+  onDelete: (id: string) => void;
   onEditValueChange: (value: string) => void;
-  onSave: () => void;
+  onSave: (id: string) => void;
   onCancel: () => void;
 }
 
@@ -64,25 +64,26 @@ const NoteCard = ({
       className={`result-card ${isEditing ? "editing" : ""} ${isSelected ? "selected" : ""}`}
     >
       <div className="result-card-header">
-        <div className="result-meta " onClick={onJump}>
+        <div className="result-meta " onClick={() => onJump(note.id, note.timestamp)}>
           <span className="timestamp">
-            <Clock size={12} className="timestamp-icon" /> {formatTime(note.timestamp)}
+            <Clock size={12} className="timestamp-icon" />{" "}
+            {formatTime(note.timestamp)}
           </span>
         </div>
 
         <div className="result-actions-row">
-          <button
-            onClick={onJump}
-            aria-label="Jump to note"
-            className="btn btn-ghost has-tooltip"
-            data-tooltip="Jump"
-          >
-            <Send size={16} />
-          </button>
-
-          {!isEditing && !readOnly && (
             <button
-              onClick={onEdit}
+            onClick={() => onJump(note.id, note.timestamp)}
+              aria-label="Jump to note"
+              className="btn btn-ghost has-tooltip"
+              data-tooltip="Jump"
+            >
+              <Send size={16} />
+            </button>
+
+            {!isEditing && !readOnly && (
+            <button
+              onClick={() => onEdit(note.id, note.content)}
               aria-label="Edit note"
               className="btn btn-ghost has-tooltip"
               data-tooltip="Edit"
@@ -91,9 +92,9 @@ const NoteCard = ({
             </button>
           )}
 
-          {!readOnly && (
+            {!readOnly && (
             <button
-              onClick={onDelete}
+              onClick={() => onDelete(note.id)}
               aria-label="Delete note"
               className="btn has-tooltip"
               data-tooltip="Delete"
@@ -107,10 +108,10 @@ const NoteCard = ({
       <div className="result-content">
         {isEditing ? (
           <EditTextarea
-            editingValue={editingValue}
+            editingValue={editingValue ?? ""}
             onEditValueChange={onEditValueChange}
             readOnly={readOnly}
-            onSave={onSave}
+            onSave={() => onSave(note.id)}
             onCancel={onCancel}
           />
         ) : (
