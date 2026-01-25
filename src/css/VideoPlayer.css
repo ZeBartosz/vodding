@@ -562,7 +562,7 @@
 
 /* Standard button in embed unavailable */
 .embed-unavailable-actions .embed-btn {
-  color: var(--text);
+  color: var(--panel-dark);
   background: rgb(var(--white-rgb), 1);
   border: 1px solid rgb(16 18 20 / 6%);
 }
