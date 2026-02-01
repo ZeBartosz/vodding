@@ -4,10 +4,10 @@
   --panel-dark: #0f1619;
   --muted: #98a1a6;
   --muted-rgb: 152, 161, 166;
-  --accent-red: #b82e2e;
-  --accent-red-strong: #d04343;
-  --accent-red-rgb: 184, 46, 46;
-  --accent-red-strong-rgb: 208, 67, 67;
+  --accent-red: #2e8b57;
+  --accent-red-strong: #3cb371;
+  --accent-red-rgb: 46, 139, 87;
+  --accent-red-strong-rgb: 60, 179, 113;
   --card-bg: #0c1416;
   --card-bg-rgb: 12, 20, 22;
   --white-rgb: 255, 255, 255;
@@ -44,9 +44,9 @@ body,
   height: 100vh;
   background: linear-gradient(
     180deg,
-    rgb(28 12 14 / 100%) 0%,
-    rgb(18 8 10 / 100%) 50%,
-    rgb(10 6 8 / 100%) 100%
+    rgb(12 28 14 / 100%) 0%,
+    rgb(8 18 10 / 100%) 50%,
+    rgb(6 10 8 / 100%) 100%
   );
 }
 
@@ -66,7 +66,7 @@ body,
   justify-content: space-between;
   padding: 14px 20px;
   white-space: nowrap;
-  background: linear-gradient(180deg, rgb(32 18 20 / 70%) 0%, rgb(24 14 16 / 75%) 100%);
+  background: linear-gradient(180deg, rgb(18 32 20 / 70%) 0%, rgb(14 24 16 / 75%) 100%);
   border: 1px solid rgb(var(--accent-red-rgb), 0.12);
   border-top: none;
   border-radius: 0 0 16px 16px;
@@ -182,7 +182,7 @@ body,
   margin-top: 8px;
   font-size: 13px;
   color: var(--text);
-  background: linear-gradient(180deg, rgb(24 16 18 / 98%) 0%, rgb(18 12 14 / 98%) 100%);
+  background: linear-gradient(180deg, rgb(16 24 18 / 98%) 0%, rgb(12 18 14 / 98%) 100%);
   border: 1px solid rgb(var(--white-rgb), 0.08);
   border-radius: 12px;
   box-shadow:
@@ -412,7 +412,7 @@ kbd {
   background-image: linear-gradient(90deg, var(--accent-red), var(--accent-red-strong));
   border: none;
   border-radius: 14px;
-  box-shadow: 0 6px 20px rgb(208 67 67 / 16%);
+  box-shadow: 0 6px 20px rgb(60 179 113 / 16%);
 }
 
 /* Main content area containing video and sidebar */
@@ -476,7 +476,7 @@ kbd {
   max-width: 42%;
   padding: 20px;
   margin: 12px 12px 12px 0;
-  background: linear-gradient(180deg, rgb(18 12 14 / 85%) 0%, rgb(12 8 10 / 90%) 100%);
+  background: linear-gradient(180deg, rgb(12 18 14 / 85%) 0%, rgb(8 12 10 / 90%) 100%);
   border: 1px solid rgb(var(--accent-red-rgb), 0.12);
   border-radius: 16px;
   box-shadow:
@@ -670,7 +670,7 @@ kbd {
 
 /* Custom scrollbar thumb with accent color */
 .result-box::-webkit-scrollbar-thumb {
-  background: rgb(184 46 46 / 40%);
+  background: rgb(46 139 87 / 40%);
   border-radius: 3px;
 }
 
@@ -695,8 +695,8 @@ kbd {
 
 /* Note card hover state with accent highlight */
 .result-card:hover {
-  background: linear-gradient(180deg, rgb(184 46 46 / 6%) 0%, rgb(184 46 46 / 3%) 100%);
-  border-color: rgb(184 46 46 / 15%);
+  background: linear-gradient(180deg, rgb(46 139 87 / 6%) 0%, rgb(46 139 87 / 3%) 100%);
+  border-color: rgb(46 139 87 / 15%);
 }
 
 /* Note content text area within card */
@@ -720,9 +720,9 @@ kbd {
   text-align: center;
   letter-spacing: 0.2px;
   cursor: pointer;
-  background: linear-gradient(135deg, rgb(184 46 46 / 80%), rgb(208 67 67 / 80%));
+  background: linear-gradient(135deg, rgb(46 139 87 / 80%), rgb(60 179 113 / 80%));
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgb(184 46 46 / 20%);
+  box-shadow: 0 4px 12px rgb(46 139 87 / 20%);
   transition:
     transform 120ms ease,
     box-shadow 120ms ease;
@@ -730,7 +730,7 @@ kbd {
 
 /* Timestamp badge hover state */
 .result-meta .timestamp:hover {
-  box-shadow: 0 6px 16px rgb(184 46 46 / 30%);
+  box-shadow: 0 6px 16px rgb(46 139 87 / 30%);
   transform: translateY(-1px);
 }
 
@@ -945,14 +945,14 @@ kbd {
   color: white;
   background: linear-gradient(135deg, var(--accent-red), var(--accent-red-strong));
   border: none;
-  box-shadow: 0 4px 12px rgb(184 46 46 / 25%);
+  box-shadow: 0 4px 12px rgb(46 139 87 / 25%);
 }
 
 /* Primary button hover state */
 .btn-primary:hover,
 .button-box .primary:hover,
 .input-box .button-box button.btn-primary:hover {
-  box-shadow: 0 6px 20px rgb(184 46 46 / 35%);
+  box-shadow: 0 6px 20px rgb(46 139 87 / 35%);
   transform: translateY(-1px);
 }
 
@@ -985,7 +985,7 @@ kbd {
 .missing-video form {
   padding: 18px;
   color: var(--text);
-  background: linear-gradient(180deg, rgb(20 14 16 / 60%) 0%, rgb(15 10 12 / 60%) 100%);
+  background: linear-gradient(180deg, rgb(14 20 16 / 60%) 0%, rgb(10 15 12 / 60%) 100%);
   border: 1px solid var(--border);
   border-radius: 8px;
 }

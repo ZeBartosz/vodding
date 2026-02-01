@@ -19,8 +19,8 @@
   background: var(--card-bg);
   border-radius: 6px;
   box-shadow:
-    inset 0 0 0 1px rgb(208 67 67 / 3%),
-    0 6px 22px rgb(184 46 46 / 6%);
+    inset 0 0 0 1px rgb(60 179 113 / 3%),
+    0 6px 22px rgb(46 139 87 / 6%);
 }
 
 /* VOD list wrapper container */
@@ -29,8 +29,8 @@
   width: 100%;
   max-width: 800px;
   padding: 24px 28px;
-  background: linear-gradient(180deg, rgb(18 12 14 / 75%) 0%, rgb(12 8 10 / 80%) 100%);
-  border: 1px solid rgb(184 46 46 / 12%);
+  background: linear-gradient(180deg, rgb(12 18 14 / 75%) 0%, rgb(8 12 10 / 80%) 100%);
+  border: 1px solid rgb(46 139 87 / 12%);
   border-radius: 16px;
   box-shadow:
     0 4px 24px rgb(0 0 0 / 35%),
@@ -70,7 +70,7 @@
 
 /* Custom scrollbar thumb with accent color */
 .vodding-list::-webkit-scrollbar-thumb {
-  background: rgb(184 46 46 / 40%);
+  background: rgb(46 139 87 / 40%);
   border-radius: 3px;
 }
 
@@ -99,8 +99,8 @@
 /* VOD item hover and focus states */
 .vodding-item:hover,
 .vodding-item:focus-within {
-  background: linear-gradient(180deg, rgb(184 46 46 / 8%) 0%, rgb(184 46 46 / 4%) 100%);
-  border-color: rgb(184 46 46 / 20%);
+  background: linear-gradient(180deg, rgb(46 139 87 / 8%) 0%, rgb(46 139 87 / 4%) 100%);
+  border-color: rgb(46 139 87 / 20%);
   box-shadow: 0 8px 24px rgb(0 0 0 / 30%);
   transform: translateY(-2px);
 }
@@ -120,7 +120,7 @@
   user-select: none;
   background: linear-gradient(135deg, var(--accent-red), var(--accent-red-strong));
   border-radius: 10px;
-  box-shadow: 0 6px 18px rgb(208 67 67 / 12%);
+  box-shadow: 0 6px 18px rgb(60 179 113 / 12%);
 }
 
 /* Icon inside VOD thumbnail */
@@ -231,7 +231,7 @@
   background: linear-gradient(135deg, var(--accent-red), var(--accent-red-strong));
   border: none;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgb(184 46 46 / 25%);
+  box-shadow: 0 4px 12px rgb(46 139 87 / 25%);
   transition:
     transform 120ms ease,
     box-shadow 120ms ease;
@@ -240,7 +240,7 @@
 /* Restore button hover and focus states */
 .restore-btn:hover,
 .restore-btn:focus {
-  box-shadow: 0 6px 20px rgb(184 46 46 / 35%);
+  box-shadow: 0 6px 20px rgb(46 139 87 / 35%);
   transform: translateY(-2px);
 }
 
@@ -308,8 +308,8 @@
   max-width: 560px;
   padding: 28px 32px;
   color: var(--text);
-  background: linear-gradient(180deg, rgb(20 14 16 / 85%) 0%, rgb(15 10 12 / 90%) 100%);
-  border: 1px solid rgb(184 46 46 / 15%);
+  background: linear-gradient(180deg, rgb(14 20 16 / 85%) 0%, rgb(10 15 12 / 90%) 100%);
+  border: 1px solid rgb(46 139 87 / 15%);
   border-radius: 16px;
   box-shadow:
     0 4px 24px rgb(0 0 0 / 40%),
@@ -384,7 +384,7 @@
   background: linear-gradient(135deg, var(--accent-red), var(--accent-red-strong));
   border: none;
   border-radius: 10px;
-  box-shadow: 0 4px 12px rgb(184 46 46 / 30%);
+  box-shadow: 0 4px 12px rgb(46 139 87 / 30%);
   transition:
     transform 120ms ease,
     box-shadow 120ms ease;
@@ -393,7 +393,7 @@
 /* Submit button hover state */
 .missing-video .btn-primary:hover,
 .missing-video button[type="submit"]:hover {
-  box-shadow: 0 6px 20px rgb(184 46 46 / 40%);
+  box-shadow: 0 6px 20px rgb(46 139 87 / 40%);
   transform: translateY(-1px);
 }
 
