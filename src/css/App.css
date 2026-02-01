@@ -136,6 +136,10 @@ body,
   white-space: nowrap;
 }
 
+.title {
+  padding-bottom: 4px;
+}
+
 /* Brand subtitle/tagline text */
 .brand-title .subtitle {
   overflow: hidden;
