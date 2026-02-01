@@ -149,7 +149,7 @@ const Topbar = ({
                 <Skeleton height={16} />
               )
             ) : (
-              "VOD Review Session"
+              "Vodding"
             )}
           </div>
           <div className="subtitle">Competitive Analysis</div>
