@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 // Current Keybindings:
 // App.tsx
@@ -79,15 +79,22 @@ const matchesShortcut = (e: KeyboardEvent, pattern: string): boolean => {
 };
 
 export const useKeyboardShortcuts = (shortcuts: ShortcutMap) => {
+  const shortcutsRef = useRef(shortcuts);
+  shortcutsRef.current = shortcuts;
+
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement;
-      if (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable) {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const target = event.target;
+      if (
+        target instanceof HTMLElement &&
+        (target.matches("input, textarea, select") || target.isContentEditable)
+      ) {
         return;
       }
-      for (const [pattern, handler] of Object.entries(shortcuts)) {
-        if (matchesShortcut(e, pattern)) {
-          handler(e);
+
+      for (const [pattern, handler] of Object.entries(shortcutsRef.current)) {
+        if (matchesShortcut(event, pattern)) {
+          handler(event);
           break;
         }
       }
@@ -97,5 +104,5 @@ export const useKeyboardShortcuts = (shortcuts: ShortcutMap) => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [shortcuts]);
+  }, []);
 };

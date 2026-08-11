@@ -60,16 +60,18 @@ const NoteCard = ({
       className={`result-card ${isEditing ? "editing" : ""} ${isSelected ? "selected" : ""}`}
     >
       <div className="result-card-header">
-        <div
-          className="result-meta "
+        <button
+          type="button"
+          className="result-meta"
           onClick={() => {
             onJump(note.id, note.timestamp);
           }}
+          aria-label={`Jump to ${formatTime(note.timestamp)}`}
         >
           <span className="timestamp">
             <Clock size={12} className="timestamp-icon" /> {formatTime(note.timestamp)}
           </span>
-        </div>
+        </button>
 
         <div className="result-actions-row">
           <button

@@ -34,17 +34,10 @@ export const useLink = (
   const jumpTimeoutRef = useRef<number | null>(null);
   const playerRef = useRef<ReactPlayerRef | HTMLVideoElement | null>(null);
   const mapViewRef = useRef<boolean>(false);
-
-  useEffect(() => {
-    const player = playerRef.current;
-    if (!player) return;
-
-    const el = player as HTMLElement;
-    el.style.transformOrigin = `${(focus.x * 100).toFixed()}% ${(focus.y * 100).toFixed()}%`;
-    el.style.transform = `scale(${scale.toString()})`;
-    el.style.willChange = "transform";
-    el.style.transition = "transform 250ms ease";
-  }, [focus, scale]);
+  const videoRef = useRef(video);
+  const currentTitleRef = useRef(currentTitle);
+  videoRef.current = video;
+  currentTitleRef.current = currentTitle;
 
   useEffect(() => {
     return () => {
@@ -470,10 +463,11 @@ export const useLink = (
 
       setError("");
 
-      const currentUrl = video?.url ?? null;
+      const currentVideo = videoRef.current;
+      const currentUrl = currentVideo?.url ?? null;
       if (currentUrl === cleanUrl) {
         setInputValue(cleanUrl);
-        if (name && video) {
+        if (name && currentVideo) {
           setVideo((prev) => (prev ? { ...prev, name } : prev));
         }
         return false;
@@ -482,14 +476,14 @@ export const useLink = (
       setVideo({
         id: uuidv4(),
         url: cleanUrl,
-        name: name ?? currentTitle ?? "Untitled",
+        name: name ?? currentTitleRef.current ?? "Untitled",
         addedAt: new Date().toISOString(),
         provider: "youtube",
       });
       setInputValue(cleanUrl);
       return true;
     },
-    [validateAndCleanUrl, currentTitle, video],
+    [validateAndCleanUrl],
   );
 
   const handleHash = useCallback(async () => {
@@ -509,7 +503,7 @@ export const useLink = (
         if (id) {
           const data = await loadWithId(id);
           if (data) {
-            const currentUrl = video?.url ?? null;
+            const currentUrl = videoRef.current?.url ?? null;
             if (currentUrl !== data.video.url) {
               setVideo(data.video);
             }
@@ -543,7 +537,7 @@ export const useLink = (
       //
       console.debug("handleHash error", e);
     }
-  }, [loadVideoFromUrl, handleNoteJump, setSharedFromUrl, loadWithId, video]);
+  }, [loadVideoFromUrl, handleNoteJump, setSharedFromUrl, loadWithId]);
 
   const clearUrlNotes = useCallback(() => {
     setUrlNotes([]);

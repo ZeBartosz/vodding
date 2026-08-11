@@ -1,48 +1,41 @@
 import { Keyboard } from "lucide-react";
-import { memo, useMemo, useState } from "react";
+import { memo, useState } from "react";
 import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
 
 const Shortcuts = () => {
   const [showShortcuts, setShowShortcuts] = useState(false);
 
-  const shortcutsBindings = useMemo(
-    () => ({
-      "alt+s": (e: KeyboardEvent) => {
-        e.preventDefault();
-        if (showShortcuts) {
-          setShowShortcuts(false);
-        } else {
-          setShowShortcuts(true);
-        }
-      },
-    }),
-    [showShortcuts],
-  );
-
-  useKeyboardShortcuts(shortcutsBindings);
+  useKeyboardShortcuts({
+    "alt+s": (event: KeyboardEvent) => {
+      event.preventDefault();
+      setShowShortcuts((isOpen) => !isOpen);
+    },
+    escape: () => {
+      setShowShortcuts(false);
+    },
+  });
 
   return (
-    <div
-      className="shortcuts-trigger"
-      role="button"
-      tabIndex={0}
-      aria-label="Keyboard shortcuts"
-      aria-expanded={showShortcuts}
-      aria-haspopup="dialog"
-      onClick={() => {
-        setShowShortcuts(!showShortcuts);
-      }}
-      title="Keyboard shortcuts"
-    >
-      <Keyboard size={16} />
+    <div className="shortcuts">
+      <button
+        className="shortcuts-trigger"
+        type="button"
+        aria-label="Keyboard shortcuts"
+        aria-expanded={showShortcuts}
+        aria-controls="keyboard-shortcuts"
+        onClick={() => {
+          setShowShortcuts((isOpen) => !isOpen);
+        }}
+        title="Keyboard shortcuts"
+      >
+        <Keyboard size={16} />
+      </button>
       {showShortcuts && (
         <div
+          id="keyboard-shortcuts"
           className="shortcuts-panel"
-          role="dialog"
+          role="region"
           aria-label="Keyboard shortcuts"
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
         >
           <div className="shortcuts-section">
             <div className="shortcuts-title">Session</div>

@@ -64,7 +64,7 @@ export const saveVod = async (data: VoddingPayload): Promise<VoddingPayload> => 
       (a, b) => Date.parse(a.updatedAt) - Date.parse(b.updatedAt),
     );
 
-    if (currentDBArray.length > MAX_VODS) {
+    if (currentDBArray.length >= MAX_VODS) {
       const oldestVodding = currentDBArray[0];
       await db.delete("vodding", oldestVodding.id);
     }

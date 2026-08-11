@@ -128,9 +128,11 @@ textarea:focus-visible,
   place-items: center;
   width: 42px;
   height: 42px;
+  padding: 0;
   color: #100b09;
   cursor: pointer;
   background: var(--accent);
+  border: 0;
   border-radius: 11px;
   box-shadow: 0 6px 20px rgb(var(--accent-rgb) / 22%);
   transition:
@@ -257,8 +259,11 @@ textarea:focus-visible,
   }
 }
 
-.shortcuts-trigger {
+.shortcuts {
   position: relative;
+}
+
+.shortcuts-trigger {
   width: 38px;
   padding: 0;
   color: var(--muted);
@@ -553,7 +558,11 @@ kbd {
 }
 
 .result-meta {
+  padding: 0;
+  color: inherit;
   cursor: pointer;
+  background: transparent;
+  border: 0;
 }
 
 .timestamp {

@@ -39,6 +39,8 @@ export interface VideoPlayerProps {
   loading: boolean;
   setVideo: (v: Video | null) => void;
   onRestoring?: (isRestoring: boolean) => void;
+  focus: { x: number; y: number };
+  scale: number;
 }
 
 export interface MissingURLProps {

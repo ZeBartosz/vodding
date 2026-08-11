@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import type { Note } from "../types";
-import { jsPDF } from "jspdf";
 import { formatTime } from "../utils/formatTime";
 import { buildShareableUrl } from "../utils/urlParams";
 
@@ -30,18 +29,8 @@ export default function useExportPdf({
 }: UseExportPdfParams) {
   const [exporting, setExporting] = useState(false);
   const exportingRef = useRef(false);
-  const exportTimeoutRef = useRef<number | null>(null);
 
-  useEffect(() => {
-    return () => {
-      if (exportTimeoutRef.current) {
-        clearTimeout(exportTimeoutRef.current);
-        exportTimeoutRef.current = null;
-      }
-    };
-  }, []);
-
-  const exportPdf = useCallback(() => {
+  const exportPdf = useCallback(async () => {
     if (typeof window === "undefined" || typeof document === "undefined") return;
     if (exportingRef.current) return;
 
@@ -49,11 +38,12 @@ export default function useExportPdf({
     setExporting(true);
 
     try {
+      const { jsPDF } = await import("jspdf");
       const safeTitle = title ?? "VOD Review Session";
       const safeNotes: Note[] = notes ?? [];
       const sortedNotes = [...safeNotes].sort((a, b) => a.timestamp - b.timestamp);
 
-      const doc: jsPDF = new jsPDF({
+      const doc = new jsPDF({
         unit: "pt",
         format: "a4",
       });
@@ -287,12 +277,7 @@ export default function useExportPdf({
   }, [title, videoUrl, notes, filename]);
 
   const handleExport = useCallback(() => {
-    if (exportingRef.current) return;
-
-    exportTimeoutRef.current = setTimeout(() => {
-      exportTimeoutRef.current = null;
-      exportPdf();
-    }, 0);
+    void exportPdf();
   }, [exportPdf]);
 
   return { exporting, handleExport };

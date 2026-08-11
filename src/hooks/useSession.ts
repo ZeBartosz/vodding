@@ -42,8 +42,7 @@ export const useSession = (setCurrentTitle: (title: string | null) => void) => {
     } finally {
       setLoading(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [setCurrentTitle, setVodding]);
 
   const loadWithId = useCallback(async (id: string) => {
     setLoading(true);

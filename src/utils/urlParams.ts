@@ -147,15 +147,12 @@ export function updateUrlHash(videoUrl: string | null, notes: Note[]): void {
 }
 
 export function removeSharedFromUrl(): void {
-  const params = new URLSearchParams();
+  const params = new URLSearchParams(window.location.hash.replace(/^#/, ""));
   params.delete("s");
 
-  const newHash = `#${params.toString()}`;
-  const currentHash = window.location.hash;
-
-  if (currentHash !== newHash) {
-    window.history.replaceState(null, "", `${window.location.pathname}${newHash}`);
-  }
+  const hash = params.toString();
+  const nextUrl = `${window.location.pathname}${window.location.search}${hash ? `#${hash}` : ""}`;
+  window.history.replaceState(null, "", nextUrl);
 }
 
 export const cleanVideoParams = () => {

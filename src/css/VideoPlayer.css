@@ -1,5 +1,12 @@
 /* stylelint-disable no-descending-specificity */
 
+.player-transform {
+  width: 100%;
+  height: 100%;
+  transition: transform 250ms ease;
+  will-change: transform;
+}
+
 .react-player {
   display: block;
   width: 100% !important;
@@ -229,6 +236,20 @@
     background 140ms ease,
     border-color 140ms ease,
     transform 140ms ease;
+}
+
+.restore-session-btn {
+  display: flex;
+  flex: 1;
+  gap: 11px;
+  align-items: center;
+  min-width: 0;
+  padding: 0;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
 }
 
 .vodding-item:hover,

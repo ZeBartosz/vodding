@@ -10,14 +10,13 @@ import { useNotes } from "./hooks/useNotes";
 import useNotesAutosave from "./hooks/useNotesAutosave";
 import { useUrlSync } from "./hooks/useUrlSync";
 import Topbar from "./components/Topbar";
-import NotesSkeleton from "./components/ui/NotesSkeleton";
+import Notes from "./components/Notes";
 import Skeleton from "./components/ui/skeleton";
 import { v4 as uuidv4 } from "uuid";
 import { cleanVideoParams } from "./utils/urlParams";
 import { InputArea } from "./components/notes/InputTextarea";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 const VideoPlayer = lazy(() => import("./components/VideoPlayer"));
-const ResultBox = lazy(() => import("./components/Notes"));
 
 function App() {
   const [sharedFromUrl, setSharedFromUrl] = useState<boolean>(false);
@@ -36,14 +35,26 @@ function App() {
     handleMapView,
     handleResetFocusAndScale,
     handleNoteJump,
+    focus,
+    scale,
     handleHash,
     urlNotes,
     clearUrlNotes,
   } = useLink(currentTitle, setSharedFromUrl, loadWithId);
   const initialNotesSource = sharedFromUrl && urlNotes.length > 0 ? urlNotes : vodding?.notes;
-  const notes = useNotes(currentTimeRef, initialNotesSource, handleNoteJump);
+  const initialNotesKey = sharedFromUrl
+    ? `shared:${video?.url ?? ""}:${urlNotes.map((note) => `${String(note.timestamp)}:${note.content}`).join("|")}`
+    : (vodding?.id ?? "new-session");
+  const notes = useNotes({
+    currentTimeRef,
+    initialNotes: initialNotesSource,
+    initialNotesKey,
+    onJumpToNote: handleNoteJump,
+    readOnly: sharedFromUrl,
+  });
+  const { items: noteItems, setNotes } = notes;
   const { lastSavedAt, onRestoring, prevNotesRef } = useNotesAutosave({
-    notes: notes.items,
+    notes: noteItems,
     vodding,
     video,
     save,
@@ -51,7 +62,7 @@ function App() {
   });
   const { copyShareableUrl } = useUrlSync({
     video,
-    notes: notes.items,
+    notes: noteItems,
     sharedFromUrl,
   });
   const [saving, setSaving] = useState<boolean>(false);
@@ -72,7 +83,7 @@ function App() {
         payload = {
           ...vodding,
           video: currentVideo,
-          notes: urlNotes,
+          notes: noteItems,
           updatedAt: now,
         };
       } else {
@@ -81,14 +92,14 @@ function App() {
           createdAt: now,
           updatedAt: now,
           video: currentVideo,
-          notes: urlNotes,
+          notes: noteItems,
         };
       }
 
       const savedPayload = await save(payload);
 
       if (savedPayload.id) {
-        notes.setNotes(payload.notes);
+        setNotes(payload.notes);
         setVideo(payload.video);
         setSharedFromUrl(false);
         clearUrlNotes();
@@ -101,28 +112,16 @@ function App() {
     } finally {
       setSaving(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    urlNotes,
-    video,
-    vodding,
-    save,
-    notes.setNotes,
-    setVideo,
-    clearUrlNotes,
-    setSharedFromUrl,
-    saving,
-    sharedFromUrl,
-  ]);
+  }, [video, vodding, save, noteItems, setNotes, setVideo, clearUrlNotes, saving, sharedFromUrl]);
 
   const exportOptions = useMemo(
     () => ({
       title: video?.name ?? currentTitle,
       videoUrl: video?.url ?? "",
-      notes: notes.items,
+      notes: noteItems,
       filename: `${(video?.name ?? "session").replace(/\s+/g, "_")}.pdf`,
     }),
-    [video?.name, video?.url, currentTitle, notes.items],
+    [video?.name, video?.url, currentTitle, noteItems],
   );
 
   const { exporting, handleExport } = useExportPdf(exportOptions);
@@ -145,7 +144,7 @@ function App() {
   }, []);
 
   const handleNewSession = useCallback(() => {
-    notes.setNotes([]);
+    setNotes([]);
     setVideo(null);
     setVodding(null);
     handleSetInputValue("");
@@ -154,32 +153,9 @@ function App() {
     clearUrlNotes();
     window.localStorage.removeItem("current_vodding_id");
 
-    try {
-      const newUrl = cleanVideoParams();
-      if (typeof window !== "undefined" && typeof window.history.replaceState === "function") {
-        window.history.replaceState(null, "", newUrl);
-      } else {
-        //
-      }
-    } catch {
-      //
-    }
-
-    try {
-      void loadAll();
-    } catch {
-      //
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    handleSetInputValue,
-    loadAll,
-    setVideo,
-    notes.setNotes,
-    prevNotesRef,
-    clearUrlNotes,
-    setVodding,
-  ]);
+    window.history.replaceState(null, "", cleanVideoParams());
+    void loadAll();
+  }, [handleSetInputValue, loadAll, setVideo, setNotes, prevNotesRef, clearUrlNotes, setVodding]);
 
   const shortcutsBindings = useMemo(
     () => ({
@@ -227,6 +203,8 @@ function App() {
               loading={loading}
               setVideo={setVideo}
               onRestoring={onRestoring}
+              focus={focus}
+              scale={scale}
             />
           </Suspense>
         </div>
@@ -249,25 +227,23 @@ function App() {
             </div>
 
             <div className="input-container">
-              <Suspense fallback={<NotesSkeleton />}>
-                <ResultBox
-                  handleNoteJump={handleNoteJump}
-                  readOnly={sharedFromUrl}
-                  notes={notes.items}
-                  editNote={notes.editNote}
-                  editingId={notes.editingId}
-                  setEditingId={notes.setEditingId}
-                  editingValue={notes.editingValue}
-                  setEditingValue={notes.setEditingValue}
-                  query={notes.query}
-                  setQuery={notes.setQuery}
-                  deleteNote={notes.deleteNote}
-                  resultsRef={notes.resultsRef}
-                  filtered={notes.filtered}
-                  selectedNoteId={notes.selectedNoteId}
-                  setSelectedNoteId={notes.setSelectedNoteId}
-                />
-              </Suspense>
+              <Notes
+                handleNoteJump={handleNoteJump}
+                readOnly={sharedFromUrl}
+                notes={noteItems}
+                editNote={notes.editNote}
+                editingId={notes.editingId}
+                setEditingId={notes.setEditingId}
+                editingValue={notes.editingValue}
+                setEditingValue={notes.setEditingValue}
+                query={notes.query}
+                setQuery={notes.setQuery}
+                deleteNote={notes.deleteNote}
+                resultsRef={notes.resultsRef}
+                filtered={notes.filtered}
+                selectedNoteId={notes.selectedNoteId}
+                setSelectedNoteId={notes.setSelectedNoteId}
+              />
               <InputArea
                 handleKeyDown={notes.handleKeyDown}
                 handleMapView={handleMapView}

@@ -19,11 +19,13 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
   loading,
   setVideo,
   onRestoring,
+  focus,
+  scale,
 }) => {
   const [embedError, setEmbedError] = useState(false);
   const [playerKey, setPlayerKey] = useState(0);
   const [copied, setCopied] = useState(false);
-  const copyTimeout = useRef<number | null>(null);
+  const copyTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     requestAnimationFrame(() => {
@@ -207,30 +209,35 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
 
   return (
     <div className="video-player-wrap" onClick={handlePlayerClick}>
-      <ReactPlayer
-        key={playerKey}
-        ref={(r) => {
-          const playerRefRef = playerRef as { current?: unknown } | undefined;
-          if (playerRefRef && typeof playerRefRef === "object") {
-            playerRefRef.current = r as unknown;
-          }
+      <div
+        className="player-transform"
+        style={{
+          transform: `scale(${String(scale)})`,
+          transformOrigin: `${String(focus.x * 100)}% ${String(focus.y * 100)}%`,
         }}
-        src={video.url}
-        controls={true}
-        className="react-player"
-        config={{
-          youtube: {
-            disablekb: 1,
-          },
-        }}
-        onPlay={handlePlayerClick}
-        onPause={handlePlayerClick}
-        onLoadedMetadata={handleTitleChange}
-        onProgress={handleProgress}
-        onError={() => {
-          setEmbedError(true);
-        }}
-      />
+      >
+        <ReactPlayer
+          key={playerKey}
+          ref={(player) => {
+            playerRef.current = player;
+          }}
+          src={video.url}
+          controls
+          className="react-player"
+          config={{
+            youtube: {
+              disablekb: 1,
+            },
+          }}
+          onPlay={handlePlayerClick}
+          onPause={handlePlayerClick}
+          onLoadedMetadata={handleTitleChange}
+          onProgress={handleProgress}
+          onError={() => {
+            setEmbedError(true);
+          }}
+        />
+      </div>
     </div>
   );
 };
@@ -335,46 +342,42 @@ const MissingURL: FC<MissingURLProps> = ({
               const title = v.video.name || v.video.url || "Untitled VOD";
               const noteCount = Array.isArray(v.notes) ? v.notes.length : 0;
               return (
-                <li
-                  key={v.id}
-                  className="vodding-item"
-                  onClick={() => {
-                    void handleRestore(v);
-                  }}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
+                <li key={v.id} className="vodding-item">
+                  <button
+                    type="button"
+                    className="restore-session-btn"
+                    onClick={() => {
                       void handleRestore(v);
-                    }
-                  }}
-                  title={title}
-                  aria-label={`Restore ${title}`}
-                >
-                  <div className="vodding-thumb" aria-hidden="true">
-                    <Play size={18} fill="currentColor" />
-                  </div>
-                  <div className="vodding-meta">
-                    <div className="vodding-title">{title}</div>
-                    <div className="vodding-badges">
-                      <span className="notes-badge">
-                        <FileText size={13} /> {noteCount} {noteCount === 1 ? "note" : "notes"}
-                      </span>
-                      {v.updatedAt && (
-                        <span className="time-badge" title={new Date(v.updatedAt).toLocaleString()}>
-                          <Clock3 size={13} /> {new Date(v.updatedAt).toLocaleDateString()}
-                        </span>
-                      )}
+                    }}
+                    title={title}
+                    aria-label={`Restore ${title}`}
+                  >
+                    <div className="vodding-thumb" aria-hidden="true">
+                      <Play size={18} fill="currentColor" />
                     </div>
-                  </div>
-                  <ArrowRight className="open-session-icon" size={18} aria-hidden="true" />
+                    <div className="vodding-meta">
+                      <div className="vodding-title">{title}</div>
+                      <div className="vodding-badges">
+                        <span className="notes-badge">
+                          <FileText size={13} /> {noteCount} {noteCount === 1 ? "note" : "notes"}
+                        </span>
+                        {v.updatedAt && (
+                          <span
+                            className="time-badge"
+                            title={new Date(v.updatedAt).toLocaleString()}
+                          >
+                            <Clock3 size={13} /> {new Date(v.updatedAt).toLocaleDateString()}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <ArrowRight className="open-session-icon" size={18} aria-hidden="true" />
+                  </button>
                   <div className="vodding-actions">
                     <button
                       type="button"
                       className="delete-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
+                      onClick={() => {
                         void handleDelete(v.id);
                       }}
                       aria-label={`Delete ${title}`}

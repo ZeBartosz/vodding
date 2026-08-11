@@ -5,11 +5,21 @@ import { v4 as uuidv4 } from "uuid";
 import { formatTime } from "../utils/formatTime";
 import { useKeyboardShortcuts } from "./useKeyboardShortcuts";
 
-export const useNotes = (
-  currentTimeRef?: RefObject<number>,
-  initialNotes?: Note[],
-  onJumpToNote?: (time: number) => void,
-) => {
+interface UseNotesOptions {
+  currentTimeRef?: RefObject<number>;
+  initialNotes?: Note[];
+  initialNotesKey: string;
+  onJumpToNote?: (time: number) => void;
+  readOnly?: boolean;
+}
+
+export const useNotes = ({
+  currentTimeRef,
+  initialNotes,
+  initialNotesKey,
+  onJumpToNote,
+  readOnly = false,
+}: UseNotesOptions) => {
   const [notes, setNotes] = useState<Note[]>(initialNotes ?? []);
   const [inputValue, setInputValue] = useState<string>("");
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -20,13 +30,18 @@ export const useNotes = (
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const resultsRef = useRef<HTMLDivElement | null>(null);
   const scrollRef = useRef<number | null>(null);
+  const notesSourceKeyRef = useRef(initialNotesKey);
 
   useEffect(() => {
-    if (!initialNotes) return;
-    requestAnimationFrame(() => {
-      setNotes(initialNotes);
-    });
-  }, [initialNotes]);
+    if (notesSourceKeyRef.current === initialNotesKey) return;
+
+    notesSourceKeyRef.current = initialNotesKey;
+    setNotes(initialNotes ?? []);
+    setEditingId(null);
+    setEditingValue("");
+    setQuery("");
+    setSelectedNoteId(null);
+  }, [initialNotes, initialNotesKey]);
 
   const scrollToBottom = useCallback(() => {
     if (scrollRef.current) cancelAnimationFrame(scrollRef.current);
@@ -55,6 +70,8 @@ export const useNotes = (
 
   const addNote = useCallback(
     (value?: string, force?: boolean) => {
+      if (readOnly) return;
+
       const content = value ?? inputValue;
       if (!content.trim() && !force) return;
 
@@ -76,12 +93,16 @@ export const useNotes = (
       setInputValue("");
       scrollToBottom();
     },
-    [inputValue, currentTimeRef, scrollToBottom],
+    [inputValue, currentTimeRef, readOnly, scrollToBottom],
   );
 
-  const deleteNote = useCallback((id: string) => {
-    setNotes((prev) => prev.filter((n) => n.id !== id));
-  }, []);
+  const deleteNote = useCallback(
+    (id: string) => {
+      if (readOnly) return;
+      setNotes((prev) => prev.filter((n) => n.id !== id));
+    },
+    [readOnly],
+  );
 
   const deleteLatestNote = useCallback(() => {
     if (notes.length === 0) return;
@@ -92,26 +113,30 @@ export const useNotes = (
     deleteNote(latestNote.id);
   }, [notes, deleteNote]);
 
-  const editNote = useCallback((id: string, newContent: string) => {
-    setNotes((prev) =>
-      prev.map((n) =>
-        n.id === id ? { ...n, content: newContent, updatedAt: new Date().toISOString() } : n,
-      ),
-    );
+  const editNote = useCallback(
+    (id: string, newContent: string) => {
+      if (readOnly) return;
+      setNotes((prev) =>
+        prev.map((n) =>
+          n.id === id ? { ...n, content: newContent, updatedAt: new Date().toISOString() } : n,
+        ),
+      );
 
-    setEditingId(null);
-    setEditingValue("");
-  }, []);
+      setEditingId(null);
+      setEditingValue("");
+    },
+    [readOnly],
+  );
 
   const editLatestNote = useCallback(() => {
-    if (notes.length === 0) return;
+    if (readOnly || notes.length === 0) return;
     const latestNote = notes.reduce((prev, curr) =>
       prev.createdAt > curr.createdAt ? prev : curr,
     );
 
     setEditingId(latestNote.id);
     setEditingValue(latestNote.content);
-  }, [notes]);
+  }, [notes, readOnly]);
 
   const navigateNotes = useCallback(
     (direction: "up" | "down") => {
@@ -159,13 +184,13 @@ export const useNotes = (
   }, []);
 
   const editSelectedNote = useCallback(() => {
-    if (!selectedNoteId) return;
+    if (readOnly || !selectedNoteId) return;
     const note = filtered.find((n) => n.id === selectedNoteId);
     if (note) {
       setEditingId(note.id);
       setEditingValue(note.content);
     }
-  }, [selectedNoteId, filtered]);
+  }, [selectedNoteId, filtered, readOnly]);
 
   const deleteSelectedNote = useCallback(() => {
     if (!selectedNoteId) return;

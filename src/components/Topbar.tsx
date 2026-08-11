@@ -114,23 +114,18 @@ const Topbar = ({
   return (
     <header className="topbar">
       <div className="brand">
-        <div
+        <button
           className="brand-badge"
           onClick={handleNewSession}
           title="Start new session"
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              handleNewSession();
-            }
-          }}
+          aria-label="Start new session"
+          type="button"
         >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M7 5.5 17.5 12 7 18.5v-13Z" fill="currentColor" />
             <path d="M4 4v16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
           </svg>
-        </div>
+        </button>
         <div className="brand-title">
           <div className="title">
             {video?.name ? (
