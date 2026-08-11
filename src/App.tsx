@@ -235,14 +235,17 @@ function App() {
           <aside className="sidebar">
             <div className="sidebar-header">
               <div className="header-left">
-                <div className="h1">Session Notes</div>
+                <div className="sidebar-eyebrow">Timeline</div>
+                <div className="h1">Analysis notes</div>
                 <div className="small">
                   {sharedFromUrl
-                    ? "Read-only session — notes are disabled"
-                    : "Add your observations"}
+                    ? "Shared view · save to start editing"
+                    : "Capture moments without leaving the VOD"}
                 </div>
               </div>
-              <div className="dot">•</div>
+              <span className="sidebar-status" aria-label="Session active">
+                Live
+              </span>
             </div>
 
             <div className="input-container">

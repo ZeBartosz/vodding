@@ -1,4 +1,5 @@
 import { type FC, useCallback, useEffect, useRef, useState } from "react";
+import { ArrowRight, Clock3, FileText, Link2, Play, Trash2 } from "lucide-react";
 import ReactPlayer from "react-player";
 import type { VoddingPayload } from "../types";
 import type { VideoPlayerProps, MissingURLProps } from "../types/player";
@@ -270,33 +271,69 @@ const MissingURL: FC<MissingURLProps> = ({
 
   return (
     <div className="missing-video">
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="url-input">Paste VOD link</label>
-        <div>
-          <input
-            id="url-input"
-            type="text"
-            value={inputValue}
-            onChange={(e) => {
-              handleSetInputValue(e.target.value);
-            }}
-            placeholder="https://youtu.be/FOatagUO-Z0?si=B7VpCVugvcLB_Jzz"
-          />
-          <button type="submit">Submit</button>
+      <div className="landing-intro">
+        <div className="landing-kicker">
+          <span /> Review smarter
         </div>
+        <h1>Turn every VOD into an actionable timeline.</h1>
+        <p>
+          Watch, timestamp, and organise the moments that matter — all in one focused workspace.
+        </p>
+      </div>
 
-        {error && <p className="form-error">{error}</p>}
+      <form className="url-card" onSubmit={handleSubmit}>
+        <div className="url-card-icon" aria-hidden="true">
+          <Link2 size={21} />
+        </div>
+        <div className="url-card-content">
+          <label htmlFor="url-input">Start a new review</label>
+          <span>Paste a YouTube or supported video link</span>
+          <div className="url-input-row">
+            <input
+              id="url-input"
+              type="url"
+              value={inputValue}
+              onChange={(e) => {
+                handleSetInputValue(e.target.value);
+              }}
+              placeholder="https://youtube.com/watch?v=…"
+              autoComplete="url"
+            />
+            <button type="submit">
+              Open VOD <ArrowRight size={17} />
+            </button>
+          </div>
+          {error && <p className="form-error">{error}</p>}
+        </div>
       </form>
 
-      <div className="vodding-list-wrap">
-        <h4>Saved VODs</h4>
-        {loading && <p>Loading saved VODs…</p>}
-        {!loading && voddingList.length === 0 && <p className="muted">No saved VODs yet.</p>}
+      <section className="vodding-list-wrap" aria-labelledby="saved-vods-title">
+        <div className="library-header">
+          <div>
+            <span className="library-kicker">Your workspace</span>
+            <h2 id="saved-vods-title">Recent sessions</h2>
+          </div>
+          {!loading && voddingList.length > 0 && (
+            <span className="library-count">{voddingList.length} saved</span>
+          )}
+        </div>
+
+        {loading && <p className="muted">Loading your sessions…</p>}
+        {!loading && voddingList.length === 0 && (
+          <div className="library-empty">
+            <Play size={22} aria-hidden="true" />
+            <div>
+              <strong>No sessions yet</strong>
+              <p>Your first review will appear here automatically.</p>
+            </div>
+          </div>
+        )}
 
         {!loading && voddingList.length > 0 && (
           <ul className="vodding-list" aria-label="Saved vodding list">
             {voddingList.map((v) => {
               const title = v.video.name || v.video.url || "Untitled VOD";
+              const noteCount = Array.isArray(v.notes) ? v.notes.length : 0;
               return (
                 <li
                   key={v.id}
@@ -315,28 +352,23 @@ const MissingURL: FC<MissingURLProps> = ({
                   title={title}
                   aria-label={`Restore ${title}`}
                 >
+                  <div className="vodding-thumb" aria-hidden="true">
+                    <Play size={18} fill="currentColor" />
+                  </div>
                   <div className="vodding-meta">
-                    <div className="vodding-row">
-                      <div className="vodding-title">{title}</div>
-
-                      <div className="vodding-badges">
-                        <span
-                          className="notes-badge"
-                          title={`${String(Array.isArray(v.notes) ? v.notes.length : 0)} notes`}
-                        >
-                          📄 {Array.isArray(v.notes) ? v.notes.length : 0}
+                    <div className="vodding-title">{title}</div>
+                    <div className="vodding-badges">
+                      <span className="notes-badge">
+                        <FileText size={13} /> {noteCount} {noteCount === 1 ? "note" : "notes"}
+                      </span>
+                      {v.updatedAt && (
+                        <span className="time-badge" title={new Date(v.updatedAt).toLocaleString()}>
+                          <Clock3 size={13} /> {new Date(v.updatedAt).toLocaleDateString()}
                         </span>
-
-                        <span
-                          className="time-badge"
-                          title={v.updatedAt ? new Date(v.updatedAt).toLocaleString() : ""}
-                        >
-                          {v.updatedAt ? new Date(v.updatedAt).toLocaleString() : ""}
-                        </span>
-                      </div>
+                      )}
                     </div>
                   </div>
-
+                  <ArrowRight className="open-session-icon" size={18} aria-hidden="true" />
                   <div className="vodding-actions">
                     <button
                       type="button"
@@ -345,10 +377,10 @@ const MissingURL: FC<MissingURLProps> = ({
                         e.stopPropagation();
                         void handleDelete(v.id);
                       }}
-                      aria-label={`Delete ${v.id}`}
+                      aria-label={`Delete ${title}`}
                       title="Delete saved VOD"
                     >
-                      🗑
+                      <Trash2 size={16} />
                     </button>
                   </div>
                 </li>
@@ -356,7 +388,7 @@ const MissingURL: FC<MissingURLProps> = ({
             })}
           </ul>
         )}
-      </div>
+      </section>
     </div>
   );
 };
